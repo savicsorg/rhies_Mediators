@@ -1,11 +1,11 @@
 {
-  "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0e7",
+  "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0e6",
   "version": "0.0.2",
-  "name": "labwareToOpenMrs mediator",
+  "name": "labware to OpenMrs mediator",
   "description": "A mediator to get post from LabWare to OpenMRS",
   "defaultChannelConfig": [
     {
-      "name": "labware to OpenMrs mediator",
+      "name": "labware to OpenMrs chanel",
       "urlPattern": "/test/",
       "alerts": [],
       "txRerunAcl": [],
@@ -28,7 +28,7 @@
   ],
   "endpoints": [
     {
-      "name": "labwareToOpenMrs Route",
+      "name": "labware to OpenMrs endpoint",
       "host": "192.168.215.133",
       "path": "/test/",
       "port": "4000",

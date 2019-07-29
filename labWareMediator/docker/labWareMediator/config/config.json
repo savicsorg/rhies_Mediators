@@ -3,7 +3,7 @@
     "username": "root@openhim.org",
     "password": "0000",
     "apiURL": "https://192.168.215.133:8080",
-    "openMrsUrl": "http://localhost:4023/patient",
+    "openMrsUrl": "http://192.168.215.133:4023/patient",
     "urlPattern": "/test/",
     "trustSelfSigned": "true"
   },

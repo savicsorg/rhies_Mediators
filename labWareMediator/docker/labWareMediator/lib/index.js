@@ -49,43 +49,26 @@ function setupApp() {
     // construct return object
     var properties = { property: 'Primary Route' }
 
-    if (req.method == 'POST' && req.url == '/test/') {
+    if (req.method == 'POST' && req.url == apiConf.api.urlPattern) {
       var form = new formidable.IncomingForm();
       form.parse(req, function (err, fields, files) {
-
         var data = fields;
+        console.log('Got data',  data);
+
         needle
-          .post('http://localhost:4023/patient', data, {})
+          .post(apiConf.api.openMrsUrl , data, {})
           .on('readable', function () {
 
           })
           .on('done', function (err, resp) {
-            console.log('Ready-o!');
+            console.log('Posted data',  data,  "to", apiConf.api.openMrsUrl );
           })
       });
-
-
       res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
     }
 
 
-
-
-
   })
-
-
-  app.get('/test/', function (req, res) {
-
-    console.log(req);
-    res.json({
-      message: 'ok c est bon'
-    });
-
-
-
-  })
-
   return app
 }
 

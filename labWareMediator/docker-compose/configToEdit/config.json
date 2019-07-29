@@ -2,8 +2,8 @@
   "api": {
     "username": "root@openhim.org",
     "password": "0000",
-    "apiURL": "https://192.168.215.133:8080",
-    "openMrsUrl": "http://localhost:4023/patient",
+    "apiURL": "https://172.17.0.1:8080",
+    "openMrsUrl": "http://172.17.0.1:4023/patient",
     "urlPattern": "/test/",
     "trustSelfSigned": "true"
   },
