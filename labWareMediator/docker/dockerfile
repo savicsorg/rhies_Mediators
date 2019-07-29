@@ -1,0 +1,10 @@
+FROM node:latest
+WORKDIR /usr/src/app/savics/labWareMediator
+
+COPY ./labWareMediator/ .
+
+RUN npm install
+
+EXPOSE :4000
+
+CMD ["node", "./lib/index.js" ]

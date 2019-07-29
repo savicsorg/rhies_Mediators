@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  labwaremediator:
+    container_name: savics-lab
+    image: savicsorg/labwaremediator:latest
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./configToEdit/:/usr/src/app/savics/labWareMediator/config/
+    restart: always

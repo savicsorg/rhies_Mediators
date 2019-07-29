@@ -1,0 +1,51 @@
+{
+  "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0e7",
+  "version": "0.0.2",
+  "name": "labwareToOpenMrs mediator",
+  "description": "A mediator to get post from LabWare to OpenMRS",
+  "defaultChannelConfig": [
+    {
+      "name": "labware to OpenMrs mediator",
+      "urlPattern": "/test/",
+      "alerts": [],
+      "txRerunAcl": [],
+      "txViewFullAcl": [],
+      "txViewAcl": [],
+      "properties": [],
+      "matchContentTypes": [],
+      "routes": [
+        {
+          "name": "labware to OpenMrs Route",
+          "host": "192.168.215.133",
+          "port": "4000",
+          "primary": true,
+          "type": "http"
+        }
+      ],
+      "allow": ["labware"],
+      "type": "http"
+    }
+  ],
+  "endpoints": [
+    {
+      "name": "labwareToOpenMrs Route",
+      "host": "192.168.215.133",
+      "path": "/test/",
+      "port": "4000",
+      "primary": true,
+      "type": "http"
+    }
+  ],
+  "configDefs": [
+    {
+      "param": "upstreamUrl",
+      "displayName": "Upstream URL",
+      "description": "The URL of the service upstream of the mediator",
+      "type": "string",
+      "template": []
+    }
+  ],
+  "config": {
+    "upstreamUrl": "http://192.168.215.133:4000"
+  }
+}
