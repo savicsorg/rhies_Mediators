@@ -4,6 +4,7 @@
 * Netbeans or VS code or any editor you prefere
 
 *Follow the steps to modify this mediator
+
 1. Open the **docker** folder inside your ide
 
 2. edit the **lib/index.js** file
