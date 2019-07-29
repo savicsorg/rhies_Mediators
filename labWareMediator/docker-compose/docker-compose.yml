@@ -6,6 +6,8 @@ services:
     image: savicsorg/labwaremediator:latest
     ports:
       - "4000:4000"
+    environment:
+        - "NODE_TLS_REJECT_UNAUTHORIZED=0"
     volumes:
       - ./configToEdit/:/usr/src/app/savics/labWareMediator/config/
     restart: always
