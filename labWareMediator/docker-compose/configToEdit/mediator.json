@@ -16,7 +16,7 @@
       "routes": [
         {
           "name": "labware to OpenMrs Route",
-          "host": "172.17.0.1",
+          "host": "labwaremediator",
           "port": "4000",
           "primary": true,
           "type": "http"
@@ -29,7 +29,7 @@
   "endpoints": [
     {
       "name": "labware to OpenMrs endpoint",
-      "host": "172.17.0.1",
+      "host": "labwaremediator",
       "path": "/test/",
       "port": "4000",
       "primary": true,
@@ -46,6 +46,6 @@
     }
   ],
   "config": {
-    "upstreamUrl": "http://172.17.0.1:4000"
+    "upstreamUrl": "http://localhost:4000"
   }
 }
