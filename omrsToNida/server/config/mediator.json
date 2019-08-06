@@ -1,0 +1,51 @@
+{
+  "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0e7",
+  "version": "0.0.2",
+  "name": "OpenMrs to nida mediator",
+  "description": "A mediator to get data from nida to OpenMRS",
+  "defaultChannelConfig": [
+    {
+      "name": "OpenMrs to nida chanel",
+      "urlPattern": "/patient/",
+      "alerts": [],
+      "txRerunAcl": [],
+      "txViewFullAcl": [],
+      "txViewAcl": [],
+      "properties": [],
+      "matchContentTypes": [],
+      "routes": [
+        {
+          "name": "OpenMrs to nida Route",
+          "host": "omrsToNidaMediator",
+          "port": "4001",
+          "primary": true,
+          "type": "http"
+        }
+      ],
+      "allow": ["openmrs"],
+      "type": "http"
+    }
+  ],
+  "endpoints": [
+    {
+      "name": "OpenMrs to nida endpoint",
+      "host": "omrsToNidaMediator",
+      "path": "/patient/",
+      "port": "4001",
+      "primary": true,
+      "type": "http"
+    }
+  ],
+  "configDefs": [
+    {
+      "param": "upstreamUrl",
+      "displayName": "Upstream URL",
+      "description": "The URL of the service upstream of the mediator",
+      "type": "string",
+      "template": []
+    }
+  ],
+  "config": {
+    "upstreamUrl": "http://localhost:4001"
+  }
+}

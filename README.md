@@ -1,11 +1,11 @@
-## mediator (labToOmrs,omrsToNida) ##
+## mediator ##
 
 ### Prerequisites ###
 * Netbeans or VS code or any editor you prefere
 
 *Follow the steps to modify this mediator
 
-1. Open the **mediator/server/** folder inside your ide
+1. Open the **docker** folder inside your ide
 
 2. edit the **lib/index.js** file
 
@@ -20,19 +20,19 @@
 
 *Follow the steps to install the mediator
 
-1. Copy the **docker-compose** folder anywhere on your server and change it's name to **savics_openhie**
+1. Copy the **docker-compose** folder anywhere on your server and change it's name to **theMediator**
 
-2. While on the **savics_openhie** folder run the commande **sudo docker-compose build && docker-compose up -d**
+2. While on the **theMediator** folder run the commande **sudo docker-compose build && docker-compose up -d**
 
 3. Once the installation process is finish make sur that your **openHim** instance is running properly
 
-4. got to each **theMediator_config/** folder
+4. got to the **theMediator/configToEdit/** folder
 
 5. Edit **the two config file** to meet your needs
 
-6. Restart your mediators 
+6. Restart your mediator 
 
-7. finish the configuration process on **openHim** (Roles, Clients, channels and routes creations)
+7. finish the configuration process on **openHim**
 
 8. test everything
 

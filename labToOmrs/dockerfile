@@ -1,7 +1,7 @@
 FROM node:latest
-WORKDIR /usr/src/app/savics/labWareMediator
+WORKDIR /usr/src/app/savics/labToOmrsMediator
 
-COPY ./labWareMediator/ .
+COPY ./server/ .
 
 RUN npm install
 

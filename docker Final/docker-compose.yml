@@ -32,14 +32,28 @@ services:
     volumes:
       - ./default.json:/usr/share/nginx/html/config/default.json
 
-  labwaremediator:
-    container_name: savics-lab
-    image: savicsorg/labwaremediator:latest
+  labToOmrsMediator:
+    container_name: savics-labToOmrs
+    image: savicsorg/labToOmrs:latest
     ports:
       - "4000:4000"
     depends_on:
       - core
     volumes:
-      - ./configToEdit/:/usr/src/app/savics/labWareMediator/config/
+      - ./labToOmrs_config/:/usr/src/app/savics/labToOmrsMediator/config/
     restart: always
+
+
+
+  omrsToNidaMediator:
+    container_name: savics-omrsToNida
+    image: savicsorg/omrsToNida:latest
+    ports:
+      - "4001:4001"
+    depends_on:
+      - core
+    volumes:
+      - ./omrsToNida_config/:/usr/src/app/savics/omrsToNidaMediator/config/
+    restart: always
+
 

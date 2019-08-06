@@ -1,7 +1,7 @@
 {
-  "name": "tutorial-mediator",
+  "name": "labtoomrs-mediator",
   "version": "0.0.1",
-  "description": "tutorial ",
+  "description": "labToOmrs mediators ",
   "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",
@@ -15,7 +15,7 @@
     "openhim",
     "mediator"
   ],
-  "author": "Svics",
+  "author": "Savics",
   "license": "MPL-2.0",
   "contributors": [
     "Savics"
