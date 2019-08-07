@@ -1,8 +1,0 @@
-node_modules/
-.nyc_output/
-*.log
-packaging/.gnupg
-packaging/.npm
-packaging/builds/*
-packaging/.gitconfig
-packaging/builds
