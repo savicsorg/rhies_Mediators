@@ -6,7 +6,7 @@
   "defaultChannelConfig": [
     {
       "name": "OpenMrs to nida chanel",
-      "urlPattern": "/patient/",
+      "urlPattern": "/persons/",
       "alerts": [],
       "txRerunAcl": [],
       "txViewFullAcl": [],
@@ -30,7 +30,7 @@
     {
       "name": "OpenMrs to nida endpoint",
       "host": "omrsToNidaMediator",
-      "path": "/patient/",
+      "path": "/persons/",
       "port": "4001",
       "primary": true,
       "type": "http"

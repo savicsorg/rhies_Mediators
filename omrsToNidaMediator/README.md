@@ -13,6 +13,8 @@
 
 3. push your modifications to bitbucket
 
-4. Build the docker image by running the command  **docker build -t  savicsorg/omrstonida:latest .**  while in the docker folder, the **latest** flag is the version number
+4. Before building the image, delete the **node_modules** folder
 
-5. Push your image to the docker hub by running the command **docker push savicsorg/omrstonida:latest** ,the **latest** flag is the version number
+5. Build the docker image by running the command  **docker build -t  savicsorg/omrstonida:latest .**  while in the docker folder, the **latest** flag is the version number
+
+6. Push your image to the docker hub by running the command **docker push savicsorg/omrstonida:latest** ,the **latest** flag is the version number

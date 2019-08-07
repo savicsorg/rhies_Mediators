@@ -3,9 +3,20 @@
     "username": "root@openhim.org",
     "password": "0000",
     "apiURL": "https://core:8080",
-    "openMrsUrl": "http://172.17.0.1:4023/patient",
-    "urlPattern": "/test/",
-    "trustSelfSigned": "true"
+    "trustSelfSigned": "true",
+    "urlPattern": "/persons/",
+    "nida": {
+      "url": "https://uat.nida.gov.rw:8081",
+      "keyPhrase": "R4NhP!!t=MW^HxxCg8!mB?dvj+4n%!Ega47M?qh2Eff98B?L4q3_ZbhDFndgWG%xT3JQYCbXgKPAZ%KkUG?DJf%HxFZQcNRu_QZMbp3FX_wH#76jgs7nfNcK7=kCj6Tw",
+      "User": {
+        "name": "HIES",
+        "pwd": "Sw3tvX^5bxT?f8aNVM32YYrfE#3j+AufsLASEsS5Z-VM&G^G_z2_=YgXaZmMCE$CLP?7#%QVqvyHX_FQ^D%6WZ5t8xrFeThZVW%rhxcA226dfd!257F+CNx7CJ$eCyt+",
+      },
+      "token": {
+        "value": "",
+        "updateDate": ""
+      }
+    }
   },
   "register": true,
   "heartbeat": true

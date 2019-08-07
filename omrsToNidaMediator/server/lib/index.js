@@ -6,6 +6,9 @@ const formidable = require('formidable');
 const express = require('express')
 const medUtils = require('openhim-mediator-utils')
 const winston = require('winston')
+const moment = require('moment');
+
+
 
 const utils = require('./utils')
 
@@ -16,6 +19,10 @@ winston.add(winston.transports.Console, { level: 'info', timestamp: true, colori
 // Config
 var config = {} // this will vary depending on whats set in openhim-core
 const apiConf = process.env.NODE_ENV === 'test' ? require('../config/test') : require('../config/config')
+var nconf = require('nconf');
+process.env.NODE_ENV === 'test' ? nconf.file('../config/test') : nconf.file('../config/config');
+
+
 const mediatorConfig = require('../config/mediator')
 
 var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].port
@@ -53,17 +60,26 @@ function setupApp() {
       var form = new formidable.IncomingForm();
       form.parse(req, function (err, fields, files) {
         var data = fields;
-        console.log('Got data',  data);
+        console.log('Got data', data);
+
+        //Query for Token
+        var options = {
+          username: apiConf.api.nida.user.name,
+          password: apiConf.api.nida.user.pwd.        :
+        }
+
 
         needle
-          .post(apiConf.api.openMrsUrl , data, {})
-          .on('readable', function () {
+          .post(apiConf.api.nida.Url + "/onlineauthentication/claimtoken", options)
+          .on('done', function (err, resp) {
 
           })
-          .on('done', function (err, resp) {
-            console.log('Posted data',  data,  "to", apiConf.api.openMrsUrl );
-          })
       });
+
+
+
+
+
       res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
     }
 
@@ -128,7 +144,69 @@ function start(callback) {
 }
 exports.start = start
 
-if (!module.parent) {
-  // if this script is run directly, start the server
-  start(() => winston.info(`Listening on ${port}...`))
-}
+
+
+function getNidaToken(callback) {
+  var needle = require('needle');
+  var shouldGetNewToken = false;
+
+
+  if (apiConf.api.nida.token && apiConf.api.nida.token.value
+    && apiConf.api.nida.token.value != "" && apiConf.api.nida.date
+    && apiConf.api.nida.token.date != "") {
+    shouldGetNewToken = true;
+  } else {
+    var currentTockerDate = moment(new Date(apiConf.api.nida.token.date));
+    var currentDate = moment();
+
+    if (currentTockerDate.add(1, 'days').isSameOrAfter(currentDate) == true) {
+      shouldGetNewToken = true;
+    } else {
+      shouldGetNewToken = false;
+    }
+
+  }
+
+
+  if (shouldGetNewToken == true){
+    //Query for Token
+    var options = {
+      username: apiConf.api.nida.user.name,
+      password: apiConf.api.nida.user.pwd        :
+    }
+    needle
+      .post(apiConf.api.nida.Url + "/onlineauthentication/claimtoken", options)
+      .on('done', function (err, resp) {
+        if (err){
+          callback(err);
+        } else {
+          console.log("=============================",resp);
+
+
+          //save token infos on config
+          nconf.set("api:nida:token:updateDate", moment());
+          nconf.set("api:nida:token:value","===================" );
+          nconf.save(function (err) {
+              if (err) {
+                callback(err);
+              } else {
+                callback(null,apiConf.api.nida.token.value);
+              }
+          });
+        }
+      })
+  } else {
+    callback(null,apiConf.api.nida.token.value);
+  }
+    
+
+  }
+
+
+
+
+
+  if (!module.parent) {
+    // if this script is run directly, start the server
+    start(() => winston.info(`Listening on ${port}...`))
+  }
