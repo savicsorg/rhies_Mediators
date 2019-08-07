@@ -5,7 +5,7 @@
 
 
 
-*Follow the steps to modify the omrstonida mediator
+* Follow the steps to modify the omrstonida mediator
 
 1. Open the **server** folder inside your ide
 
