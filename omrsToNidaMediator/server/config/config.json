@@ -6,15 +6,16 @@
     "trustSelfSigned": "true",
     "urlPattern": "/persons/",
     "nida": {
-      "url": "https://uat.nida.gov.rw:8081",
+      "claimtokenUrl": "https://uat.nida.gov.rw:8081/onlineauthentication/claimtoken",
+      "getcitizenUrl": "https://uat.nida.gov.rw:8081/onlineauthentication/getcitizen ",
       "keyPhrase": "R4NhP!!t=MW^HxxCg8!mB?dvj+4n%!Ega47M?qh2Eff98B?L4q3_ZbhDFndgWG%xT3JQYCbXgKPAZ%KkUG?DJf%HxFZQcNRu_QZMbp3FX_wH#76jgs7nfNcK7=kCj6Tw",
-      "User": {
+      "user": {
         "name": "HIES",
-        "pwd": "Sw3tvX^5bxT?f8aNVM32YYrfE#3j+AufsLASEsS5Z-VM&G^G_z2_=YgXaZmMCE$CLP?7#%QVqvyHX_FQ^D%6WZ5t8xrFeThZVW%rhxcA226dfd!257F+CNx7CJ$eCyt+",
+        "pwd": "Sw3tvX^5bxT?f8aNVM32YYrfE#3j+AufsLASEsS5Z-VM&G^G_z2_=YgXaZmMCE$CLP?7#%QVqvyHX_FQ^D%6WZ5t8xrFeThZVW%rhxcA226dfd!257F+CNx7CJ$eCyt+"
       },
       "token": {
-        "value": "",
-        "updateDate": ""
+        "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFYnBJZCI6IjEzIiwiRWJwTmFtZSI6IkhJRVMiLCJPdGsiOiJ0eklWVmVTYURJcVBtU0x4WVNzek9iLzY0UTVuNm1YaFdhNWwydTZ6WVRzUDlMRGZoeXd1MWF4VXJia1dTQXFpIiwianRpIjoiNjI1ZDM0OTYtMmY1ZC00ZmVlLTliZmUtOGY1ZGE1MzMzOTNkIiwibmJmIjoxNTY1MjY5MTMxLCJleHAiOjE1NjUyODM1MzEsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDI4Ni8iLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyODYvIn0.sLTClvZfkQsgvrFp1k4JJtrT9ZNuRrK1tmRFQkRiLOU",
+        "updateDate": "2019-08-08T12:53:28.122Z"
       }
     }
   },

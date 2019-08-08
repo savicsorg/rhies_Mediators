@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 'use strict'
 
-
 const formidable = require('formidable');
 const express = require('express')
 const medUtils = require('openhim-mediator-utils')
 const winston = require('winston')
 const moment = require('moment');
-
-
+var needle = require('needle');
+var request = require('request');
 
 const utils = require('./utils')
 
@@ -20,7 +19,7 @@ winston.add(winston.transports.Console, { level: 'info', timestamp: true, colori
 var config = {} // this will vary depending on whats set in openhim-core
 const apiConf = process.env.NODE_ENV === 'test' ? require('../config/test') : require('../config/config')
 var nconf = require('nconf');
-process.env.NODE_ENV === 'test' ? nconf.file('../config/test') : nconf.file('../config/config');
+process.env.NODE_ENV === 'test' ? nconf.file('../config/test.json') : nconf.file('../config/config.json');
 
 
 const mediatorConfig = require('../config/mediator')
@@ -34,7 +33,6 @@ var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].
  */
 function setupApp() {
   const app = express()
-  var needle = require('needle');
 
 
   app.all('*', (req, res) => {
@@ -56,37 +54,118 @@ function setupApp() {
     // construct return object
     var properties = { property: 'Primary Route' }
 
-    if (req.method == 'POST' && req.url == apiConf.api.urlPattern) {
-      var form = new formidable.IncomingForm();
-      form.parse(req, function (err, fields, files) {
-        var data = fields;
-        console.log('Got data', data);
+    if (req.method == 'GET' && req.url.includes(apiConf.api.urlPattern) == true) {
 
-        //Query for Token
-        var options = {
-          username: apiConf.api.nida.user.name,
-          password: apiConf.api.nida.user.pwd.        :
+      getNidaToken(function (err, token) {
+        if (err) {
+          console.log(err);
+          //res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 400, headers, responseBody, orchestrations, properties))
+        } else {
+          var options = {
+            url: apiConf.api.nida.getcitizenUrl,
+            body: JSON.stringify(
+              {
+                documentNumber: req.param("id"),
+                keyPhrase: apiConf.api.nida.keyPhrase
+              }),
+            headers: {
+              'Authorization': token,
+              'Content-Type': 'application/json'
+            }
+          };
+          
+          request.post(options, function (error, response, body) {
+            if (error) {
+              console.log(error);
+              //res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
+            } else {
+              console.log(body);
+              if (body != null && body != undefined && body != '') {
+                //res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
+              } else {
+                //res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
+              }
+            }
+          });
         }
-
-
-        needle
-          .post(apiConf.api.nida.Url + "/onlineauthentication/claimtoken", options)
-          .on('done', function (err, resp) {
-
-          })
       });
-
-
-
-
-
-      res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
     }
 
 
   })
   return app
 }
+
+
+function getNidaToken(callback) {
+  var shouldGetNewToken = false;
+
+  if (apiConf.api.nida.token == undefined
+    || apiConf.api.nida.token.value == undefined || apiConf.api.nida.token.value == ""
+    || apiConf.api.nida.token.updateDate == undefined || apiConf.api.nida.token.updateDate == "") {
+
+    shouldGetNewToken = true;
+    console.log('first run, getting new token...');
+  } else {
+    var currentTokenDate = moment(new Date(apiConf.api.nida.token.updateDate));
+    var currentDate = moment();
+
+    if (currentDate.isSameOrAfter(currentTokenDate.add(1, 'days')) == true) {
+      shouldGetNewToken = true;
+      console.log('different day, getting new token...');
+    } else {
+      console.log('Same day, leading to query...');
+      shouldGetNewToken = false;
+    }
+
+  }
+
+  if (shouldGetNewToken == true) {
+    //Query for Token
+    var options = {
+      url: apiConf.api.nida.claimtokenUrl,
+      body: JSON.stringify(
+        {
+          username: apiConf.api.nida.user.name,
+          password: apiConf.api.nida.user.pwd,
+        }),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    };
+
+    request.post(options, function (error, response, body) {
+      if (error) {
+        callback(error);
+      } else {
+
+        if (body != null && body != undefined && body != '' && body.includes(' ') == true) {
+          var tokenInfo = body;
+          //save token infos on config
+          nconf.set("api:nida:token:updateDate", moment());
+          nconf.set("api:nida:token:value", tokenInfo);
+
+          nconf.save(function (err) {
+            if (err) {
+              callback(err);
+            } else {
+              callback(null, tokenInfo);
+            }
+          });
+        } else {
+          callback('Server returned an empty or wrong token...');
+        }
+      }
+    });
+  } else {
+    callback(null, apiConf.api.nida.token.value);
+  }
+
+}
+
+
+
+
 
 /**
  * start - starts the mediator
@@ -96,8 +175,8 @@ function setupApp() {
  */
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
-
-  if (apiConf.register) {
+  if (true == false) {
+    //if (apiConf.register) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
@@ -145,68 +224,7 @@ function start(callback) {
 exports.start = start
 
 
-
-function getNidaToken(callback) {
-  var needle = require('needle');
-  var shouldGetNewToken = false;
-
-
-  if (apiConf.api.nida.token && apiConf.api.nida.token.value
-    && apiConf.api.nida.token.value != "" && apiConf.api.nida.date
-    && apiConf.api.nida.token.date != "") {
-    shouldGetNewToken = true;
-  } else {
-    var currentTockerDate = moment(new Date(apiConf.api.nida.token.date));
-    var currentDate = moment();
-
-    if (currentTockerDate.add(1, 'days').isSameOrAfter(currentDate) == true) {
-      shouldGetNewToken = true;
-    } else {
-      shouldGetNewToken = false;
-    }
-
-  }
-
-
-  if (shouldGetNewToken == true){
-    //Query for Token
-    var options = {
-      username: apiConf.api.nida.user.name,
-      password: apiConf.api.nida.user.pwd        :
-    }
-    needle
-      .post(apiConf.api.nida.Url + "/onlineauthentication/claimtoken", options)
-      .on('done', function (err, resp) {
-        if (err){
-          callback(err);
-        } else {
-          console.log("=============================",resp);
-
-
-          //save token infos on config
-          nconf.set("api:nida:token:updateDate", moment());
-          nconf.set("api:nida:token:value","===================" );
-          nconf.save(function (err) {
-              if (err) {
-                callback(err);
-              } else {
-                callback(null,apiConf.api.nida.token.value);
-              }
-          });
-        }
-      })
-  } else {
-    callback(null,apiConf.api.nida.token.value);
-  }
-    
-
-  }
-
-
-
-
-
-  if (!module.parent) {
-    // if this script is run directly, start the server
-    start(() => winston.info(`Listening on ${port}...`))
-  }
+if (!module.parent) {
+  // if this script is run directly, start the server
+  start(() => winston.info(`Listening on ${port}...`))
+}
