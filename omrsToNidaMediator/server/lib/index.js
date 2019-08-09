@@ -37,7 +37,7 @@ function setupApp() {
 
   app.all('*', (req, res) => {
     winston.info(`Processing ${req.method} request on ${req.url}`)
-    var responseBody = 'Primary Route Reached'
+    var responseBody = 'Return Route Reached'
     var headers = { 'content-type': 'application/json' }
 
     // add logic to alter the request here
@@ -45,27 +45,29 @@ function setupApp() {
     // capture orchestration data
     var orchestrationResponse = { statusCode: 200, headers: headers }
     let orchestrations = []
-    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-
+  
     // set content type header so that OpenHIM knows how to handle the response
     res.set('Content-Type', 'application/json+openhim')
 
 
     // construct return object
-    var properties = { property: 'Primary Route' }
+    var properties = { property: 'Return to openHim Route' }
 
     if (req.method == 'GET' && req.url.includes(apiConf.api.urlPattern) == true) {
 
       getNidaToken(function (err, token) {
         if (err) {
-          console.log(err);
-          //res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 400, headers, responseBody, orchestrations, properties))
+          orchestrationResponse=err;
+          responseBody=err;
+          orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
+          res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, error, orchestrations, properties))
         } else {
+          nconf.load();
           var options = {
             url: apiConf.api.nida.getcitizenUrl,
             body: JSON.stringify(
               {
-                documentNumber: req.param("id"),
+                documentNumber: req.query.id,
                 keyPhrase: apiConf.api.nida.keyPhrase
               }),
             headers: {
@@ -73,17 +75,24 @@ function setupApp() {
               'Content-Type': 'application/json'
             }
           };
-          
+
           request.post(options, function (error, response, body) {
             if (error) {
-              console.log(error);
-              //res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
+              responseBody=error;
+              orchestrationResponse=error
+              orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
+              res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, responseBody, orchestrations, properties))
             } else {
-              console.log(body);
               if (body != null && body != undefined && body != '') {
-                //res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
+                responseBody= body
+                orchestrationResponse=body;
+                orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
+                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
               } else {
-                //res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
+                responseBody='Server sent an empty response.';
+                orchestrationResponse=responseBody;
+                orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
+                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, responseBody, orchestrations, properties))
               }
             }
           });
@@ -142,13 +151,17 @@ function getNidaToken(callback) {
         if (body != null && body != undefined && body != '' && body.includes(' ') == true) {
           var tokenInfo = body;
           //save token infos on config
-          nconf.set("api:nida:token:updateDate", moment());
+          var currentDate=moment()
+          nconf.set("api:nida:token:updateDate",  currentDate);
           nconf.set("api:nida:token:value", tokenInfo);
+          apiConf.api.nida.token.value=tokenInfo;
+          apiConf.api.nida.token.updateDate=currentDate;
 
           nconf.save(function (err) {
             if (err) {
               callback(err);
             } else {
+
               callback(null, tokenInfo);
             }
           });
@@ -175,8 +188,7 @@ function getNidaToken(callback) {
  */
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
-  if (true == false) {
-    //if (apiConf.register) {
+  if (apiConf.register) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
