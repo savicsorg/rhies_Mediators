@@ -50,7 +50,11 @@ var tests = {
 
 
 var locations = {
-    l_448: "ec098275-651d-4852-9603-aa0e1d88297f"
+    l_448: {
+        name: "Location-10",
+        ip: "http://172.16.170.134:8080"
+
+    }
 }
 
 
@@ -111,7 +115,7 @@ function setupApp() {
                     nd_of_research = nd_of_research + 1;
                     if (q && q != "") {
                         var options = {
-                            url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/patient?q=" + q + "&v=full",
+                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/patient?q=" + q + "&v=full",
                             headers: {
                                 'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
                                 'Content-Type': 'application/json'
@@ -132,285 +136,307 @@ function setupApp() {
                                     if (results && results.length == 1) {
                                         patient = results[0];
 
-                                        switch (testType) {
-                                            case 'viral_load_2':
+                                        var options = {
+                                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/location?q=" + locations["l_" + data.facilityCode]["name"],
+                                            headers: {
+                                                'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                'Content-Type': 'application/json'
+                                            }
+                                        }
+                                        
+                                        //// 2. Location 
+                                        request.get(options, function (error, response, body) {
+                                            if (error) {
+                                                console.log(error);
+                                                res.sendStatus(500);
+                                            } else {
+                                                var location = JSON.parse(body).results;
+                                                if (location && location.length > 0) {
+                                                    location = _getTheGoodResult(location, "display", locations["l_" + data.facilityCode]["name"]);
 
-                                                options = {
-                                                    url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
-                                                    headers: {
-                                                        'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
-                                                        'Content-Type': 'application/json'
-                                                    }
-                                                }
+                                                    switch (testType) {
+                                                        case 'viral_load_2':
 
-                                                //// 2. Form 
-                                                request.get(options, function (error, response, body) {
-                                                    if (error) {
-                                                        console.log(error);
-                                                        res.sendStatus(500);
-                                                    } else {
-                                                        var form = JSON.parse(body).results;
-                                                        if (form && form.length > 0) {
-                                                            form = _getTheGoodResult(form, "display", tests.viral_load_2.form)
                                                             options = {
-                                                                url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.parentConcept + "&v=full",
+                                                                url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
                                                                 headers: {
                                                                     'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
                                                                     'Content-Type': 'application/json'
                                                                 }
                                                             }
 
-                                                            //// 3. Parent concept
-                                                            request.get(options, function (error, response, body) {
-                                                                if (error) {
-                                                                    console.log(error);
-                                                                    res.sendStatus(500)
-                                                                } else {
-                                                                    var parentConcept = JSON.parse(body).results;
-                                                                    if (parentConcept && parentConcept.length > 0) {
-                                                                        parentConcept = _getTheGoodResult(parentConcept, "display", tests.viral_load_2.parentConcept)
-
-                                                                        options = {
-                                                                            url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.concept,
-                                                                            headers: {
-                                                                                'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
-                                                                                'Content-Type': 'application/json'
-                                                                            }
-                                                                        };
-
-                                                                        //// 4. Concept
-                                                                        request.get(options, function (error, response, body) {
-                                                                            if (error) {
-                                                                                console.log(error);
-                                                                                res.sendStatus(500)
-                                                                            } else {
-                                                                                var concept = JSON.parse(body).results;
-                                                                                if (concept && concept.length > 0) {
-                                                                                    concept = _getTheGoodResult(concept, "display", tests.viral_load_2.concept)
-
-                                                                                    var encounterOptions = {
-                                                                                        url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/encounter",
-                                                                                        body: JSON.stringify(
-                                                                                                {
-                                                                                                    "patient": patient.uuid,
-                                                                                                    "form": form.uuid, //uuid of the concerned form in openmrs
-                                                                                                    "encounterType": form.encounterType.uuid, //uuid of encounterType
-                                                                                                    "location": locations.l_448, //uuid of localtion
-                                                                                                    "encounterDatetime": (new Date()).toISOString(),
-                                                                                                    "obs": [
-                                                                                                        {
-                                                                                                            "concept": parentConcept.uuid, //uuid of perent concept
-                                                                                                            "person": patient.uuid, //uuid of patient
-                                                                                                            "obsDatetime": (new Date()).toISOString(),
-                                                                                                            "groupMembers": [
-                                                                                                                {
-                                                                                                                    "concept": concept.uuid, //uuid of concept
-                                                                                                                    "person": patient.uuid, //uuid of patient
-                                                                                                                    "location": locations.l_448, //uuid of location
-                                                                                                                    "obsDatetime": (new Date()).toISOString(),
-                                                                                                                    "value": data.Result.copies, //hiv concentration value (copie/ml) comming from labware
-                                                                                                                    "resourceVersion": "1.8"//OpenMRS version
-                                                                                                                }
-                                                                                                            ],
-                                                                                                            "location": locations.l_448//uuid of location
-                                                                                                        }
-                                                                                                    ],
-                                                                                                    "encounterProviders": [{
-                                                                                                            "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                                                            "provider": "prov9b01-f749-4b3f-b8fe-8f6d460003bb",
-                                                                                                            "resourceVersion": "1.9"//OpenMRS version
-                                                                                                        }]
-                                                                                                }
-                                                                                        ),
-                                                                                        headers: {
-                                                                                            'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
-                                                                                            'Content-Type': 'application/json'
-                                                                                        }
-                                                                                    };
-
-                                                                                    request.post(encounterOptions, function (error, response, body) {
-                                                                                        if (error) {
-                                                                                            console.log(error);
-                                                                                            res.sendStatus(500)
-                                                                                        } else {
-                                                                                            res.sendStatus(200)
-                                                                                        }
-                                                                                    });
-
-                                                                                }
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                }
-                                                            });
-                                                        }//TODO Manage the case no form found here
-                                                    }
-                                                });
-
-
-                                                break;
-                                            case 'recency_vl':
-
-                                                options = {
-                                                    url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
-                                                    headers: {
-                                                        'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
-                                                        'Content-Type': 'application/json'
-                                                    }
-                                                }
-
-                                                //// 2. Form 
-                                                request.get(options, function (error, response, body) {
-                                                    if (error) {
-                                                        console.log(error);
-                                                        res.sendStatus(500);
-                                                    } else {
-                                                        var form = JSON.parse(body).results;
-                                                        if (form && form.length > 0) {
-                                                            form = _getTheGoodResult(form, "display", tests.recency_vl.form);
-
-                                                            options = {
-                                                                url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.q + "&v=full",
-                                                                headers: {
-                                                                    'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
-                                                                    'Content-Type': 'application/json'
-                                                                }
-                                                            }
-
-                                                            //// 3. Get the RECENCY concepts list
+                                                            //// 2. Form 
                                                             request.get(options, function (error, response, body) {
                                                                 if (error) {
                                                                     console.log(error);
                                                                     res.sendStatus(500);
                                                                 } else {
-                                                                    var recencies = JSON.parse(body).results;
-                                                                    if (recencies && recencies.length > 0) {
-                                                                        var recencyAssayResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayResultConcept)
-                                                                        var recencyAssayTestConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayTestConcept)
-                                                                        var recencyViralLoadResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadResultConcept)
-                                                                        var recencyViralLoadTestDateConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadTestDateConcept)
-
-
+                                                                    var form = JSON.parse(body).results;
+                                                                    if (form && form.length > 0) {
+                                                                        form = _getTheGoodResult(form, "display", tests.viral_load_2.form)
                                                                         options = {
-                                                                            url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/visittype",
+                                                                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.parentConcept + "&v=full",
                                                                             headers: {
                                                                                 'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
                                                                                 'Content-Type': 'application/json'
                                                                             }
                                                                         }
-                                                                        //// 4. Get the VISIT TYPE 
+
+                                                                        //// 3. Parent concept
                                                                         request.get(options, function (error, response, body) {
                                                                             if (error) {
                                                                                 console.log(error);
                                                                                 res.sendStatus(500)
                                                                             } else {
-                                                                                var visittype = JSON.parse(body).results;
-                                                                                if (visittype && visittype.length > 0) {
-                                                                                    visittype = _getTheGoodResult(visittype, "display", tests.recency_vl.visitType)
+                                                                                var parentConcept = JSON.parse(body).results;
+                                                                                if (parentConcept && parentConcept.length > 0) {
+                                                                                    parentConcept = _getTheGoodResult(parentConcept, "display", tests.viral_load_2.parentConcept)
 
-
-                                                                                    var encounterOptions = {
-                                                                                        url: "http://172.16.170.134:8080/openmrs/ws/rest/v1/encounter",
-                                                                                        body: JSON.stringify(
-                                                                                                {
-                                                                                                    "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
-                                                                                                    "patient": patient.uuid,
-                                                                                                    "location": locations.l_448,
-                                                                                                    "form": form.uuid,
-                                                                                                    "encounterType": form.encounterType.uuid,
-                                                                                                    "obs": [
-                                                                                                        {
-                                                                                                            "concept": recencyAssayResultConcept.uuid,
-                                                                                                            "person": patient.uuid,
-                                                                                                            "obsDatetime": (new Date()).toISOString(), //TODO
-                                                                                                            "location": locations.l_448,
-                                                                                                            "voided": false,
-                                                                                                            "value": {
-                                                                                                                "uuid": "fb3b2a61-4f4b-46b2-9187-9ec769349a44" //TODO
-                                                                                                            }
-                                                                                                        },
-                                                                                                        {
-                                                                                                            "concept": recencyAssayTestConcept.uuid,
-                                                                                                            "person": patient.uuid,
-                                                                                                            "obsDatetime": (new Date()).toISOString(), //TODO
-                                                                                                            "location": locations.l_448,
-                                                                                                            "voided": false,
-                                                                                                            "value": {
-                                                                                                                "uuid": "3cd6f600-26fe-102b-80cb-0017a47871b2" //TODO
-                                                                                                            },
-                                                                                                            "resourceVersion": "1.8"
-                                                                                                        },
-                                                                                                        {
-                                                                                                            "concept": recencyViralLoadResultConcept.uuid,
-                                                                                                            "person": patient.uuid,
-                                                                                                            "obsDatetime": (new Date()).toISOString(), //TODO
-                                                                                                            "location": locations.l_448,
-                                                                                                            "voided": false,
-                                                                                                            "value": data.Result.copies,
-                                                                                                            "resourceVersion": "1.8"
-                                                                                                        },
-                                                                                                        {
-                                                                                                            "concept": recencyViralLoadTestDateConcept.uuid,
-                                                                                                            "person": patient.uuid,
-                                                                                                            "obsDatetime": (new Date()).toISOString(), //TODO
-                                                                                                            "location": locations.l_448,
-                                                                                                            "voided": false,
-                                                                                                            "value": (new Date(data.DateReleased)).toISOString(),
-                                                                                                        }
-                                                                                                    ],
-                                                                                                    "visit": {
-                                                                                                        //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-                                                                                                        "patient": patient.uuid,
-                                                                                                        "visitType": visittype.uuid,
-                                                                                                        "location": locations.l_448,
-                                                                                                        "startDatetime": (new Date(data.DateSampleReceived)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-                                                                                                    },
-                                                                                                    "encounterProviders": [{
-                                                                                                            "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                                                            "provider": "prov877f-b5c3-4546-a1b1-533270e04721",
-                                                                                                            "resourceVersion": "1.9"
-                                                                                                        }],
-                                                                                                    "resourceVersion": "1.9"
-                                                                                                }
-                                                                                        ),
+                                                                                    options = {
+                                                                                        url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.concept,
                                                                                         headers: {
                                                                                             'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
                                                                                             'Content-Type': 'application/json'
                                                                                         }
                                                                                     };
 
-                                                                                    request.post(encounterOptions, function (error, response, body) {
+                                                                                    //// 4. Concept
+                                                                                    request.get(options, function (error, response, body) {
+                                                                                        if (error) {
+                                                                                            console.log(error);
+                                                                                            res.sendStatus(500);
+                                                                                        } else {
+                                                                                            var concept = JSON.parse(body).results;
+                                                                                            if (concept && concept.length > 0) {
+                                                                                                concept = _getTheGoodResult(concept, "display", tests.viral_load_2.concept)
+
+                                                                                                var encounterOptions = {
+                                                                                                    url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/encounter",
+                                                                                                    body: JSON.stringify(
+                                                                                                            {
+                                                                                                                "patient": patient.uuid,
+                                                                                                                "form": form.uuid, //uuid of the concerned form in openmrs
+                                                                                                                "encounterType": form.encounterType.uuid, //uuid of encounterType
+                                                                                                                "location": location.uuid, //uuid of localtion
+                                                                                                                "encounterDatetime": (new Date()).toISOString(),
+                                                                                                                "obs": [
+                                                                                                                    {
+                                                                                                                        "concept": parentConcept.uuid, //uuid of perent concept
+                                                                                                                        "person": patient.uuid, //uuid of patient
+                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                        "groupMembers": [
+                                                                                                                            {
+                                                                                                                                "concept": concept.uuid, //uuid of concept
+                                                                                                                                "person": patient.uuid, //uuid of patient
+                                                                                                                                "location": location.uuid, //uuid of location
+                                                                                                                                "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                "value": data.Result.copies, //hiv concentration value (copie/ml) comming from labware
+                                                                                                                                "resourceVersion": "1.8"//OpenMRS version
+                                                                                                                            }
+                                                                                                                        ],
+                                                                                                                        "location": location.uuid//uuid of location
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                                "encounterProviders": [{
+                                                                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
+                                                                                                                        "provider": "prov9b01-f749-4b3f-b8fe-8f6d460003bb",
+                                                                                                                        "resourceVersion": "1.9"//OpenMRS version
+                                                                                                                    }]
+                                                                                                            }
+                                                                                                    ),
+                                                                                                    headers: {
+                                                                                                        'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                                                                        'Content-Type': 'application/json'
+                                                                                                    }
+                                                                                                };
+
+                                                                                                request.post(encounterOptions, function (error, response, body) {
+                                                                                                    if (error) {
+                                                                                                        console.log(error);
+                                                                                                        res.sendStatus(response.statusCode);
+                                                                                                    } else {
+                                                                                                        res.sendStatus(response.statusCode);
+                                                                                                    }
+                                                                                                });
+
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }//TODO Manage the case no form found here
+                                                                }
+                                                            });
+
+
+                                                            break;
+                                                        case 'recency_vl':
+
+                                                            options = {
+                                                                url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
+                                                                headers: {
+                                                                    'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                                    'Content-Type': 'application/json'
+                                                                }
+                                                            }
+
+                                                            //// 2. Form 
+                                                            request.get(options, function (error, response, body) {
+                                                                if (error) {
+                                                                    console.log(error);
+                                                                    res.sendStatus(500);
+                                                                } else {
+                                                                    var form = JSON.parse(body).results;
+                                                                    if (form && form.length > 0) {
+                                                                        form = _getTheGoodResult(form, "display", tests.recency_vl.form);
+
+                                                                        options = {
+                                                                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.q + "&v=full",
+                                                                            headers: {
+                                                                                'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                                                'Content-Type': 'application/json'
+                                                                            }
+                                                                        }
+
+                                                                        //// 3. Get the RECENCY concepts list
+                                                                        request.get(options, function (error, response, body) {
+                                                                            if (error) {
+                                                                                console.log(error);
+                                                                                res.sendStatus(500);
+                                                                            } else {
+                                                                                var recencies = JSON.parse(body).results;
+                                                                                if (recencies && recencies.length > 0) {
+                                                                                    var recencyAssayResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayResultConcept)
+                                                                                    var recencyAssayTestConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayTestConcept)
+                                                                                    var recencyViralLoadResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadResultConcept)
+                                                                                    var recencyViralLoadTestDateConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadTestDateConcept)
+
+
+                                                                                    options = {
+                                                                                        url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/visittype",
+                                                                                        headers: {
+                                                                                            'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                                                            'Content-Type': 'application/json'
+                                                                                        }
+                                                                                    }
+                                                                                    //// 4. Get the VISIT TYPE 
+                                                                                    request.get(options, function (error, response, body) {
                                                                                         if (error) {
                                                                                             console.log(error);
                                                                                             res.sendStatus(500)
                                                                                         } else {
-                                                                                            console.log('statusCode:', response && response.statusCode);
-                                                                                            console.log('body:', body);
-                                                                                            res.sendStatus(response.statusCode);
+                                                                                            var visittype = JSON.parse(body).results;
+                                                                                            if (visittype && visittype.length > 0) {
+                                                                                                visittype = _getTheGoodResult(visittype, "display", tests.recency_vl.visitType)
+
+
+                                                                                                var encounterOptions = {
+                                                                                                    url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/encounter",
+                                                                                                    body: JSON.stringify(
+                                                                                                            {
+                                                                                                                "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
+                                                                                                                "patient": patient.uuid,
+                                                                                                                "location": location.uuid,
+                                                                                                                "form": form.uuid,
+                                                                                                                "encounterType": form.encounterType.uuid,
+                                                                                                                "obs": [
+                                                                                                                    {
+                                                                                                                        "concept": recencyAssayResultConcept.uuid,
+                                                                                                                        "person": patient.uuid,
+                                                                                                                        "obsDatetime": (new Date()).toISOString(), 
+                                                                                                                        "location": location.uuid,
+                                                                                                                        "voided": false,
+                                                                                                                        "value": {
+                                                                                                                            "uuid": "fb3b2a61-4f4b-46b2-9187-9ec769349a44" //TODO
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "concept": recencyAssayTestConcept.uuid,
+                                                                                                                        "person": patient.uuid,
+                                                                                                                        "obsDatetime": (new Date()).toISOString(), 
+                                                                                                                        "location": location.uuid,
+                                                                                                                        "voided": false,
+                                                                                                                        "value": {
+                                                                                                                            "uuid": "3cd6f600-26fe-102b-80cb-0017a47871b2" //TODO
+                                                                                                                        },
+                                                                                                                        "resourceVersion": "1.8"
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "concept": recencyViralLoadResultConcept.uuid,
+                                                                                                                        "person": patient.uuid,
+                                                                                                                        "obsDatetime": (new Date()).toISOString(), 
+                                                                                                                        "location": location.uuid,
+                                                                                                                        "voided": false,
+                                                                                                                        "value": data.Result.copies,
+                                                                                                                        "resourceVersion": "1.8"
+                                                                                                                    },
+                                                                                                                    {
+                                                                                                                        "concept": recencyViralLoadTestDateConcept.uuid,
+                                                                                                                        "person": patient.uuid,
+                                                                                                                        "obsDatetime": (new Date()).toISOString(), 
+                                                                                                                        "location": location.uuid,
+                                                                                                                        "voided": false,
+                                                                                                                        "value": (new Date(data.DateReleased)).toISOString()
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                                "visit": {
+                                                                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
+                                                                                                                    "patient": patient.uuid,
+                                                                                                                    "visitType": visittype.uuid,
+                                                                                                                    "location": location.uuid,
+                                                                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
+                                                                                                                },
+                                                                                                                "encounterProviders": [{
+                                                                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
+                                                                                                                        "provider": "prov877f-b5c3-4546-a1b1-533270e04721",
+                                                                                                                        "resourceVersion": "1.9"
+                                                                                                                    }],
+                                                                                                                "resourceVersion": "1.9"
+                                                                                                            }
+                                                                                                    ),
+                                                                                                    headers: {
+                                                                                                        'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                                                                        'Content-Type': 'application/json'
+                                                                                                    }
+                                                                                                };
+                                                                                                
+                                                                                                console.log(encounterOptions);
+//                                                                                                request.post(encounterOptions, function (error, response, body) {
+//                                                                                                    if (error) {
+//                                                                                                        console.log(error);
+//                                                                                                        res.sendStatus(500)
+//                                                                                                    } else {
+//                                                                                                        console.log('statusCode:', response && response.statusCode);
+//                                                                                                        console.log('body:', body);
+//                                                                                                        res.sendStatus(response.statusCode);
+//                                                                                                    }
+//                                                                                                });
+
+
+
+
+                                                                                            }
                                                                                         }
                                                                                     });
-
-
 
 
                                                                                 }
                                                                             }
                                                                         });
-
-
-                                                                    }
+                                                                    }//TODO Manage the case no form found here
                                                                 }
                                                             });
-                                                        }//TODO Manage the case no form found here
-                                                    }
-                                                });
 
-                                                break;
-                                            case 'hiv_recency':
-                                                //TODO
-                                                res.sendStatus(200)
-                                                break;
-                                        }//END Switch
+                                                            break;
+                                                        case 'hiv_recency':
+                                                            //TODO
+                                                            res.sendStatus(200)
+                                                            break;
+                                                    }//END Switch
+                                                }//TODO Manage the case no form found here
+                                            }
+                                        });
                                     } else if (results && results.length == 0) {//No result found
                                         if (nd_of_research < 2) {//Second research possible by name 
                                             console.log(">>> Searching by name: " + data.firstName + " " + data.lastName);
