@@ -8,6 +8,9 @@ const medUtils = require('openhim-mediator-utils')
 const winston = require('winston')
 const moment = require('moment');
 var request = require('request');
+var nconf = require('nconf');
+nconf.file('../config/config.json');
+var log = require('./log');
 
 const utils = require('./utils')
 
@@ -46,11 +49,8 @@ var tests = {
         recentConceptValue: "RECENT"
     },
     hiv_recency: {
-        form: "XXXXX",
-        concept: "XXXXX",
-        parentConcept: "LABORATORY EXAMINATIONS CONSTRUCT", //Check this,
-        encounterType: "HIV VISIT"//Check this,
-    },
+        
+    }
 }
 
 
@@ -554,6 +554,7 @@ function start(callback) {
         medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
             if (err) {
                 winston.error('Failed to register this mediator, check your config')
+                log.error('Failed to register this mediator, check your config');
                 winston.error(err.stack)
                 process.exit(1)
             }
@@ -564,10 +565,12 @@ function start(callback) {
                 config = newConfig
                 if (err) {
                     winston.error('Failed to fetch initial config')
+                    log.error('Failed to fetch initial config');
                     winston.error(err.stack)
                     process.exit(1)
                 } else {
                     winston.info('Successfully registered mediator!')
+                    log.info('Successfully registered mediator!');
                     let app = setupApp()
                     const server = app.listen(port, () => {
                         if (apiConf.heartbeat) {
@@ -592,6 +595,7 @@ function start(callback) {
         config = mediatorConfig.config
         let app = setupApp()
         const server = app.listen(port, () => callback(server))
+        log.info('Labware OpenMRS mediator started on port ' + port);
     }
 }
 exports.start = start

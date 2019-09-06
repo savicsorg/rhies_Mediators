@@ -8,5 +8,10 @@
     "trustSelfSigned": "true"
   },
   "register": true,
-  "heartbeat": true
+  "heartbeat": true,
+  "system": {
+    "logPath": "../logs/",
+    "deleteLogsAfter": "-1",
+    "environment": "dev"
+  }
 }
