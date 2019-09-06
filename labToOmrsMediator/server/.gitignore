@@ -6,4 +6,4 @@ packaging/.npm
 packaging/builds/*
 packaging/.gitconfig
 packaging/builds
-/logs
+logs
