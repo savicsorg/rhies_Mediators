@@ -44,12 +44,12 @@ var tests = {
         recencyViralLoadTestDateConcept: "RECENCY VIRAL LOAD TEST DATE",
         recencyViralLoadResultConcept: "RECENCY VIRAL LOAD RESULT",
         recencyViralLoadResultDateConcept: "RECENCY VIRAL LOAD RESULT DATE",
-        
+
         yesConceptValue: "YES",
         recentConceptValue: "RECENT"
     },
     hiv_recency: {
-        
+
     }
 }
 
@@ -116,6 +116,7 @@ function setupApp() {
 
 
                 var nd_of_research = 0;
+                var forbidenRepeatTime = 0;
                 function LoopA(q) {
                     nd_of_research = nd_of_research + 1;
                     if (q && q != "") {
@@ -130,9 +131,11 @@ function setupApp() {
                         var testType = data.TestId.toLowerCase();
 
                         //// 1. Patient
+                        log.info("Search for the patient "+q, locations["l_" + data.facilityCode]["name"]);
                         request.get(options, function (error, response, body) {
                             if (error) {
-                                console.log(error);
+                                log.error("Error on patient research. Encounter creation aborted for " + data.SampleID + ".");
+                                log.error(error);
                                 res.sendStatus(500)
                             } else {
                                 if (response.statusCode == "200") {
@@ -150,9 +153,11 @@ function setupApp() {
                                         }
 
                                         //// 2. Location 
+                                        log.info("Search for the location '" + locations["l_" + data.facilityCode]["name"] + "'...");
                                         request.get(options, function (error, response, body) {
                                             if (error) {
-                                                console.log(error);
+                                                log.error("Error when searching the location. Encounter creation aborted for " + data.SampleID + ".");
+                                                log.error(error);
                                                 res.sendStatus(500);
                                             } else {
                                                 var location = JSON.parse(body).results;
@@ -161,7 +166,7 @@ function setupApp() {
 
                                                     switch (testType) {
                                                         case 'viral_load_2':
-
+                                                            log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
                                                             options = {
                                                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
                                                                 headers: {
@@ -170,10 +175,12 @@ function setupApp() {
                                                                 }
                                                             }
 
-                                                            //// 2. Form 
+                                                            //// 2. Form
+                                                            log.info("Search for the form '" + tests.recency_vl.form + "'...");
                                                             request.get(options, function (error, response, body) {
                                                                 if (error) {
-                                                                    console.log(error);
+                                                                    log.error("Error on form search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                    log.error(error);
                                                                     res.sendStatus(500);
                                                                 } else {
                                                                     var form = JSON.parse(body).results;
@@ -188,9 +195,11 @@ function setupApp() {
                                                                         }
 
                                                                         //// 3. Parent concept
+                                                                        log.info("Search for encounter concept ");
                                                                         request.get(options, function (error, response, body) {
                                                                             if (error) {
-                                                                                console.log(error);
+                                                                                log.error("Error on encounter concept search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                log.error(error);
                                                                                 res.sendStatus(500)
                                                                             } else {
                                                                                 var parentConcept = JSON.parse(body).results;
@@ -206,9 +215,11 @@ function setupApp() {
                                                                                     };
 
                                                                                     //// 4. Concept
+                                                                                    log.info("Search for obs concept ");
                                                                                     request.get(options, function (error, response, body) {
                                                                                         if (error) {
-                                                                                            console.log(error);
+                                                                                            log.error("Error on obs concept search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                            log.error(error);
                                                                                             res.sendStatus(500);
                                                                                         } else {
                                                                                             var concept = JSON.parse(body).results;
@@ -257,12 +268,16 @@ function setupApp() {
 
                                                                                                 request.post(encounterOptions, function (error, response, body) {
                                                                                                     if (error) {
-                                                                                                        console.log(error);
-                                                                                                        res.sendStatus(response.statusCode);
+                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                        log.error(error);
+                                                                                                        log.error(response.body);
+                                                                                                        res.sendStatus(500)
                                                                                                     } else {
-                                                                                                        res.sendStatus(response.statusCode);
+                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
+                                                                                                        res.json(response.body);
                                                                                                     }
                                                                                                 });
+
 
                                                                                             }
                                                                                         }
@@ -277,7 +292,7 @@ function setupApp() {
 
                                                             break;
                                                         case 'recency_vl':
-
+                                                            log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
                                                             options = {
                                                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
                                                                 headers: {
@@ -287,10 +302,13 @@ function setupApp() {
                                                             }
 
                                                             //// 2. Form 
+                                                            log.info("Search for the form '" + tests.recency_vl.form + "'...");
                                                             request.get(options, function (error, response, body) {
                                                                 if (error) {
-                                                                    console.log(error);
                                                                     res.sendStatus(500);
+                                                                    log.warn("Form " + tests.recency_vl.form + " not found!");
+                                                                    log.error("Error on search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                    log.log(error);
                                                                 } else {
                                                                     var form = JSON.parse(body).results;
                                                                     if (form && form.length > 0) {
@@ -305,9 +323,10 @@ function setupApp() {
                                                                         }
 
                                                                         //// 3. Get the RECENCY concepts list
+                                                                        log.info("Search for the RECENCY list ...");
                                                                         request.get(options, function (error, response, body) {
                                                                             if (error) {
-                                                                                console.log(error);
+                                                                                log.log(error);
                                                                                 res.sendStatus(500);
                                                                             } else {
                                                                                 var recencies = JSON.parse(body).results;
@@ -331,7 +350,7 @@ function setupApp() {
                                                                                     //// 3. Get the YES 
                                                                                     request.get(options, function (error, response, body) {
                                                                                         if (error) {
-                                                                                            console.log(error);
+                                                                                            log.error(error);
                                                                                             res.sendStatus(500);
                                                                                         } else {
                                                                                             var yesConceptValue = JSON.parse(body).results;
@@ -346,9 +365,12 @@ function setupApp() {
                                                                                                     }
                                                                                                 }
                                                                                                 //// 4. Get the VISIT TYPE 
+                                                                                                log.info("Search for the VISIT TYPE '" + tests.recency_vl.visitType + "'...");
                                                                                                 request.get(options, function (error, response, body) {
                                                                                                     if (error) {
-                                                                                                        console.log(error);
+                                                                                                        log.warn("VISIT TYPE " + tests.recency_vl.visitType + " not found!");
+                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                        log.error(error);
                                                                                                         res.sendStatus(500);
                                                                                                     } else {
                                                                                                         var visittype = JSON.parse(body).results;
@@ -357,7 +379,7 @@ function setupApp() {
 
                                                                                                             var encounterOptions = {
                                                                                                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/encounter",
-                                                                                                    body: JSON.stringify(
+                                                                                                                body: JSON.stringify(
                                                                                                                         {
                                                                                                                             "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
                                                                                                                             "patient": patient.uuid,
@@ -412,7 +434,7 @@ function setupApp() {
                                                                                                                                     "location": location.uuid,
                                                                                                                                     "voided": false,
                                                                                                                                     "value": (new Date(data.DateReleased)).toISOString()
-                                                                                                                                },{
+                                                                                                                                }, {
                                                                                                                                     "concept": recencyAssayResultConcept.uuid, //RECENCY ASSAY RESULTS: RECENT
                                                                                                                                     "display": "RECENCY ASSAY RESULTS: RECENT",
                                                                                                                                     "person": patient.uuid,
@@ -438,40 +460,58 @@ function setupApp() {
                                                                                                                                 }],
                                                                                                                             "resourceVersion": "1.9"
                                                                                                                         }
-                                                                                                    ),
+                                                                                                                ),
                                                                                                                 headers: {
                                                                                                                     'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                                     'Content-Type': 'application/json'
                                                                                                                 }
                                                                                                             };
 
-                                                                                                            console.log(encounterOptions);
                                                                                                             request.post(encounterOptions, function (error, response, body) {
                                                                                                                 if (error) {
-                                                                                                                    console.log(error);
+                                                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                    log.error(error);
+                                                                                                                    log.error(response.body);
                                                                                                                     res.sendStatus(500)
                                                                                                                 } else {
-                                                                                                                    console.log('statusCode:', response && response.statusCode);
-                                                                                                                    console.log('body:', body);
+                                                                                                                    log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
+                                                                                                                    //console.log('statusCode:', response && response.statusCode);
+                                                                                                                    //console.log('body:', body);
                                                                                                                     //res.sendStatus(response.statusCode);
-                                                                                                                    res.json(response);
+                                                                                                                    res.json(response.body);
                                                                                                                 }
                                                                                                             });
 
 
 
 
+                                                                                                        } else {
+                                                                                                            log.warn("Visite type not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                                            log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                            res.sendStatus(500);
                                                                                                         }
                                                                                                     }
                                                                                                 });
+                                                                                            } else {
+                                                                                                log.warn("Concept not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                res.sendStatus(500);
                                                                                             }
                                                                                         }
                                                                                     });
 
+                                                                                } else {
+                                                                                    log.warn("RECENCY concept list not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                    res.sendStatus(500);
                                                                                 }
                                                                             }
                                                                         });
-                                                                    }//TODO Manage the case no form found here
+                                                                    } else {
+                                                                        log.warn("Form " + tests.recency_vl.form + " not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                        res.sendStatus(500);
+                                                                    }
                                                                 }
                                                             });
 
@@ -486,38 +526,43 @@ function setupApp() {
                                         });
                                     } else if (results && results.length == 0) {//No result found
                                         if (nd_of_research < 2) {//Second research possible by name 
-                                            console.log(">>> Searching by name: " + data.firstName + " " + data.lastName);
+                                            log.info("No patient found, searching by name: " + data.firstName + " " + data.lastName);
                                             LoopA(data.firstName + " " + data.lastName);
                                         } else {
-                                            console.log(">>> No patient found in OpenMRS: ");
-                                            res.sendStatus(200);
+                                            log.warn("No patient found in "+locations["l_" + data.facilityCode]["name"], "Name: "+data.firstName + " " + data.lastName);
+                                            log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                            res.sendStatus(500);
                                         }
                                     } else {
-                                        console.log(">>> Hoo, look like we have many candidtes with the input data, we are not able to take decision. ");
-                                        //TODO in case we have many choice, log this case somewhere or save it in database.
-                                        res.sendStatus(200);
+                                        log.warn("Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision.");
+                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                        res.sendStatus(500);
                                     }
                                 } else if (response.statusCode == "403") {
-                                    console.log("FORBIDEN statusCode: ", response.statusCode)
-                                    LoopA(data.tractnetID);//Search by TracknetID Firts
-                                    res.sendStatus(200);
+                                    log.error("FORBIDEN statusCode: ", response.statusCode);
+                                    if (forbidenRepeatTime < 1) {
+                                        LoopA(data.tractnetID);//Search by TracknetID Firts
+                                    }else{
+                                        log.error("ACCESS FORBIDEN");
+                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                        res.sendStatus(500);
+                                    }
                                 } else {
-                                    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-                                    console.log('body:', body); // Print the HTML for the Google homepage.
-                                    res.sendStatus(200);
+                                    log.error("Encounter creation aborted for unkown reason.", "Status Code "+response.statusCode);
+                                    res.sendStatus(500);
                                 }
                             }
                         });
                     } else {
                         if (nd_of_research < 2) {//Second research possible by name 
-                            console.log(">>> Searching by name : " + data.firstName + " " + data.lastName);
+                            log.info("No patient found, searching by name : " + data.firstName + " " + data.lastName);
                             LoopA(data.firstName + " " + data.lastName);
                         } else {
                             res.sendStatus(200);
                         }
                     }
                 }
-                console.log(">>>> Searching by tractnetID: " + data.tractnetID);
+                log.info("Searching patient by tractnetID: " + data.tractnetID);
                 LoopA(data.tractnetID);//Search by TracknetID Firts
 
 //        needle
