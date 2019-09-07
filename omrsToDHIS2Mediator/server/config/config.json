@@ -1,0 +1,18 @@
+{
+  "api": {
+    "username": "root@openhim.org",
+    "password": "0000",
+    "apiURL": "https://localhost:8080",
+    "trustSelfSigned": "true",
+    "urlPattern": "/report/",
+    "DHIS2": {
+      "url": "http://localhost:8081/openmrs/ws/rest/v1/patient",
+      "user": {
+        "name": "geoffrey",
+        "pwd": "Ganyugxy1"
+      }
+    }
+  },
+  "register": true,
+  "heartbeat": true
+}
