@@ -373,14 +373,17 @@ function setupApp() {
                                                                                                     var recencyViralLoadConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadConcept)
 
                                                                                                     if (data.Result && data.Result.copies) {
-                                                                                                        var copiesml = parseInt(data.Result.copies, 10);
+
                                                                                                         var ritaConcept = "RECENT";
-                                                                                                        if (data.Result.copies == "NEGATIVE"){
+                                                                                                        if (data.Result.copies == "NEGATIVE") {
                                                                                                             ritaConcept = "INVALID";
-                                                                                                        }else if (copiesml > 1000) {
-                                                                                                            
                                                                                                         } else {
-                                                                                                            ritaConcept = "LONG-TERM";
+                                                                                                            var copiesml = parseInt(data.Result.copies, 10);
+                                                                                                            if (copiesml > 1000) {
+                                                                                                                ritaConcept = "RECENT";
+                                                                                                            } else {
+                                                                                                                ritaConcept = "LONG-TERM";
+                                                                                                            }
                                                                                                         }
 
                                                                                                         options = {
