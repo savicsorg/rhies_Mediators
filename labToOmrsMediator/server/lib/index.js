@@ -46,7 +46,10 @@ var tests = {
         recencyViralLoadResultDateConcept: "RECENCY VIRAL LOAD RESULT DATE",
 
         yesConceptValue: "YES",
-        recentConceptValue: "RECENT"
+        recentConceptValue: "RECENT",
+        longTermeConceptValue: "LONG-TERM",
+        invalideConceptValue: "INVALID",
+        negativeConceptValue: "NEGATIVE"
     },
     hiv_recency: {
 
@@ -167,7 +170,6 @@ function setupApp() {
                                                     var visittype = JSON.parse(body).results;
                                                     if (visittype && visittype.length > 0) {
                                                         visittype = _getTheGoodResult(visittype, "display", tests.recency_vl.visitType)
-                                                        visittype = undefined;
                                                         var options = {
                                                             url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/location?q=" + locations["l_" + data.facilityCode]["name"],
                                                             headers: {
@@ -353,7 +355,7 @@ function setupApp() {
                                                                                             }
                                                                                         }
 
-                                                                                        //// 3. Get the RECENCY concepts list
+                                                                                        //// 3.0. Get the RECENCY concepts list
                                                                                         log.info("Search for the RECENCY list ...");
                                                                                         request.get(options, function (error, response, body) {
                                                                                             if (error) {
@@ -370,141 +372,183 @@ function setupApp() {
                                                                                                     var recentConceptValue = _getTheGoodResult(recencies, "display", tests.recency_vl.recentConceptValue)
                                                                                                     var recencyViralLoadConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadConcept)
 
-                                                                                                    options = {
-                                                                                                        url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.yesConceptValue,
-                                                                                                        headers: {
-                                                                                                            'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
-                                                                                                            'Content-Type': 'application/json'
-                                                                                                        }
-                                                                                                    }
-
-                                                                                                    //// 3. Get the YES 
-                                                                                                    request.get(options, function (error, response, body) {
-                                                                                                        if (error) {
-                                                                                                            log.error(error);
-                                                                                                            res.sendStatus(500);
+                                                                                                    if (data.Result && data.Result.copies) {
+                                                                                                        var copiesml = parseInt(data.Result.copies, 10);
+                                                                                                        var ritaConcept = "RECENT";
+                                                                                                        if (data.Result.copies == "NEGATIVE"){
+                                                                                                            ritaConcept = "INVALID";
+                                                                                                        }else if (copiesml > 1000) {
+                                                                                                            
                                                                                                         } else {
-                                                                                                            var yesConceptValue = JSON.parse(body).results;
-                                                                                                            if (yesConceptValue && yesConceptValue.length > 0) {
-                                                                                                                var yesConceptValue = _getTheGoodResult(yesConceptValue, "display", tests.recency_vl.yesConceptValue)
+                                                                                                            ritaConcept = "LONG-TERM";
+                                                                                                        }
 
-                                                                                                                var encounterOptions = {
-                                                                                                                    url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/encounter",
-                                                                                                                    body: JSON.stringify(
-                                                                                                                            {
-                                                                                                                                "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
-                                                                                                                                "patient": patient.uuid,
-                                                                                                                                "location": location.uuid,
-                                                                                                                                "form": form.uuid,
-                                                                                                                                "encounterType": form.encounterType.uuid,
-                                                                                                                                "obs": [
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyAssayTestConcept.uuid,
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": {
-                                                                                                                                            "uuid": yesConceptValue.uuid //ALWAYS YES concept
-                                                                                                                                        },
-                                                                                                                                        "resourceVersion": "1.8"
-                                                                                                                                    },
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyAssayResultConcept.uuid, //RECENCY ASSAY RESULTS: YES
-                                                                                                                                        "display": "RECENCY ASSAY RESULTS: YES",
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": {
-                                                                                                                                            "uuid": yesConceptValue.uuid //ALWAYS YES concept
-                                                                                                                                        }
-                                                                                                                                    },
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyViralLoadResultConcept.uuid,
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": data.Result.copies,
-                                                                                                                                        "resourceVersion": "1.8"
-                                                                                                                                    },
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyViralLoadResultDateConcept.uuid,
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": (new Date(data.DateReleased)).toISOString(),
-                                                                                                                                        "resourceVersion": "1.8"
-                                                                                                                                    },
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyViralLoadTestDateConcept.uuid,
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": (new Date(data.DateReleased)).toISOString()
-                                                                                                                                    }, {
-                                                                                                                                        "concept": recencyAssayResultConcept.uuid, //RECENCY ASSAY RESULTS: RECENT
-                                                                                                                                        "display": "RECENCY ASSAY RESULTS: RECENT",
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": {
-                                                                                                                                            "uuid": recentConceptValue.uuid //ALWAYS RECENT
-                                                                                                                                        }
-                                                                                                                                    }
-                                                                                                                                ],
-                                                                                                                                "visit": {
-                                                                                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-                                                                                                                                    "patient": patient.uuid,
-                                                                                                                                    "visitType": visittype.uuid,
-                                                                                                                                    "location": location.uuid,
-                                                                                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-                                                                                                                                },
-                                                                                                                                "encounterProviders": [{
-                                                                                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                                                                                        "provider": "prov877f-b5c3-4546-a1b1-533270e04721",
-                                                                                                                                        "resourceVersion": "1.9"
-                                                                                                                                    }],
-                                                                                                                                "resourceVersion": "1.9"
-                                                                                                                            }
-                                                                                                                    ),
-                                                                                                                    headers: {
-                                                                                                                        'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
-                                                                                                                        'Content-Type': 'application/json'
-                                                                                                                    }
-                                                                                                                };
-
-                                                                                                                request.post(encounterOptions, function (error, response, body) {
-                                                                                                                    if (error) {
-                                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                        log.error(error);
-                                                                                                                        log.error(response.body);
-                                                                                                                        res.sendStatus(500)
-                                                                                                                    } else {
-                                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
-                                                                                                                        //console.log('statusCode:', response && response.statusCode);
-                                                                                                                        //console.log('body:', body);
-                                                                                                                        //res.sendStatus(response.statusCode);
-                                                                                                                        res.json(response.body);
-                                                                                                                    }
-                                                                                                                });
-
-
-
-
-
-                                                                                                            } else {
-                                                                                                                log.warn("Concept not found!", locations["l_" + data.facilityCode]["name"]);
-                                                                                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                res.sendStatus(500);
+                                                                                                        options = {
+                                                                                                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + ritaConcept,
+                                                                                                            headers: {
+                                                                                                                'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                                                                                'Content-Type': 'application/json'
                                                                                                             }
                                                                                                         }
-                                                                                                    });
 
+                                                                                                        //// 3.1. Get the RITA Concept
+                                                                                                        request.get(options, function (error, response, body) {
+                                                                                                            if (error) {
+                                                                                                                log.error(error);
+                                                                                                                res.sendStatus(500);
+                                                                                                            } else {
+                                                                                                                var ritaResultConceptValue = JSON.parse(body).results;
+                                                                                                                if (ritaResultConceptValue && ritaResultConceptValue.length > 0) {
+                                                                                                                    console.log(ritaResultConceptValue);
+                                                                                                                    var ritaResultConceptValue = _getTheGoodResult(ritaResultConceptValue, "display", ritaConcept)
+
+                                                                                                                    options = {
+                                                                                                                        url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.yesConceptValue,
+                                                                                                                        headers: {
+                                                                                                                            'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                                                                                            'Content-Type': 'application/json'
+                                                                                                                        }
+                                                                                                                    }
+
+                                                                                                                    //// 3.2. Get the YES Concept
+                                                                                                                    request.get(options, function (error, response, body) {
+                                                                                                                        if (error) {
+                                                                                                                            log.error(error);
+                                                                                                                            res.sendStatus(500);
+                                                                                                                        } else {
+                                                                                                                            var yesConceptValue = JSON.parse(body).results;
+                                                                                                                            if (yesConceptValue && yesConceptValue.length > 0) {
+                                                                                                                                var yesConceptValue = _getTheGoodResult(yesConceptValue, "display", tests.recency_vl.yesConceptValue)
+
+
+                                                                                                                                var encounterOptions = {
+                                                                                                                                    url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/encounter",
+                                                                                                                                    body: JSON.stringify(
+                                                                                                                                            {
+                                                                                                                                                "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
+                                                                                                                                                "patient": patient.uuid,
+                                                                                                                                                "location": location.uuid,
+                                                                                                                                                "form": form.uuid,
+                                                                                                                                                "encounterType": form.encounterType.uuid,
+                                                                                                                                                "obs": [
+                                                                                                                                                    {
+                                                                                                                                                        "concept": recencyAssayTestConcept.uuid,
+                                                                                                                                                        "person": patient.uuid,
+                                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                                        "location": location.uuid,
+                                                                                                                                                        "voided": false,
+                                                                                                                                                        "value": {
+                                                                                                                                                            "uuid": yesConceptValue.uuid //ALWAYS YES concept
+                                                                                                                                                        },
+                                                                                                                                                        "resourceVersion": "1.8"
+                                                                                                                                                    },
+                                                                                                                                                    {
+                                                                                                                                                        "concept": recencyAssayResultConcept.uuid, //RECENCY ASSAY RESULTS: YES
+                                                                                                                                                        "display": "RECENCY ASSAY RESULTS: YES",
+                                                                                                                                                        "person": patient.uuid,
+                                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                                        "location": location.uuid,
+                                                                                                                                                        "voided": false,
+                                                                                                                                                        "value": {
+                                                                                                                                                            "uuid": yesConceptValue.uuid //ALWAYS YES concept
+                                                                                                                                                        }
+                                                                                                                                                    },
+                                                                                                                                                    {
+                                                                                                                                                        "concept": recencyViralLoadResultConcept.uuid,
+                                                                                                                                                        "person": patient.uuid,
+                                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                                        "location": location.uuid,
+                                                                                                                                                        "voided": false,
+                                                                                                                                                        "value": data.Result.copies,
+                                                                                                                                                        "resourceVersion": "1.8"
+                                                                                                                                                    },
+                                                                                                                                                    {
+                                                                                                                                                        "concept": recencyViralLoadResultDateConcept.uuid,
+                                                                                                                                                        "person": patient.uuid,
+                                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                                        "location": location.uuid,
+                                                                                                                                                        "voided": false,
+                                                                                                                                                        "value": (new Date(data.DateReleased)).toISOString(),
+                                                                                                                                                        "resourceVersion": "1.8"
+                                                                                                                                                    },
+                                                                                                                                                    {
+                                                                                                                                                        "concept": recencyViralLoadTestDateConcept.uuid,
+                                                                                                                                                        "person": patient.uuid,
+                                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                                        "location": location.uuid,
+                                                                                                                                                        "voided": false,
+                                                                                                                                                        "value": (new Date(data.DateReleased)).toISOString()
+                                                                                                                                                    }, {
+                                                                                                                                                        "concept": recencyAssayResultConcept.uuid, //RITA RESULT
+                                                                                                                                                        "display": "RECENCY ASSAY RESULTS: RECENT",
+                                                                                                                                                        "person": patient.uuid,
+                                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                                        "location": location.uuid,
+                                                                                                                                                        "voided": false,
+                                                                                                                                                        "value": {
+                                                                                                                                                            "uuid": ritaResultConceptValue.uuid // RECENT, LONG-TERM or INVALID
+                                                                                                                                                        }
+                                                                                                                                                    }
+                                                                                                                                                ],
+                                                                                                                                                "visit": {
+                                                                                                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
+                                                                                                                                                    "patient": patient.uuid,
+                                                                                                                                                    "visitType": visittype.uuid,
+                                                                                                                                                    "location": location.uuid,
+                                                                                                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
+                                                                                                                                                },
+                                                                                                                                                "encounterProviders": [{
+                                                                                                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
+                                                                                                                                                        "provider": "prov877f-b5c3-4546-a1b1-533270e04721",
+                                                                                                                                                        "resourceVersion": "1.9"
+                                                                                                                                                    }],
+                                                                                                                                                "resourceVersion": "1.9"
+                                                                                                                                            }
+                                                                                                                                    ),
+                                                                                                                                    headers: {
+                                                                                                                                        'Authorization': 'Basic ' + new Buffer("geoffrey:Ganyugxy1").toString('base64'),
+                                                                                                                                        'Content-Type': 'application/json'
+                                                                                                                                    }
+                                                                                                                                };
+
+                                                                                                                                request.post(encounterOptions, function (error, response, body) {
+                                                                                                                                    if (error) {
+                                                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                                        log.error(error);
+                                                                                                                                        log.error(response.body);
+                                                                                                                                        res.sendStatus(500)
+                                                                                                                                    } else {
+                                                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
+                                                                                                                                        //console.log('statusCode:', response && response.statusCode);
+                                                                                                                                        //console.log('body:', body);
+                                                                                                                                        //res.sendStatus(response.statusCode);
+                                                                                                                                        res.json(response.body);
+                                                                                                                                    }
+                                                                                                                                });
+
+
+
+
+
+                                                                                                                            } else {
+                                                                                                                                log.warn("Concept not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                                res.sendStatus(500);
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    });
+                                                                                                                } else {
+                                                                                                                    log.warn("Concept not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                    res.sendStatus(500);
+                                                                                                                }
+                                                                                                            }
+                                                                                                        });
+                                                                                                    } else {
+                                                                                                        log.warn("Data with empty result received!");
+                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                        res.sendStatus(500);
+                                                                                                    }
                                                                                                 } else {
                                                                                                     log.warn("RECENCY concept list not found!", locations["l_" + data.facilityCode]["name"]);
                                                                                                     log.error("Encounter creation aborted for " + data.SampleID + ".");
@@ -581,15 +625,15 @@ function setupApp() {
 
                 LoopA(data.tractnetID);//Search by TracknetID Firts
 
-//        needle
-//          .post(apiConf.api.openMrsUrl , data, {})
-//          .on('readable', function () {
-//
-//          })
-//          .on('done', function (err, resp) {
-//            console.log('Posted data',  data,  "to", apiConf.api.openMrsUrl );
-//          })
 
+                needle
+                        .post(apiConf.api.openMrsUrl, data, {})
+                        .on('readable', function () {
+
+                        })
+                        .on('done', function (err, resp) {
+                            console.log('Posted data', data, "to", apiConf.api.openMrsUrl);
+                        })
 
 
             });
