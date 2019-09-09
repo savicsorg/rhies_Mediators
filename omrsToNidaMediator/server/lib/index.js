@@ -35,6 +35,25 @@ function setupApp() {
   const app = express()
 
 
+  var CronJob = require('cron').CronJob;
+  new CronJob('2 * * * * *', function () {
+    /*
+     * Runs every day 
+     * at 01:00:00 AM.
+     * or Sunday.
+     */
+
+    console.log('Setting Cron for token claiming....');
+    exports.getNewNidaToken(function (error, token) {
+      if (error) {
+        console.log('error while claiming for token...',error);
+      } else {
+        console.log('Token retrieved with success');
+      }
+    });
+  }, null, true);
+
+
   app.all('*', (req, res) => {
     winston.info(`Processing ${req.method} request on ${req.url}`)
     var responseBody = 'Return Route Reached'
@@ -45,7 +64,7 @@ function setupApp() {
     // capture orchestration data
     var orchestrationResponse = { statusCode: 200, headers: headers }
     let orchestrations = []
-  
+
     // set content type header so that OpenHIM knows how to handle the response
     res.set('Content-Type', 'application/json+openhim')
 
@@ -57,10 +76,10 @@ function setupApp() {
 
       getNidaToken(function (err, token) {
         if (err) {
-          orchestrationResponse=err;
-          responseBody=err;
+          orchestrationResponse = err;
+          responseBody = err;
           orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-          res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, error, orchestrations, properties))
+          res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, err, orchestrations, properties))
         } else {
           nconf.load();
           var options = {
@@ -78,19 +97,19 @@ function setupApp() {
 
           request.post(options, function (error, response, body) {
             if (error) {
-              responseBody=error;
-              orchestrationResponse=error
+              responseBody = error;
+              orchestrationResponse = error
               orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
               res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, responseBody, orchestrations, properties))
             } else {
               if (body != null && body != undefined && body != '') {
-                responseBody= body
-                orchestrationResponse=body;
+                responseBody = body
+                orchestrationResponse = body;
                 orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
               } else {
-                responseBody='Server sent an empty response.';
-                orchestrationResponse=responseBody;
+                responseBody = 'Server sent an empty response.';
+                orchestrationResponse = responseBody;
                 orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, responseBody, orchestrations, properties))
               }
@@ -130,54 +149,55 @@ function getNidaToken(callback) {
   }
 
   if (shouldGetNewToken == true) {
-    //Query for Token
-    var options = {
-      url: apiConf.api.nida.claimtokenUrl,
-      body: JSON.stringify(
-        {
-          username: apiConf.api.nida.user.name,
-          password: apiConf.api.nida.user.pwd,
-        }),
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    };
-
-    request.post(options, function (error, response, body) {
-      if (error) {
-        callback(error);
-      } else {
-
-        if (body != null && body != undefined && body != '' && body.includes(' ') == true) {
-          var tokenInfo = body;
-          //save token infos on config
-          var currentDate=moment()
-          nconf.set("api:nida:token:updateDate",  currentDate);
-          nconf.set("api:nida:token:value", tokenInfo);
-          apiConf.api.nida.token.value=tokenInfo;
-          apiConf.api.nida.token.updateDate=currentDate;
-
-          nconf.save(function (err) {
-            if (err) {
-              callback(err);
-            } else {
-
-              callback(null, tokenInfo);
-            }
-          });
-        } else {
-          callback('Server returned an empty or wrong token...');
-        }
-      }
+    exports.getNewNidaToken(function (error, tokenInfo) {
+      callback(error, tokenInfo);
     });
   } else {
     callback(null, apiConf.api.nida.token.value);
   }
-
 }
 
 
 
+
+exports.getNewNidaToken = function (callback) {
+  //Query for Token
+  var options = {
+    url: apiConf.api.nida.claimtokenUrl,
+    body: JSON.stringify(
+      {
+        username: apiConf.api.nida.user.name,
+        password: apiConf.api.nida.user.pwd,
+      }),
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  };
+  request.post(options, function (error, response, body) {
+    if (error) {
+      callback(error);
+    } else {
+      if (body != null && body != undefined && body != '' && body.includes(' ') == true) {
+        var tokenInfo = body;
+        //save token infos on config
+        var currentDate = moment()
+        nconf.set("api:nida:token:updateDate", currentDate);
+        nconf.set("api:nida:token:value", tokenInfo);
+        apiConf.api.nida.token.value = tokenInfo;
+        apiConf.api.nida.token.updateDate = currentDate;
+        nconf.save(function (err) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, tokenInfo);
+          }
+        });
+      } else {
+        callback('Server returned an empty or wrong token...');
+      }
+    }
+  });
+}
 
 
 /**
@@ -238,5 +258,5 @@ exports.start = start
 
 if (!module.parent) {
   // if this script is run directly, start the server
-  start(() => winston.info(`Listening on ${port}...`))
+ // start(() => winston.info(`Listening on ${port}...`))
 }
