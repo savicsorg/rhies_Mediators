@@ -36,7 +36,7 @@ function setupApp() {
 
 
   var CronJob = require('cron').CronJob;
-  new CronJob('2 * * * * *', function () {
+  new CronJob('00 00 06 * * *', function () {
     /*
      * Runs every day 
      * at 01:00:00 AM.
@@ -183,6 +183,7 @@ exports.getNewNidaToken = function (callback) {
         var currentDate = moment()
         nconf.set("api:nida:token:updateDate", currentDate);
         nconf.set("api:nida:token:value", tokenInfo);
+        console.log(tokenInfo);
         apiConf.api.nida.token.value = tokenInfo;
         apiConf.api.nida.token.updateDate = currentDate;
         nconf.save(function (err) {
@@ -258,5 +259,5 @@ exports.start = start
 
 if (!module.parent) {
   // if this script is run directly, start the server
- // start(() => winston.info(`Listening on ${port}...`))
+  start(() => winston.info(`Listening on ${port}...`))
 }
