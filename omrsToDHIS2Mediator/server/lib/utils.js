@@ -22,6 +22,40 @@ exports.buildOrchestration = (name, beforeTimestamp, method, url, requestHeaders
   }
 }
 
+exports.isFineValue = function (value) {
+  if (value === null) {
+    return false;
+  }
+  else if (value === undefined) {
+    return false;
+  }
+  else if (value.constructor === "none".constructor) {
+    if (value.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  else if (value.constructor === [].constructor) {
+    if (value.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  else if (value.constructor ===  ({}).constructor) {
+    if (Object.keys(value).length > 0 ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  else {
+    return false;
+  }
+}
+
+
 exports.buildReturnObject = (urn, status, statusCode, headers, responseBody, orchestrations, properties) => {
   var response = {
     status: statusCode,

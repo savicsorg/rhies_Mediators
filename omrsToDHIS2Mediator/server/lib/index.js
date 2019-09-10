@@ -3,9 +3,13 @@
 
 
 const formidable = require('formidable');
-const express = require('express')
-const medUtils = require('openhim-mediator-utils')
-const winston = require('winston')
+const express = require('express');
+const medUtils = require('openhim-mediator-utils');
+const winston = require('winston');
+const _ = require('underscore');
+
+
+
 var request = require('request');
 
 const utils = require('./utils')
@@ -34,7 +38,7 @@ function setupApp() {
     var responseBody = 'Primary Route Reached'
     var headers = { 'content-type': 'application/json' }
 
-  
+
     // add logic to alter the request here
 
     // capture orchestration data
@@ -53,16 +57,35 @@ function setupApp() {
       var form = new formidable.IncomingForm();
       form.parse(req, function (err, fields, files) {
         var data = fields;
-        console.log('Got data');
+        winston.info('Encounter received ...')
+
+        //get DHIS2 Lab id with FOSA code
+        getOrganizationUnit(fields, function (error, organizationUnit) {
+          if (error) {
+            winston.error('error while retrieving for organization unit ...', error);
+          } else {
+            //Create or update entity instance
+            upsertEntityInstanceId(fields, organizationUnit, function (error, trackedEntityInstanceId) {
+              if (error) {
+                winston.error('error while upserting entity instance id ...', error);
+              } else {
+
+                //Enroll entity instance
+                enrolleTrackedEntityInstance(organizationUnit, trackedEntityInstanceId, function (error, enrollment) {
+                  if (error) {
+                    winston.error('error while enrolling entity instance id ...', error);
+                  } else {
 
 
+                    //Saving Stage (Encounters)
 
 
-
-
-
-
-
+                  }
+                })
+              }
+            });
+          }
+        });
         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
 
       })
@@ -74,98 +97,322 @@ function setupApp() {
 }
 
 
-exports.pushSetp1 = function (callback) {
-  console.log('[Step 1--------------------------------------]');
-  var options = {
-    url: apiConf.api.nida.getcitizenUrl,
-    body: JSON.stringify(
-      {
-        documentNumber: req.query.id,
-        keyPhrase: apiConf.api.nida.keyPhrase
-      }),
+
+
+
+var upsertEntityInstanceId = function (fields, organizationUnit, callback) {
+
+  if (utils.isFineValue(fields) == true && utils.isFineValue(fields.patient) == true) {
+
+    var patient = fields.patient;
+
+    if (utils.isFineValue(patient) == true && utils.isFineValue(patient.identifiers) == true) {
+
+      //getting openmrs patient TRACNetId and  UPId
+      getOpenmrsPatientIDs(fields, function (UPId, TRACNetId) {
+        if (utils.isFineValue(TRACNetId) == true && utils.isFineValue(UPId) == true) {
+
+          //Create patient existance
+          var patientInstance = {
+            "trackedEntity": "fHNKuROvJEc",
+            "orgUnit": organizationUnit,
+            "attributes": [
+              {
+                "attribute": "QdxWgPBlRxt",
+                "value": UPId
+              },
+              {
+                "attribute": "ISfxedlVq7Y",
+                "value": "1900-01-01"
+              },
+              {
+                "attribute": "zxrhIBj6H5K",
+                "value": TRACNetId
+              }
+            ]
+          }
+
+
+          //Query with UPID or TRACNetId 
+          getdhsi2Patient(organizationUnit, UPId, TRACNetId, function (error, resp) {
+            if (error) {
+              callback(error);
+            } else {
+
+              if (utils.isFineValue(resp) == true) {
+                //A tracked entity instance found, updating ...
+                var options = {
+                  url: apiConf.api.dhis2.url + "/api/trackedEntityInstances/" + resp.trackedEntityInstance,
+                  headers: {
+                    'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(patientInstance),
+                };
+
+                winston.info('Updating Entity instance ...')               
+                 request.put(options, function (error, response, body) {
+                  if (error) {
+                    callback(error);
+                  } else {
+                    if (utils.isFineValue(body) == true) {
+                      if (body.httpStatusCode == 200) {
+                        winston.info('Entity instance updated with success ', body.httpStatusCode, body.message)
+                         callback(null, resp.trackedEntityInstance);
+                      } else {
+                        winston.error('An error occured when trying to update an entity instance ', body, )
+                        callback('An error occured when trying to update an entity instance ' + body.message);
+                      }
+                    } else {
+                      callback('An error occured, the server returned an empty response when updating an entity instance');
+                    }
+                  }
+                }); 
+
+              } else {
+                //No tracked entity instance found, creating...
+                var options = {
+                  url: apiConf.api.dhis2.url + "/api/trackedEntityInstances",
+                  headers: {
+                    'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(patientInstance),
+                };
+
+                winston.info('Creating Entity instance ...')     
+                request.post(options, function (error, response, body) {
+                  if (error) {
+                    callback(error);
+                  } else {
+                    if (utils.isFineValue(body) == true && utils.isFineValue(body.httpStatusCode) == true) {
+                      if (body.httpStatusCode == 200) {
+                        winston.info('Entity instance created with success ', body.httpStatusCode, body.message)
+                        callback(null, resp.trackedEntityInstance);
+                      } else {
+                        winston.error('An error occured when trying to create an entity instance ', body.httpStatusCode, body.message)
+                        callback('An error occured when trying to create an entity instance ' + body.message);
+                      }
+                    } else {
+                      callback('An error occured, the server returned an empty when creation an entity instance');
+                    }
+                  }
+                });
+              }
+            }
+          });
+        } else {
+          winston.error('Patient with no UPID and no TRACNet Id received from openmrs.')
+          callback('Patient with no UPID and no TRACNet Id received from openmrs.');
+        }
+      });
+
+    } else {
+      winston.error('Empty patient information received from openmrs.')
+      callback('Empty patient information received from openmrs.');
+    }
+  }
+}
+
+
+var getOpenmrsPatientIDs = function (fields, callback) {
+  if (utils.isFineValue(fields) == true && utils.isFineValue(fields.patient) == true) {
+    var patient = fields.patient;
+    if (utils.isFineValue(patient) == true && utils.isFineValue(patient.identifiers) == true) {
+      var identifiers = patient.identifiers;
+      var TRACNetId = null;
+      var UPId = null;
+      for (var i = 0; i < patient.identifiers.length; i++) {
+        if (utils.isFineValue(patient.identifiers[i]) == true && utils.isFineValue(patient.identifiers[i].display) == true) {
+          if (patient.identifiers[i].display.toUpperCase().includes("UPID =".toUpperCase()) == true) {
+            UPId = patient.identifiers[i].display.split("=")[1].trim();
+          }
+          if (patient.identifiers[i].display.toUpperCase().includes("TRACNet ID =".toUpperCase()) == true) {
+            TRACNetId = patient.identifiers[i].display.split("=")[1].trim();
+          }
+        }
+      }
+      callback(UPId, TRACNetId);
+    } else {
+      callback(null, null);
+    }
+  } else {
+    callback(null, null);
+  }
+}
+
+
+
+var getdhsi2Patient = function (organizationUnit, UPId, TRACNetId, callback) {
+  var UPIdOptions = {};
+  var TRACNetIdOptions = {};
+
+  if (utils.isFineValue(UPId) == true && utils.isFineValue(organizationUnit) == true) {
+    UPIdOptions = {
+      url: apiConf.api.dhis2.url + "/api/trackedEntityInstances.json?filter=QdxWgPBlRxt:EQ:" + UPId + "&ou=" + organizationUnit,
+      headers: {
+        'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+        'Content-Type': 'application/json'
+      }
+    };
+  }
+
+  if (utils.isFineValue(TRACNetId) == true && utils.isFineValue(organizationUnit) == true) {
+    TRACNetIdOptions = {
+      url: apiConf.api.dhis2.url + "/api/trackedEntityInstances.json?filter=zxrhIBj6H5K:EQ:" + TRACNetId + "&ou=" + organizationUnit,
+      headers: {
+        'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+        'Content-Type': 'application/json'
+      }
+    };
+  }
+
+  if (utils.isFineValue(UPIdOptions) == true) {
+    winston.info('Checking tracked entity instance with UPID ', UPId);
+    request.get(UPIdOptions, function (error, response, body) {
+      if (error) {
+        callback(error);
+      } else {
+        var resp = JSON.parse(body);
+        if (utils.isFineValue(resp.trackedEntityInstances) == true) {
+          winston.info('Tracked entity instance retrieved with success');
+          callback(null, resp.trackedEntityInstances[0]);
+        } else {
+          winston.info('No tracked entity instance found with UPID ', UPId);
+          if (utils.isFineValue(TRACNetIdOptions) == true) {
+            winston.info('Checking tracked entity instance with TRACNet id ', TRACNetId);
+            request.get(TRACNetIdOptions, function (error, response, body) {
+              if (error) {
+                callback(error);
+              } else {
+                var resp = JSON.parse(body);
+                if (utils.isFineValue(resp.trackedEntityInstances) == true) {
+                  callback(null, resp.trackedEntityInstances[0]);
+                } else {
+                  winston.info('No tracked entity instance found with TRACNet ID ', TRACNetId);
+                  callback(null, null);
+                }
+              }
+            });
+          } else {
+            winston.info('No TRACNetId available.');
+            callback(null, null);
+          }
+        }
+      }
+    });
+  } else {
+    winston.info('No UPID available.');
+    if (utils.isFineValue(TRACNetIdOptions) == true) {
+      winston.info('Checking tracked entity instance with TRACNet id ', TRACNetId);
+      request.get(TRACNetIdOptions, function (error, response, body) {
+        if (error) {
+          callback(error);
+        } else {
+          var resp = JSON.parse(body);
+          if (utils.isFineValue(resp.trackedEntityInstances) == true) {
+            winston.info('Tracked entity instance retrieved with success');
+            callback(null, resp.trackedEntityInstances[0]);
+          } else {
+            winston.info('No tracked entity instance found with TRACNet ID ', TRACNetId);
+            callback(null, null);
+          }
+        }
+      });
+    } else {
+      winston.info('No TRACNet id available.');
+      callback(null, null);
+    }
+  }
+}
+
+
+var getOrganizationUnit = function (fields, callback) {
+  if (utils.isFineValue(fields) == true && utils.isFineValue(fields.location) == true && utils.isFineValue(fields.location.description) == true) {
+    if (utils.isFineValue(fields.location.description) == true && fields.location.description.includes(":") == true) {
+
+      //FOSAID: 448 TYPE: CS
+      var labFosaId = fields.location.description.split(":")[1].trim().split(" ")[0].trim();
+      winston.info('Getting DHIS2 organizationUnit with location fosa id ', labFosaId)
+      var options = {
+        url: apiConf.api.dhis2.url + "/api/organisationUnits.json?fields=id&&filter=code:eq:" + labFosaId,
+        headers: {
+          'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+          'Content-Type': 'application/json'
+        }
+      };
+
+      request.get(options, function (error, response, body) {
+        if (error) {
+          callback(error);
+        } else {
+          var organizationUnit = JSON.parse(body);
+          if (utils.isFineValue(organizationUnit) == true && utils.isFineValue(organizationUnit.organisationUnits) == true) {
+            callback(null, organizationUnit.organisationUnits[0].id);
+          } else {
+            callback('Server returned an empty response when retrieving organization unit ', labFosaId);
+          }
+        }
+      });
+
+    } else {
+      winston.error('Wrong fosa code provided for the location ' + fields.location.display)
+      callback('Wrong fosa code provided for the location ' + fields.location.display)
+    }
+  } else {
+    winston.error('Empty location information received from openmrs.')
+    callback('Empty location information received from openmrs.');
+  }
+}
+
+
+var getEnrolleTrackedEntityInstance = function (organizationUnit, trackedEntityInstanceId, callback) {
+ var Options = {
+    url: apiConf.api.dhis2.url + "/api/enrollments.json?ou=" + organizationUnit + "&trackedEntityInstance=" + trackedEntityInstanceId,
     headers: {
-      'Authorization': token,
+      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
       'Content-Type': 'application/json'
     }
   };
+  if (utils.isFineValue(organizationUnit) == true && utils.isFineValue(trackedEntityInstanceId) == true) {
 
-  request.post(options, function (error, response, body) {
-    if (error) {
-      responseBody = error;
-      orchestrationResponse = error
-      orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-      res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, responseBody, orchestrations, properties))
-    } else {
-      if (body != null && body != undefined && body != '') {
-        responseBody = body
-        orchestrationResponse = body;
-        orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-        res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
+    winston.info('Checking for enrollemenet with organizationUnit ', organizationUnit, 'and trackedEntityInstance ', trackedEntityInstanceId);
+    request.get(Options, function (error, response, body) {
+      if (error) {
+        callback(error);
       } else {
-        responseBody = 'Server sent an empty response.';
-        orchestrationResponse = responseBody;
-        orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-        res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, responseBody, orchestrations, properties))
+        var resp = JSON.parse(body);
+        if (utils.isFineValue(resp) == true) {
+          //callback(null, resp.trackedEntityInstances[0]);
+        } else {
+          winston.info('No enrollment found found for tracked entity Instance Id ', trackedEntityInstanceId);
+          callback(null, null);
+        }
       }
+    });
+  } else {
+    winston.info('Organization unit or tracked entity instance not provided.');
+    callback(null, null);
+  }
+}
+
+
+
+
+var enrolleTrackedEntityInstance = function (organizationUnit, trackedEntityInstanceId, callback) {
+  getEnrolleTrackedEntityInstance(organizationUnit, trackedEntityInstanceId, function (error, resu) {
+    if (error) {
+      winston.error('error while enrolling entity instance id ...', error);
+    } else {
+      //Saving Stage (Encounters)
     }
   });
-
-};
-
-exports.pushSetp2 = function (callback) {
-  console.log('[Step 2--------------------------------------]');
-  if (error) {
-
-  } else {
-
-  }
-}
-
-exports.pushSetp3 = function (callback) {
-  console.log('[Step 3--------------------------------------]');
-  if (error) {
-    
-  } else {
-
-  }
-}
-
-exports.pushSetp4 = function (callback) {
-  console.log('[Step 4--------------------------------------]');
-  if (error) {
-    
-  } else {
-
-  }
-}
-
-exports.pushSetp5 = function (callback) {
-  console.log('[Step 5--------------------------------------]');
-  if (error) {
-    
-  } else {
-
-  }
-}
-
-exports.pushSetp6 = function (callback) {
-  console.log('[Step 6--------------------------------------]');
-  if (error) {
-    
-  } else {
-
-  }
 }
 
 
-exports.pushSetp7 = function (callback) {
-  console.log('[Step 7--------------------------------------]');
-  if (error) {
-    
-  } else {
 
-  }
-}
+
+
 
 
 

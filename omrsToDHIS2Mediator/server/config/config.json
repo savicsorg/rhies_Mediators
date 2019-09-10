@@ -5,11 +5,11 @@
     "apiURL": "https://localhost:8080",
     "trustSelfSigned": "true",
     "urlPattern": "/report/",
-    "DHIS2": {
-      "url": "http://localhost:8081/openmrs/ws/rest/v1/patient",
+    "dhis2": {
+      "url": "http://130.104.12.92:8082",
       "user": {
-        "name": "geoffrey",
-        "pwd": "Ganyugxy1"
+        "name": "amza",
+        "pwd": "District@123"
       }
     }
   },

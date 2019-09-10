@@ -1,7 +1,7 @@
 {
-  "name": "labtoomrs-mediator",
+  "name": "omrstodhis2",
   "version": "0.0.1",
-  "description": "labToOmrs mediators ",
+  "description": "openmrs to DHIS2 mediator ",
   "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",
@@ -30,7 +30,8 @@
     "urijs": "^1.17.1",
     "xmldom": "^0.1.22",
     "xpath": "0.0.23",
-    "formidable": "1.2.1"
+    "formidable": "1.2.1",
+    "underscore": "1.9.1"
   },
   "devDependencies": {
     "onchange": "^2.3.0",
