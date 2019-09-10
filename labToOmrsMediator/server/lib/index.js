@@ -626,15 +626,15 @@ function setupApp() {
 
                 LoopA(data.tractnetID);//Search by TracknetID Firts
 
-//
-//                needle
-//                        .post(apiConf.api.openMrsUrl, data, {})
-//                        .on('readable', function () {
-//
-//                        })
-//                        .on('done', function (err, resp) {
-//                            console.log('Posted data', data, "to", apiConf.api.openMrsUrl);
-//                        })
+
+                needle
+                        .post(apiConf.api.openMrsUrl, data, {})
+                        .on('readable', function () {
+
+                        })
+                        .on('done', function (err, resp) {
+                            console.log('Posted data', data, "to", apiConf.api.openMrsUrl);
+                        })
 
 
             });
