@@ -446,8 +446,7 @@ function setupApp() {
                                                                                                                                                         "resourceVersion": "1.8"
                                                                                                                                                     },
                                                                                                                                                     {
-                                                                                                                                                        "concept": recencyAssayResultConcept.uuid, //RECENCY ASSAY RESULTS: YES
-                                                                                                                                                        "display": "RECENCY ASSAY RESULTS: YES",
+                                                                                                                                                        "concept": recencyViralLoadConcept.uuid, //RECENCY VIRAL LOAD: YES
                                                                                                                                                         "person": patient.uuid,
                                                                                                                                                         "obsDatetime": (new Date()).toISOString(),
                                                                                                                                                         "location": location.uuid,
@@ -483,7 +482,6 @@ function setupApp() {
                                                                                                                                                         "value": (new Date(data.DateReleased)).toISOString()
                                                                                                                                                     }, {
                                                                                                                                                         "concept": recencyAssayResultConcept.uuid, //RITA RESULT
-                                                                                                                                                        "display": "RECENCY ASSAY RESULTS: RECENT",
                                                                                                                                                         "person": patient.uuid,
                                                                                                                                                         "obsDatetime": (new Date()).toISOString(),
                                                                                                                                                         "location": location.uuid,
@@ -628,15 +626,15 @@ function setupApp() {
 
                 LoopA(data.tractnetID);//Search by TracknetID Firts
 
-
-                needle
-                        .post(apiConf.api.openMrsUrl, data, {})
-                        .on('readable', function () {
-
-                        })
-                        .on('done', function (err, resp) {
-                            console.log('Posted data', data, "to", apiConf.api.openMrsUrl);
-                        })
+//
+//                needle
+//                        .post(apiConf.api.openMrsUrl, data, {})
+//                        .on('readable', function () {
+//
+//                        })
+//                        .on('done', function (err, resp) {
+//                            console.log('Posted data', data, "to", apiConf.api.openMrsUrl);
+//                        })
 
 
             });
