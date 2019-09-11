@@ -43,14 +43,16 @@ exports.isFineValue = function (value) {
       return false;
     }
   }
-  else if (value.constructor ===  ({}).constructor) {
-    if (Object.keys(value).length > 0 ) {
+  else if (value.constructor === ({}).constructor) {
+    if (Object.keys(value).length > 0) {
       return true;
     } else {
       return false;
     }
   }
-  else {
+  else if (isNaN(value) == false) {
+    return true;
+  } else {
     return false;
   }
 }
