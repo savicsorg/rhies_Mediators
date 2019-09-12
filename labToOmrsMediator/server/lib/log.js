@@ -1,15 +1,13 @@
 var fs      = require('fs');
 var bristol=require('bristol');;
-var nconf   = require('nconf');
 var moment  = require('moment');
 var archiver = require('archiver');
 var rimraf = require('rimraf');
 var lastInitializeLogsDate;
 var path = require("path");
-var conf = require('nconf');
-conf.file("../config/config.json");
+const nconf = process.env.NODE_ENV === 'test' ? require('../config/test') : require('../config/config')
 
-var logPath = nconf.get('system').logPath;
+var logPath = nconf.system.logPath;
 
 
 var initialize =function() {
@@ -133,7 +131,7 @@ var initialize =function() {
 
 
      //delete this year aged logs  
-     var deleteLogsAfter =conf.get('system').deleteLogsAfter;
+     var deleteLogsAfter =nconf.system.deleteLogsAfter;
     if (deleteLogsAfter == null || deleteLogsAfter == "" || deleteLogsAfter=="-1"){
         deleteLogsAfter="0";
     }
