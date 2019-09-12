@@ -26,6 +26,11 @@ const mediatorConfig = require('../config/mediator')
 
 var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].port
 
+var nida ={
+    token:undefined,
+    lastUpdate: undefined
+};
+
 /**
  * setupApp - configures the http server for this mediator
  *
@@ -128,14 +133,12 @@ function setupApp() {
 function getNidaToken(callback) {
   var shouldGetNewToken = false;
 
-  if (apiConf.api.nida.token == undefined
-    || apiConf.api.nida.token.value == undefined || apiConf.api.nida.token.value == ""
-    || apiConf.api.nida.token.updateDate == undefined || apiConf.api.nida.token.updateDate == "") {
+  if (nida.token == undefined || nida.token == "" || nida.lastUpdate == undefined || nida.lastUpdate == "") {
 
     shouldGetNewToken = true;
     console.log('first run, getting new token...');
   } else {
-    var currentTokenDate = moment(new Date(apiConf.api.nida.token.updateDate));
+    var currentTokenDate = moment(new Date(nida.lastUpdate));
     var currentDate = moment();
 
     if (currentDate.isSameOrAfter(currentTokenDate.add(1, 'days')) == true) {
@@ -153,7 +156,7 @@ function getNidaToken(callback) {
       callback(error, tokenInfo);
     });
   } else {
-    callback(null, apiConf.api.nida.token.value);
+    callback(null, nida.token);
   }
 }
 
@@ -184,15 +187,16 @@ exports.getNewNidaToken = function (callback) {
         nconf.set("api:nida:token:updateDate", currentDate);
         nconf.set("api:nida:token:value", tokenInfo);
         console.log(tokenInfo);
-        apiConf.api.nida.token.value = tokenInfo;
-        apiConf.api.nida.token.updateDate = currentDate;
-        nconf.save(function (err) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, tokenInfo);
-          }
-        });
+        nida.token = tokenInfo;
+        nida.lastUpdate = currentDate;
+        callback(null, tokenInfo);
+//        nconf.save(function (err) {
+//          if (err) {
+//            callback(err);
+//          } else {
+//            callback(null, tokenInfo);
+//          }
+//        });
       } else {
         callback('Server returned an empty or wrong token...');
       }
@@ -251,7 +255,10 @@ function start(callback) {
     config = mediatorConfig.config
     let app = setupApp()
     const server = app.listen(port, () => callback(server))
-
+    
+    exports.getNewNidaToken(function (error, tokenInfo) {
+      console.log('Initialize the NIDA token...');
+    });
   }
 }
 exports.start = start
