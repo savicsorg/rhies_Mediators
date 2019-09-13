@@ -146,7 +146,7 @@ function setupApp() {
                                     orchestrationResponse = error
                                     orchestrationResponse = { statusCode: 500, headers: headers }
                                     orchestrations = []
-                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                     res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                 } else {
                                     if (response.statusCode == "200") {
@@ -176,7 +176,7 @@ function setupApp() {
                                                     orchestrationResponse = "Encounter creation aborted for " + data.SampleID + ".";
                                                     orchestrationResponse = { statusCode: 500, headers: headers }
                                                     orchestrations = []
-                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                     res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                 } else {
                                                     var visittype = JSON.parse(body).results;
@@ -202,7 +202,7 @@ function setupApp() {
                                                                 orchestrationResponse = error
                                                                 orchestrationResponse = { statusCode: 500, headers: headers }
                                                                 orchestrations = []
-                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                             } else {
                                                                 var location = JSON.parse(body).results;
@@ -230,7 +230,7 @@ function setupApp() {
                                                                                     orchestrationResponse = error
                                                                                     orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                     orchestrations = []
-                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                     res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                 } else {
                                                                                     var form = JSON.parse(body).results;
@@ -255,7 +255,7 @@ function setupApp() {
                                                                                                 orchestrationResponse = error
                                                                                                 orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                 orchestrations = []
-                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                             } else {
                                                                                                 var parentConcept = JSON.parse(body).results;
@@ -281,7 +281,7 @@ function setupApp() {
                                                                                                             orchestrationResponse = error
                                                                                                             orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                             orchestrations = []
-                                                                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                         } else {
                                                                                                             var concept = JSON.parse(body).results;
@@ -346,7 +346,7 @@ function setupApp() {
                                                                                                                         orchestrationResponse = error
                                                                                                                         orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                                         orchestrations = []
-                                                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                                     } else {
                                                                                                                         console.log("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
@@ -388,7 +388,7 @@ function setupApp() {
                                                                                     orchestrationResponse = error
                                                                                     orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                     orchestrations = []
-                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                     res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                 } else {
                                                                                     var form = JSON.parse(body).results;
@@ -413,7 +413,7 @@ function setupApp() {
                                                                                                 orchestrationResponse = error
                                                                                                 orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                 orchestrations = []
-                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                             } else {
                                                                                                 var recencies = JSON.parse(body).results;
@@ -457,7 +457,7 @@ function setupApp() {
                                                                                                                 orchestrationResponse = error
                                                                                                                 orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                                 orchestrations = []
-                                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                             } else {
                                                                                                                 var ritaResultConceptValue = JSON.parse(body).results;
@@ -482,7 +482,7 @@ function setupApp() {
                                                                                                                             orchestrationResponse = error
                                                                                                                             orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                                             orchestrations = []
-                                                                                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                                         } else {
                                                                                                                             var yesConceptValue = JSON.parse(body).results;
@@ -588,7 +588,7 @@ function setupApp() {
                                                                                                                                         orchestrationResponse = error
                                                                                                                                         orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                                                         orchestrations = []
-                                                                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                                                     } else {
                                                                                                                                         console.log("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
@@ -600,7 +600,7 @@ function setupApp() {
                                                                                                                                         orchestrationResponse = "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID
                                                                                                                                         orchestrationResponse = { statusCode: 200, headers: headers }
                                                                                                                                         orchestrations = []
-                                                                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, response.body))
+                                                                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, response.body))
                                                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, body, orchestrations, properties))
                                                                                                                                     }
                                                                                                                                 });
@@ -616,7 +616,7 @@ function setupApp() {
                                                                                                                                 orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                                                                 orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                                                 orchestrations = []
-                                                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                                             }
                                                                                                                         }
@@ -629,7 +629,7 @@ function setupApp() {
                                                                                                                     orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                                                     orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                                     orchestrations = []
-                                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                                     res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                                 }
                                                                                                             }
@@ -641,7 +641,7 @@ function setupApp() {
                                                                                                         orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                                         orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                         orchestrations = []
-                                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                     }
                                                                                                 } else {
@@ -652,7 +652,7 @@ function setupApp() {
                                                                                                     orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                                     orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                                     orchestrations = []
-                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                     res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                 }
                                                                                             }
@@ -664,7 +664,7 @@ function setupApp() {
                                                                                         orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                         orchestrationResponse = { statusCode: 500, headers: headers }
                                                                                         orchestrations = []
-                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                     }
                                                                                 }
@@ -676,7 +676,7 @@ function setupApp() {
                                                                             orchestrationResponse = "Operation succeeded"
                                                                             orchestrationResponse = { statusCode: 200, headers: headers }
                                                                             orchestrations = []
-                                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, body, orchestrations, properties))
                                                                             break;
                                                                     }//END Switch
@@ -691,7 +691,7 @@ function setupApp() {
                                                         orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                         orchestrationResponse = { statusCode: 500, headers: headers }
                                                         orchestrations = []
-                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                     }
                                                 }
@@ -708,7 +708,7 @@ function setupApp() {
                                                 orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                 orchestrationResponse = { statusCode: 500, headers: headers }
                                                 orchestrations = []
-                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                             }
                                         } else {
@@ -719,7 +719,7 @@ function setupApp() {
                                             orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                             orchestrationResponse = { statusCode: 500, headers: headers }
                                             orchestrations = []
-                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                         }
                                     } else if (response.statusCode == "403") {
@@ -734,7 +734,7 @@ function setupApp() {
                                             orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                             orchestrationResponse = { statusCode: 500, headers: headers }
                                             orchestrations = []
-                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                         }
                                     } else {
@@ -744,7 +744,7 @@ function setupApp() {
                                         orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                         orchestrationResponse = { statusCode: 500, headers: headers }
                                         orchestrations = []
-                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
+                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                     }
                                 }
@@ -758,8 +758,8 @@ function setupApp() {
                                 orchestrationResponse = ""
                                 orchestrationResponse = { statusCode: 500, headers: headers }
                                 orchestrations = []
-                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
-                                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
+                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, "Failed"))
+                                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, "Failed", orchestrations, properties))
                             }
                         }
                     } catch (err) {
