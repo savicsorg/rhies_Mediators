@@ -129,7 +129,7 @@ function setupApp() {
                             var options = {
                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/patient?q=" + q + "&v=full",
                                 headers: {
-                                    'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                    'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                     'Content-Type': 'application/json'
                                 }
                             }
@@ -158,7 +158,7 @@ function setupApp() {
                                             options = {
                                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/visittype",
                                                 headers: {
-                                                    'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                    'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                     'Content-Type': 'application/json'
                                                 }
                                             }
@@ -185,7 +185,7 @@ function setupApp() {
                                                         var options = {
                                                             url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/location?q=" + locations["l_" + data.facilityCode]["name"],
                                                             headers: {
-                                                                'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                 'Content-Type': 'application/json'
                                                             }
                                                         }
@@ -215,7 +215,7 @@ function setupApp() {
                                                                             options = {
                                                                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
                                                                                 headers: {
-                                                                                    'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                    'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                     'Content-Type': 'application/json'
                                                                                 }
                                                                             }
@@ -239,7 +239,7 @@ function setupApp() {
                                                                                         options = {
                                                                                             url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.parentConcept + "&v=full",
                                                                                             headers: {
-                                                                                                'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                                'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                 'Content-Type': 'application/json'
                                                                                             }
                                                                                         }
@@ -265,7 +265,7 @@ function setupApp() {
                                                                                                     options = {
                                                                                                         url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.concept,
                                                                                                         headers: {
-                                                                                                            'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                                            'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                             'Content-Type': 'application/json'
                                                                                                         }
                                                                                                     };
@@ -330,7 +330,7 @@ function setupApp() {
                                                                                                                         }
                                                                                                                     ),
                                                                                                                     headers: {
-                                                                                                                        'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                                                        'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                                         'Content-Type': 'application/json'
                                                                                                                     }
                                                                                                                 };
@@ -372,7 +372,7 @@ function setupApp() {
                                                                             options = {
                                                                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
                                                                                 headers: {
-                                                                                    'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                    'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                     'Content-Type': 'application/json'
                                                                                 }
                                                                             }
@@ -398,7 +398,7 @@ function setupApp() {
                                                                                         options = {
                                                                                             url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.q + "&v=full",
                                                                                             headers: {
-                                                                                                'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                                'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                 'Content-Type': 'application/json'
                                                                                             }
                                                                                         }
@@ -443,7 +443,7 @@ function setupApp() {
                                                                                                         options = {
                                                                                                             url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + ritaConcept,
                                                                                                             headers: {
-                                                                                                                'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                                                'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                                 'Content-Type': 'application/json'
                                                                                                             }
                                                                                                         }
@@ -468,7 +468,7 @@ function setupApp() {
                                                                                                                     options = {
                                                                                                                         url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.yesConceptValue,
                                                                                                                         headers: {
-                                                                                                                            'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                                                            'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                                             'Content-Type': 'application/json'
                                                                                                                         }
                                                                                                                     }
@@ -573,7 +573,7 @@ function setupApp() {
                                                                                                                                         }
                                                                                                                                     ),
                                                                                                                                     headers: {
-                                                                                                                                        'Authorization': 'Basic ' + new Buffer.from("geoffrey:Ganyugxy1", 'base64'),
+                                                                                                                                        'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                                                         'Content-Type': 'application/json'
                                                                                                                                     }
                                                                                                                                 };
