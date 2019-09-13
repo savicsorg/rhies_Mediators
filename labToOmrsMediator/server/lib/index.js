@@ -137,6 +137,8 @@ function setupApp() {
 
                         //// 1. Patient
                         console.log("Search for the patient " + q, locations["l_" + data.facilityCode]["name"]);
+                        console.log("=====options=====");
+                        console.log(options);
                         request.get(options, function (error, response, body) {
                             if (error) {
                                 console.log("Error on patient research. Encounter creation aborted for " + data.SampleID + ".");
