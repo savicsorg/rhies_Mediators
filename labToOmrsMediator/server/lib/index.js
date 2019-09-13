@@ -10,7 +10,7 @@ const moment = require('moment');
 var request = require('request');
 var nconf = require('nconf');
 nconf.file('../config/config.json');
-var log = require('./log');
+//var log = require('./log');
 
 const utils = require('./utils')
 
@@ -137,11 +137,11 @@ function setupApp() {
                             var testType = data.TestId.toLowerCase();
 
                             //// 1. Patient
-                            log.info("Search for the patient " + q, locations["l_" + data.facilityCode]["name"]);
+                            console.log("Search for the patient " + q, locations["l_" + data.facilityCode]["name"]);
                             request.get(options, function (error, response, body) {
                                 if (error) {
-                                    log.error("Error on patient research. Encounter creation aborted for " + data.SampleID + ".");
-                                    log.error(error);
+                                    console.log("Error on patient research. Encounter creation aborted for " + data.SampleID + ".");
+                                    console.log(error);
 
                                     orchestrationResponse = error
                                     orchestrationResponse = { statusCode: 500, headers: headers }
@@ -164,12 +164,12 @@ function setupApp() {
                                             }
 
                                             //// 4. Get the VISIT TYPE 
-                                            log.info("Search for the VISIT TYPE '" + tests.recency_vl.visitType + "'...");
+                                            console.log("Search for the VISIT TYPE '" + tests.recency_vl.visitType + "'...");
                                             request.get(options, function (error, response, body) {
                                                 if (error) {
-                                                    log.warn("VISIT TYPE " + tests.recency_vl.visitType + " not found!");
-                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                    log.error(error);
+                                                    console.log("VISIT TYPE " + tests.recency_vl.visitType + " not found!");
+                                                    console.log("Encounter creation aborted for " + data.SampleID + ".");
+                                                    console.log(error);
 
 
 
@@ -191,11 +191,11 @@ function setupApp() {
                                                         }
 
                                                         //// 2. Location 
-                                                        log.info("Search for the location '" + locations["l_" + data.facilityCode]["name"] + "'...");
+                                                        console.log("Search for the location '" + locations["l_" + data.facilityCode]["name"] + "'...");
                                                         request.get(options, function (error, response, body) {
                                                             if (error) {
-                                                                log.error("Error when searching the location. Encounter creation aborted for " + data.SampleID + ".");
-                                                                log.error(error);
+                                                                console.log("Error when searching the location. Encounter creation aborted for " + data.SampleID + ".");
+                                                                console.log(error);
 
 
 
@@ -211,7 +211,7 @@ function setupApp() {
 
                                                                     switch (testType) {
                                                                         case 'viral_load_2':
-                                                                            log.info("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                                            console.log("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
                                                                             options = {
                                                                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
                                                                                 headers: {
@@ -221,11 +221,11 @@ function setupApp() {
                                                                             }
 
                                                                             //// 2. Form
-                                                                            log.info("Search for the form '" + tests.viral_load_2.form + "'...");
+                                                                            console.log("Search for the form '" + tests.viral_load_2.form + "'...");
                                                                             request.get(options, function (error, response, body) {
                                                                                 if (error) {
-                                                                                    log.error("Error on form search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                                    log.error(error);
+                                                                                    console.log("Error on form search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                    console.log(error);
 
                                                                                     orchestrationResponse = error
                                                                                     orchestrationResponse = { statusCode: 500, headers: headers }
@@ -245,11 +245,11 @@ function setupApp() {
                                                                                         }
 
                                                                                         //// 3. Parent concept
-                                                                                        log.info("Search for encounter concept ");
+                                                                                        console.log("Search for encounter concept ");
                                                                                         request.get(options, function (error, response, body) {
                                                                                             if (error) {
-                                                                                                log.error("Error on encounter concept search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                log.error(error);
+                                                                                                console.log("Error on encounter concept search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                console.log(error);
 
 
                                                                                                 orchestrationResponse = error
@@ -271,11 +271,11 @@ function setupApp() {
                                                                                                     };
 
                                                                                                     //// 4. Concept
-                                                                                                    log.info("Search for obs concept ");
+                                                                                                    console.log("Search for obs concept ");
                                                                                                     request.get(options, function (error, response, body) {
                                                                                                         if (error) {
-                                                                                                            log.error("Error on obs concept search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                            log.error(error);
+                                                                                                            console.log("Error on obs concept search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                            console.log(error);
 
 
                                                                                                             orchestrationResponse = error
@@ -337,9 +337,9 @@ function setupApp() {
 
                                                                                                                 request.post(encounterOptions, function (error, response, body) {
                                                                                                                     if (error) {
-                                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                        log.error(error);
-                                                                                                                        log.error(response.body);
+                                                                                                                        console.log("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                        console.log(error);
+                                                                                                                        console.log(response.body);
 
 
 
@@ -349,7 +349,7 @@ function setupApp() {
                                                                                                                         orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
                                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                                     } else {
-                                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
+                                                                                                                        console.log("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
                                                                                                                         res.json(response.body);
                                                                                                                     }
                                                                                                                 });
@@ -368,7 +368,7 @@ function setupApp() {
 
                                                                             break;
                                                                         case 'recency_vl':
-                                                                            log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                                            console.log("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
                                                                             options = {
                                                                                 url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
                                                                                 headers: {
@@ -378,11 +378,11 @@ function setupApp() {
                                                                             }
 
                                                                             //// 2. Form 
-                                                                            log.info("Search for the form '" + tests.recency_vl.form + "'...");
+                                                                            console.log("Search for the form '" + tests.recency_vl.form + "'...");
                                                                             request.get(options, function (error, response, body) {
                                                                                 if (error) {
-                                                                                    log.warn("Form " + tests.recency_vl.form + " not found!");
-                                                                                    log.error("Error on search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                    console.log("Form " + tests.recency_vl.form + " not found!");
+                                                                                    console.log("Error on search. Encounter creation aborted for " + data.SampleID + ".");
                                                                                     log.log(error);
 
                                                                                     orchestrationResponse = error
@@ -404,7 +404,7 @@ function setupApp() {
                                                                                         }
 
                                                                                         //// 3.0. Get the RECENCY concepts list
-                                                                                        log.info("Search for the RECENCY list ...");
+                                                                                        console.log("Search for the RECENCY list ...");
                                                                                         request.get(options, function (error, response, body) {
                                                                                             if (error) {
                                                                                                 log.log(error);
@@ -451,7 +451,7 @@ function setupApp() {
                                                                                                         //// 3.1. Get the RITA Concept
                                                                                                         request.get(options, function (error, response, body) {
                                                                                                             if (error) {
-                                                                                                                log.error(error);
+                                                                                                                console.log(error);
 
 
                                                                                                                 orchestrationResponse = error
@@ -476,7 +476,7 @@ function setupApp() {
                                                                                                                     //// 3.2. Get the YES Concept
                                                                                                                     request.get(options, function (error, response, body) {
                                                                                                                         if (error) {
-                                                                                                                            log.error(error);
+                                                                                                                            console.log(error);
 
 
                                                                                                                             orchestrationResponse = error
@@ -580,9 +580,9 @@ function setupApp() {
 
                                                                                                                                 request.post(encounterOptions, function (error, response, body) {
                                                                                                                                     if (error) {
-                                                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                                        log.error(error);
-                                                                                                                                        log.error(response.body);
+                                                                                                                                        console.log("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                                        console.log(error);
+                                                                                                                                        console.log(response.body);
 
 
                                                                                                                                         orchestrationResponse = error
@@ -591,7 +591,7 @@ function setupApp() {
                                                                                                                                         orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, request.url, request.headers, request.body, orchestrationResponse, body))
                                                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                                                     } else {
-                                                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
+                                                                                                                                        console.log("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
                                                                                                                                         //console.log('statusCode:', response && response.statusCode);
                                                                                                                                         //console.log('body:', body);
                                                                                                                                         //res.sendStatus(response.statusCode);
@@ -610,8 +610,8 @@ function setupApp() {
 
 
                                                                                                                             } else {
-                                                                                                                                log.warn("Concept not found!", locations["l_" + data.facilityCode]["name"]);
-                                                                                                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                                console.log("Concept not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                                                                console.log("Encounter creation aborted for " + data.SampleID + ".");
 
                                                                                                                                 orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                                                                 orchestrationResponse = { statusCode: 500, headers: headers }
@@ -622,8 +622,8 @@ function setupApp() {
                                                                                                                         }
                                                                                                                     });
                                                                                                                 } else {
-                                                                                                                    log.warn("Concept not found!", locations["l_" + data.facilityCode]["name"]);
-                                                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                    console.log("Concept not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                                                    console.log("Encounter creation aborted for " + data.SampleID + ".");
 
 
                                                                                                                     orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
@@ -635,8 +635,8 @@ function setupApp() {
                                                                                                             }
                                                                                                         });
                                                                                                     } else {
-                                                                                                        log.warn("Data with empty result received!");
-                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                        console.log("Data with empty result received!");
+                                                                                                        console.log("Encounter creation aborted for " + data.SampleID + ".");
 
                                                                                                         orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                                         orchestrationResponse = { statusCode: 500, headers: headers }
@@ -645,8 +645,8 @@ function setupApp() {
                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                     }
                                                                                                 } else {
-                                                                                                    log.warn("RECENCY concept list not found!", locations["l_" + data.facilityCode]["name"]);
-                                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                    console.log("RECENCY concept list not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                                    console.log("Encounter creation aborted for " + data.SampleID + ".");
 
 
                                                                                                     orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
@@ -658,8 +658,8 @@ function setupApp() {
                                                                                             }
                                                                                         });
                                                                                     } else {
-                                                                                        log.warn("Form " + tests.recency_vl.form + " not found!", locations["l_" + data.facilityCode]["name"]);
-                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                        console.log("Form " + tests.recency_vl.form + " not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                        console.log("Encounter creation aborted for " + data.SampleID + ".");
 
                                                                                         orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                         orchestrationResponse = { statusCode: 500, headers: headers }
@@ -684,8 +684,8 @@ function setupApp() {
                                                             }
                                                         });
                                                     } else {
-                                                        log.warn("Visite type not found!", locations["l_" + data.facilityCode]["name"]);
-                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                        console.log("Visite type not found!", locations["l_" + data.facilityCode]["name"]);
+                                                        console.log("Encounter creation aborted for " + data.SampleID + ".");
 
 
                                                         orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
@@ -698,11 +698,11 @@ function setupApp() {
                                             });
                                         } else if (results && results.length == 0) {//No result found
                                             if (nd_of_research < 2) {//Second research possible by name 
-                                                log.info("No patient found, searching by name: " + data.firstName + " " + data.lastName);
+                                                console.log("No patient found, searching by name: " + data.firstName + " " + data.lastName);
                                                 LoopA(data.firstName + " " + data.lastName);
                                             } else {
-                                                log.warn("No patient found in " + locations["l_" + data.facilityCode]["name"], "Name: " + data.firstName + " " + data.lastName);
-                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                console.log("No patient found in " + locations["l_" + data.facilityCode]["name"], "Name: " + data.firstName + " " + data.lastName);
+                                                console.log("Encounter creation aborted for " + data.SampleID + ".");
 
 
                                                 orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
@@ -712,8 +712,8 @@ function setupApp() {
                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                             }
                                         } else {
-                                            log.warn("Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision.");
-                                            log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                            console.log("Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision.");
+                                            console.log("Encounter creation aborted for " + data.SampleID + ".");
 
 
                                             orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
@@ -723,12 +723,12 @@ function setupApp() {
                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                         }
                                     } else if (response.statusCode == "403") {
-                                        log.error("FORBIDEN statusCode: ", response.statusCode);
+                                        console.log("FORBIDEN statusCode: ", response.statusCode);
                                         if (forbidenRepeatTime < 1) {
                                             LoopA(data.tractnetID);//Search by TracknetID Firts
                                         } else {
-                                            log.error("ACCESS FORBIDEN");
-                                            log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                            console.log("ACCESS FORBIDEN");
+                                            console.log("Encounter creation aborted for " + data.SampleID + ".");
 
 
                                             orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
@@ -738,7 +738,7 @@ function setupApp() {
                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                         }
                                     } else {
-                                        log.error("Encounter creation aborted for unkown reason.", "Status Code " + response.statusCode);
+                                        console.log("Encounter creation aborted for unkown reason.", "Status Code " + response.statusCode);
 
 
                                         orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
@@ -751,7 +751,7 @@ function setupApp() {
                             });
                         } else {
                             if (nd_of_research < 2) {//Second research possible by name 
-                                log.info("No patient found, searching by name : " + data.firstName + " " + data.lastName);
+                                console.log("No patient found, searching by name : " + data.firstName + " " + data.lastName);
                                 LoopA(data.firstName + " " + data.lastName);
                             } else {
 
@@ -763,10 +763,10 @@ function setupApp() {
                             }
                         }
                     } catch (err) {
-                        log.error(err);
+                        console.log(err);
                     }
                 }
-                log.info("Searching patient by tractnetID: " + data.tractnetID);
+                console.log("Searching patient by tractnetID: " + data.tractnetID);
 
                 LoopA(data.tractnetID);//Search by TracknetID Firts
 
@@ -804,7 +804,7 @@ function start(callback) {
         medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
             if (err) {
                 winston.error('Failed to register this mediator, check your config')
-                log.error('Failed to register this mediator, check your config');
+                console.log('Failed to register this mediator, check your config');
                 winston.error(err.stack)
                 process.exit(1)
             }
@@ -815,12 +815,12 @@ function start(callback) {
                 config = newConfig
                 if (err) {
                     winston.error('Failed to fetch initial config')
-                    log.error('Failed to fetch initial config');
+                    console.log('Failed to fetch initial config');
                     winston.error(err.stack)
                     process.exit(1)
                 } else {
                     winston.info('Successfully registered mediator!')
-                    log.info('Successfully registered mediator!');
+                    console.log('Successfully registered mediator!');
                     let app = setupApp()
                     const server = app.listen(port, () => {
                         if (apiConf.heartbeat) {
@@ -845,7 +845,7 @@ function start(callback) {
         config = mediatorConfig.config
         let app = setupApp()
         const server = app.listen(port, () => callback(server))
-        log.info('Labware OpenMRS mediator started on port ' + port);
+        console.log('Labware OpenMRS mediator started on port ' + port);
     }
 }
 exports.start = start
