@@ -60,8 +60,7 @@ var tests = {
 var locations = {
     l_448: {
         name: "Location-10",
-        ip: "http://130.104.12.92:8081"
-
+        ip: "openmrs-tomcat:8080"
     }
 }
 
