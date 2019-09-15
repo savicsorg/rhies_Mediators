@@ -126,12 +126,8 @@ function setupApp() {
                     if (q && q != "") {
                         var options = {
                             url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/patient?q=" + q + "&v=full",
-                            body: JSON.stringify(
-                                    {
-                                        username: "geoffrey",
-                                        password: "Ganyugxy1"
-                                    }),
                             headers: {
+                                'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                 'Content-Type': 'application/json'
                             }
                         }
@@ -803,7 +799,7 @@ function start(callback) {
     }
 
     if (apiConf.register) {
-    //if (false) {
+        //if (false) {
         medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
             if (err) {
                 winston.error('Failed to register this mediator, check your config')
