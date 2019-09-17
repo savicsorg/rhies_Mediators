@@ -13,7 +13,7 @@ const _ = require('underscore');
 var request = require('request');
 
 const utils = require('./utils');
-const formMatch = require('./FormMatch');
+const formMapping = require('./formMapping');
 
 // Logging setup
 winston.remove(winston.transports.Console)
@@ -80,8 +80,7 @@ function setupApp() {
                     //send incoming form
                     if (utils.isFineValue(fields.encounter.form) == true && utils.isFineValue(fields.encounter.form.display) == true) {
                       winston.info('Adding a new ', fields.encounter.form.display.trim());
-
-                      if (fields.encounter.form.display.trim().toUpperCase() == "HIV CASE-BASED SURVEILLANCE Form - Index testing, partner notification, recency testing information".toUpperCase) {
+                      if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
                         addHivCaseBaseSurveillance(fields, organizationUnit, trackedEntityInstanceId, enrollmentId, function (error, resp) {
                           if (error) {
                             winston.error('error while adding ', fields.encounter.form.display.trim, ', error : ', error);
@@ -91,7 +90,7 @@ function setupApp() {
                         })
                       }
 
-                      if (fields.encounter.form.display.trim().toUpperCase() == "Confidential HIV CRF - SECTION 1: Enrollment Information".toUpperCase) {
+                      if (fields.encounter.form.display.trim().toUpperCase() == apiConf.enrollmentForm.trim().toUpperCase()) {
                         addHivCrfSection1(fields, organizationUnit, trackedEntityInstanceId, enrollmentId, function (error, resp) {
                           if (error) {
                             winston.error('error while adding ', fields.encounter.form.display.trim, ', error : ', error);
@@ -101,7 +100,7 @@ function setupApp() {
                         })
                       }
 
-                      if (fields.encounter.form.display.trim().toUpperCase() == "Confidential HIV CRF - SECTION II: Follow up Information".toUpperCase) {
+                      if (fields.encounter.form.display.trim().toUpperCase() == apiConf.followupForm.trim().toUpperCase()) {
                         addHivCrfSection2(fields, organizationUnit, trackedEntityInstanceId, enrollmentId, function (error, resp) {
                           if (error) {
                             winston.error('error while adding ', fields.encounter.form.display.trim, ', error : ', error);
@@ -162,7 +161,6 @@ var upsertEntity = function (fields, organizationUnit, callback) {
             ]
           }
 
-
           //Query with UPID or TRACNetId 
           getTrackedEntity(organizationUnit, UPId, TRACNetId, function (error, resp) {
             if (error) {
@@ -170,72 +168,98 @@ var upsertEntity = function (fields, organizationUnit, callback) {
             } else {
               if (utils.isFineValue(resp) == true) {
                 //A tracked entity instance found, updating ...
-                var options = {
-                  url: apiConf.api.dhis2.url + "/api/trackedEntityInstances/" + resp.trackedEntityInstance,
-                  headers: {
-                    'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(patientInstance),
-                };
 
-                winston.info('Updating Entity instance ...')
-                // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
-                // or we take what is on resp.trackedEntityInstance
-
-                request.put(options, function (error, response, body) {
-                  if (error) {
-                    callback(error);
-                  } else {
-                    var ResponseBody = JSON.parse(body);
-                    if (utils.isFineValue(ResponseBody) == true) {
-                      if (ResponseBody.httpStatusCode == 200) {
-                        winston.info('Entity instance ', resp.trackedEntityInstance, ' updated with success ', ResponseBody.httpStatusCode, ResponseBody.message)
-
-                        callback(null, resp.trackedEntityInstance);
-                      } else {
-                        winston.error('An error occured when trying to update an entity instance ', ResponseBody.httpStatusCode, body.message)
-                        callback('An error occured when trying to update an entity instance ' + ResponseBody.message);
-                      }
+                if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
+                  // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
+                  // or we take what is on resp.trackedEntityInstance
+                  formMapping.getValue(formMapping.form1MappingTable, fields, "ISfxedlVq7Y", function (result) {
+                    if (utils.isFineValue(result) == true) {
+                      patientInstance.attributes[1].value = result;
                     } else {
-                      callback('An error occured, the server returned an empty response when updating an entity instance');
+                      patientInstance.attributes[1].value = resp.attributes[1].value;
                     }
-                  }
-                });
 
+                    var options = {
+                      url: apiConf.api.dhis2.url + "/api/trackedEntityInstances/" + resp.trackedEntityInstance,
+                      headers: {
+                        'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(patientInstance),
+                    };
+
+                    winston.info('Updating Entity instance ...')
+                    request.put(options, function (error, response, body) {
+                      if (error) {
+                        callback(error);
+                      } else {
+                        var ResponseBody = JSON.parse(body);
+                        if (utils.isFineValue(ResponseBody) == true) {
+                          if (ResponseBody.httpStatusCode == 200) {
+                            winston.info('Entity instance ', resp.trackedEntityInstance, ' updated with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                            callback(null, resp.trackedEntityInstance);
+                          } else {
+                            if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true) {
+                              callback("An error occured when trying to update an entity instance", ResponseBody.response.importSummaries[0].conflicts);
+                            } else {
+                              winston.error('An error occured when trying to update an entity instance ', ResponseBody.httpStatusCode, body.message)
+                              callback('An error occured when trying to update an entity instance ' + ResponseBody.message);
+                            }
+                          }
+                        } else {
+                          callback('An error occured, the server returned an empty response when updating an entity instance');
+                        }
+                      }
+                    });
+
+                  });
+                }
               } else {
                 //No tracked entity instance found, creating...
-                var options = {
-                  url: apiConf.api.dhis2.url + "/api/trackedEntityInstances",
-                  headers: {
-                    'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify(patientInstance),
-                };
 
-                winston.info('Creating Entity instance ...')
-                request.post(options, function (error, response, body) {
-                  // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
+                if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
+                  // if received encounter have the right (start of ARV), we replace
                   // or we let like this
-                  if (error) {
-                    callback(error);
-                  } else {
-                    var ResponseBody = JSON.parse(body);
-
-                    if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
-                      if (ResponseBody.httpStatusCode == 200) {
-                        winston.info('Entity instance ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
-                        callback(null, ResponseBody.response.importSummaries[0].reference);
-                      } else {
-                        winston.error('An error occured when trying to create an entity instance ', ResponseBody.httpStatusCode, body.message)
-                        callback('An error occured when trying to create an entity instance ' + ResponseBody.message);
-                      }
-                    } else {
-                      callback('An error occured, the server returned an empty when creation an entity instance');
+                  formMapping.getValue(formMapping.form1MappingTable, fields, "ISfxedlVq7Y", function (result) {
+                    if (utils.isFineValue(result) == true) {
+                      patientInstance.attributes[1].value = result;
                     }
-                  }
-                });
+
+                    var options = {
+                      url: apiConf.api.dhis2.url + "/api/trackedEntityInstances",
+                      headers: {
+                        'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(patientInstance),
+                    };
+
+                    winston.info('Creating Entity instance ...')
+                    request.post(options, function (error, response, body) {
+                      if (error) {
+                        callback(error);
+                      } else {
+                        var ResponseBody = JSON.parse(body);
+
+                        if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
+                          if (ResponseBody.httpStatusCode == 200) {
+                            winston.info('Entity instance ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                            callback(null, ResponseBody.response.importSummaries[0].reference);
+                          } else {
+                            if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true) {
+                              callback("An error occured when trying to create an entity instance", ResponseBody.response.importSummaries[0].conflicts);
+                            } else {
+                              winston.error('An error occured when trying to create an entity instance ', ResponseBody.httpStatusCode, body.message)
+                              callback('An error occured when trying to create an entity instance ' + ResponseBody.message);
+                            }
+                          }
+                        } else {
+                          callback('An error occured, the server returned an empty body when creating an entity instance');
+                        }
+                      }
+                    });
+                  });
+                }
               }
             }
           });
@@ -449,264 +473,771 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
       }
 
       if (utils.isFineValue(resp) == true) {
-        // if received encounter have the right enrollmentDate and incidentDate , we replace
-        // or we take what is on enrollment
 
-        var options = {
-          url: apiConf.api.dhis2.url + "/api/enrollments/" + resp.enrollment,
-          headers: {
-            'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(enrollementValue),
-        };
+        if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
+          // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
+          // or we take what is on resp.trackedEntityInstance
+          formMapping.getValue(formMapping.form1MappingTable, fields, "ijTurgFUOPq", function (result) {
 
-        winston.info('Updating enrollment ...')
-        request.put(options, function (error, response, body) {
-          if (error) {
-            callback(error);
-          } else {
-            var ResponseBody = JSON.parse(body);
-            if (utils.isFineValue(ResponseBody) == true) {
-              if (ResponseBody.httpStatusCode == 200) {
-                winston.info('Enrollment ', resp.enrollment, ' done with success ', ResponseBody.httpStatusCode, ResponseBody.message)
-                callback(null, resp.enrollment);
-              } else {
-                winston.error('An error occured when trying to update an Enrollment', ResponseBody.httpStatusCode, body.message)
-                callback('An error occured when trying to update an Enrollment' + ResponseBody.message);
-              }
+            if (utils.isFineValue(result) == true) {
+              enrollementValue.enrollmentDate = result;
             } else {
-              callback('An error occured, the server returned an empty response when updating an Enrollment');
+              enrollementValue.enrollmentDate = resp.enrollmentDate;
             }
-          }
-        });
 
 
+            var options = {
+              url: apiConf.api.dhis2.url + "/api/enrollments/" + resp.enrollment,
+              headers: {
+                'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(enrollementValue),
+            };
+
+            winston.info('Updating enrollment ...')
+            request.put(options, function (error, response, body) {
+              if (error) {
+                callback(error);
+              } else {
+                var ResponseBody = JSON.parse(body);
+                if (utils.isFineValue(ResponseBody) == true) {
+                  if (ResponseBody.httpStatusCode == 200) {
+                    winston.info('Enrollment ', resp.enrollment, ' done with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                    callback(null, resp.enrollment);
+                  } else {
+                    if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true) {
+                      callback("An error occured when trying to update an Enrollment", ResponseBody.response.importSummaries[0].conflicts);
+                    } else {
+                      winston.error('An error occured when trying to update an Enrollment ', ResponseBody.httpStatusCode, body.message)
+                      callback('An error occured when trying to update an Enrollment ' + ResponseBody.message);
+                    }
+                  }
+                } else {
+                  callback('An error occured, the server returned an empty response when updating an Enrollment');
+                }
+              }
+            });
+          });
+        }
       } else {
-        // if received encounter have the right enrollmentDate and incidentDate , we replace
-        //or we let like this
-
-        var options = {
-          url: apiConf.api.dhis2.url + "/api/enrollments",
-          headers: {
-            'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(enrollementValue),
-        };
-
-        winston.info('Creating enrollment ...')
-        request.post(options, function (error, response, body) {
-          if (error) {
-            callback(error);
-          } else {
-
-            var ResponseBody = JSON.parse(body);
-            if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
-              if (ResponseBody.httpStatusCode == 200) {
-                winston.info('Enrollment ', ResponseBody.response.importSummaries[0].reference, ' done with success ', ResponseBody.httpStatusCode, ResponseBody.message)
-                callback(null, ResponseBody.response.importSummaries[0].reference);
-              } else {
-                winston.error('An error occured when trying to create an enrollment ', ResponseBody.httpStatusCode, body.message)
-                callback('An error occured when trying to create an enrollment ' + ResponseBody.message);
-
-              }
-            } else {
-              callback('An error occured, the server returned an empty when creation an enrollment');
+        if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
+          // if received encounter have the right enrollmentDate and incidentDate , we replace
+          //or we let like this
+          formMapping.getValue(formMapping.form1MappingTable, fields, "ijTurgFUOPq", function (result) {
+            if (utils.isFineValue(result) == true) {
+              enrollementValue.enrollmentDate = result;
             }
-          }
-        });
 
+            var options = {
+              url: apiConf.api.dhis2.url + "/api/enrollments",
+              headers: {
+                'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(enrollementValue),
+            };
+
+            winston.info('Creating enrollment ...')
+            request.post(options, function (error, response, body) {
+              if (error) {
+                callback(error);
+              } else {
+
+                var ResponseBody = JSON.parse(body);
+                if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
+                  if (ResponseBody.httpStatusCode == 200) {
+                    winston.info('Enrollment ', ResponseBody.response.importSummaries[0].reference, ' done with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                    callback(null, ResponseBody.response.importSummaries[0].reference);
+                  } else {
+                    
+                    if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true) {
+                      callback("An error occured when trying to create an enrollment ", ResponseBody.response.importSummaries[0].conflicts);
+                    } else {
+                      winston.error('An error occured when trying to create an enrollment ', ResponseBody.httpStatusCode, body.message)
+                      callback('An error occured when trying to create an enrollment ' + ResponseBody.message);
+                    }
+                  }
+                } else {
+                  callback('An error occured, the server returned an empty body when creating an enrollment');
+                }
+              }
+            });
+          });
+        }
       }
-
-
     }
   });
 }
 
 
-var addHivCaseBaseSurveillance = function (fields, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
-
+var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //1- sending createNewEventStageInfoRecencyContact
-  var recencyData = {
-    "events": [
+  var dhsi2RecencyData = {
+    "program": "CYyICYiO5zo",
+    "orgUnit": organizationUnit,
+    "eventDate": utils.getNewDate(),
+    "status": "COMPLETED",
+    "storedBy": "Savics",
+    "programStage": "r45yv7rwDEO",
+    "trackedEntityInstance": trackedEntityInstanceId,
+    "enrollment": enrollmentId,
+    "dataValues": [
       {
-        "program": "CYyICYiO5zo", 
-        "orgUnit": organizationUnit,
-        "eventDate": "yyyy-mm-dd", //Put the completion date of this form
-        "status": "COMPLETED",
-        "storedBy": "amza",
-        "programStage": "r45yv7rwDEO",
-        "enrollment": enrollmentId,
-        "dataValues": [
-          {
-            "dataElement": formMatch.getForm1Value("SNcELOKJCTs",fields),
-            "value": "" 
-          },
-          {
-            "dataElement": formMatch.getForm1Value("K4l00GKVInN",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("W58gazENRqS",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("xHo7COhyMKM",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("KX4MrpcRuAb",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("GyqLOJRotuL",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("FsbargPR5hR",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("buRJTweOy6h",fields),
-            "value": ""
-          }
-        ]
+        "dataElement": "SNcELOKJCTs",
+        "value": ""
+      },
+      {
+        "dataElement": "K4l00GKVInN",
+        "value": ""
+      },
+      {
+        "dataElement": "W58gazENRqS",
+        "value": ""
+      },
+      {
+        "dataElement": "xHo7COhyMKM",
+        "value": ""
+      },
+      {
+        "dataElement": "KX4MrpcRuAb",
+        "value": ""
+      },
+      {
+        "dataElement": "GyqLOJRotuL",
+        "value": ""
+      },
+      {
+        "dataElement": "FsbargPR5hR",
+        "value": ""
+      },
+      {
+        "dataElement": "buRJTweOy6h",
+        "value": ""
       }
     ]
   }
+
 
 
   //2- sending createNewEventStageInfoContacts
-  winston.info('Adding contacts information...');
-
-
-  var contactData = {
-    "events": [
+  var dhsi2ContactData =
+  {
+    "program": "CYyICYiO5zo",
+    "orgUnit": organizationUnit,
+    "eventDate": utils.getNewDate(),
+    "status": "COMPLETED",
+    "storedBy": "amza",
+    "programStage": "RtQV53iuq7z",
+    "trackedEntityInstance": trackedEntityInstanceId,
+    "enrollment": enrollmentId,
+    "dataValues": [
       {
-        "program": "CYyICYiO5zo", 
-        "orgUnit": organizationUnit,
-        "eventDate": "yyyy-mm-dd", 
-        "status": "COMPLETED",
-        "storedBy": "amza",
-        "programStage": "RtQV53iuq7z", 
-        "enrollment": enrollmentId,
-        "dataValues": [
-          {
-            "dataElement": formMatch.getForm1Value("CIh22FjXvOR",fields),
-            "value": "" 
-          },
-          {
-            "dataElement": formMatch.getForm1Value("m3pQUNk6AeL",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("Zxkghqkbn7p",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("scledbnTVVK",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("mfAyPSJA74t",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("iz0c8aW79QH",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("MgkDDuHQHeN",fields),
-            "value": ""
-          }
-        ]
+        "dataElement": "CIh22FjXvOR",
+        "value": ""
+      },
+      {
+        "dataElement": "m3pQUNk6AeL",
+        "value": ""
+      },
+      {
+        "dataElement": "Zxkghqkbn7p",
+        "value": ""
+      },
+      {
+        "dataElement": "scledbnTVVK",
+        "value": ""
+      },
+      {
+        "dataElement": "mfAyPSJA74t",
+        "value": ""
+      },
+      {
+        "dataElement": "iz0c8aW79QH",
+        "value": ""
+      },
+      {
+        "dataElement": "MgkDDuHQHeN",
+        "value": ""
       }
     ]
   }
+
+
 
   //3- sending createNewEventStageResultContactNotif
-  winston.info('Adding results of contacts notifications...');
-  var notifData = {
-    "events": [
+  var dhsi2NotifData =
+  {
+    "program": "CYyICYiO5zo",
+    "orgUnit": organizationUnit,
+    "eventDate": utils.getNewDate(),
+    "status": "COMPLETED",
+    "storedBy": "Savics",
+    "programStage": "b9rxVAiJaxA",
+    "trackedEntityInstance": trackedEntityInstanceId,
+    "enrollment": enrollmentId,
+    "dataValues": [
       {
-        "program": "CYyICYiO5zo", 
-        "orgUnit": organizationUnit,
-        "eventDate": "yyyy-mm-dd", 
-        "status": "COMPLETED", 
-        "storedBy": "amza",
-        "programStage": "b9rxVAiJaxA",
-        "enrollment": enrollmentId,
-        "dataValues": [
-          {
-            "dataElement": formMatch.getForm1Value("VsEnL2R7crc",fields),
-            "value": "" 
-          },
-          {
-            "dataElement": formMatch.getForm1Value("VuZnWho10cr",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("SUL0FdHdNyq",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("y0Z5EVxKowc",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("iTx0txf0FVj",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("jJxPUCWKW1K",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("i5f4SA6TGRt",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("Y7RU4f1g49C",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("GE0hAdM6xMg",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("r3DvI1uxJM0",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("UXx7mkioReb",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("kVoTnMfXnyt",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("sCvxPIDQ66r",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("r1PVDg5nIGZ",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("OsZRlnXq7Qk",fields),
-            "value": ""
-          },
-          {
-            "dataElement": formMatch.getForm1Value("yRpn8oL0vxv",fields),
-            "value": ""
-          }
-        ]
+        "dataElement": "VsEnL2R7crc",
+        "value": ""
+      },
+      {
+        "dataElement": "VuZnWho10cr",
+        "value": ""
+      },
+      {
+        "dataElement": "SUL0FdHdNyq",
+        "value": ""
+      },
+      {
+        "dataElement": "y0Z5EVxKowc",
+        "value": ""
+      },
+      {
+        "dataElement": "iTx0txf0FVj",
+        "value": ""
+      },
+      {
+        "dataElement": "jJxPUCWKW1K",
+        "value": ""
+      },
+      {
+        "dataElement": "i5f4SA6TGRt",
+        "value": ""
+      },
+      {
+        "dataElement": "Y7RU4f1g49C",
+        "value": ""
+      },
+      {
+        "dataElement": "GE0hAdM6xMg",
+        "value": ""
+      },
+      {
+        "dataElement": "r3DvI1uxJM0",
+        "value": ""
+      },
+      {
+        "dataElement": "UXx7mkioReb",
+        "value": ""
+      },
+      {
+        "dataElement": "kVoTnMfXnyt",
+        "value": ""
+      },
+      {
+        "dataElement": "sCvxPIDQ66r",
+        "value": ""
+      },
+      {
+        "dataElement": "r1PVDg5nIGZ",
+        "value": ""
+      },
+      {
+        "dataElement": "OsZRlnXq7Qk",
+        "value": ""
+      },
+      {
+        "dataElement": "yRpn8oL0vxv",
+        "value": ""
       }
     ]
   }
 
+
+  winston.info('Adding recency contact information ...');
+  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyData, function (error, result) {
+    if (error) {
+      winston.error('An error occured when trying to add a recency contact information ', error);
+    } else {
+      winston.info('Recency contact information added with success ', result);
+    }
+  })
+
+  winston.info('Adding contacts information...');
+  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactData, function (error, result) {
+    if (error) {
+      winston.error('An error occured when trying to add a contacts information ', error);
+    } else {
+      winston.info('Contacts information added with success ', result);
+    }
+  })
+
+  winston.info('Adding results of contacts notifications...');
+  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifData, function (error, result) {
+    if (error) {
+      winston.error('An error occured when trying to add a results of contacts notifications ', error);
+    } else {
+      winston.info('Results of contacts notifications added with success ', result);
+    }
+  })
+
+};
+
+var addHivCrfSection1 = function (fields, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
+  //createNewEventStageEnrollmentInfo.json  
+  var enrollementData =
+  {
+    "program": "CYyICYiO5zo",
+    "orgUnit": organizationUnit,
+    "eventDate": utils.getNewDate(),
+    "status": "COMPLETED",
+    "storedBy": "Savics",
+    "programStage": "pBAeqPjnhdF",
+    "trackedEntityInstance": trackedEntityInstanceId,
+    "enrollment": enrollmentId,
+    "dataValues": [
+      {
+        "dataElement": "pbeBAIly2GT",
+        "value": ""
+      },
+      {
+        "dataElement": "qycXEyMMFMb",
+        "value": ""
+      },
+      {
+        "dataElement": "txsxKp2l6y9",
+        "value": ""
+      },
+      {
+        "dataElement": "oLqMrGMI4Uf",
+        "value": ""
+      },
+      {
+        "dataElement": "I809QdRlgCb",
+        "value": ""
+      },
+      {
+        "dataElement": "tnMNaBmQaIy",
+        "value": ""
+      },
+      {
+        "dataElement": "wXcnNSYryUd",
+        "value": ""
+      },
+      {
+        "dataElement": "aYhoeOchJYM",
+        "value": ""
+      },
+      {
+        "dataElement": "GwCiJLY0of4",
+        "value": ""
+      },
+      {
+        "dataElement": "c4KsTiEImGx",
+        "value": ""
+      },
+      {
+        "dataElement": "qsCPZIJLpYo",
+        "value": ""
+      },
+      {
+        "dataElement": "ZvH6DY75uR1",
+        "value": ""
+      },
+      {
+        "dataElement": "p5U0vUS0Q3V",
+        "value": ""
+      },
+      {
+        "dataElement": "I79uRgVEyUc",
+        "value": ""
+      },
+      {
+        "dataElement": "UaCDJMTQRLz",
+        "value": ""
+      },
+      {
+        "dataElement": "kPkjR4qEhhn",
+        "value": ""
+      },
+      {
+        "dataElement": "PZo2sP0TOb6",
+        "value": ""
+      },
+      {
+        "dataElement": "NrWXvZg3WtW",
+        "value": ""
+      },
+      {
+        "dataElement": "Cgt39EInKQV",
+        "value": ""
+      },
+      {
+        "dataElement": "SzvTcCTNlGo",
+        "value": ""
+      },
+      {
+        "dataElement": "G0Jq8kyaJCD",
+        "value": ""
+      },
+      {
+        "dataElement": "xHo7COhyMKM",
+        "value": ""
+      },
+      {
+        "dataElement": "MyMV3TTWYmW",
+        "value": ""
+      },
+      {
+        "dataElement": "SNAaIVKCh78",
+        "value": ""
+      },
+      {
+        "dataElement": "eUVdYRa8qUo",
+        "value": ""
+      },
+      {
+        "dataElement": "KY4a5xCSKgT",
+        "value": ""
+      },
+      {
+        "dataElement": "VQPCeakHIpV",
+        "value": ""
+      },
+      {
+        "dataElement": "NFOu3OCGMKl",
+        "value": ""
+      },
+      {
+        "dataElement": "NZe43UAOGmt",
+        "value": ""
+      },
+      {
+        "dataElement": "ccYYcYf78sz",
+        "value": ""
+      },
+      {
+        "dataElement": "Ba8VCAO9Nqi",
+        "value": ""
+      },
+      {
+        "dataElement": "yu2bxd3xVIg",
+        "value": ""
+      },
+      {
+        "dataElement": "ptZMCKSxvU8",
+        "value": ""
+      },
+      {
+        "dataElement": "qBYsHDuUBIv",
+        "value": ""
+      },
+      {
+        "dataElement": "nMJKcTFHGj0",
+        "value": ""
+      },
+      {
+        "dataElement": "qBYsHDuUBIv",
+        "value": ""
+      },
+      {
+        "dataElement": "DDHl9CtiqaC",
+        "value": ""
+      },
+      {
+        "dataElement": "RDQB5Zx8hMH",
+        "value": ""
+      },
+      {
+        "dataElement": "ocgzZ6BdT8W",
+        "value": ""
+      },
+      {
+        "dataElement": "ZodoxM8PakE",
+        "value": ""
+      },
+      {
+        "dataElement": "ERqqYuUtigv",
+        "value": ""
+      },
+      {
+        "dataElement": "kJIuYQpa9Lc",
+        "value": ""
+      },
+      {
+        "dataElement": "ivqLch0DMXv",
+        "value": ""
+      },
+      {
+        "dataElement": "gNjou1Bq6dz",
+        "value": ""
+      },
+      {
+        "dataElement": "jYMNto3ELj5",
+        "value": ""
+      },
+      {
+        "dataElement": "mKVpD68KeIO",
+        "value": ""
+      },
+      {
+        "dataElement": "ISfxedlVq7Y",
+        "value": ""
+      },
+      {
+        "dataElement": "jmwJSKQthb7",
+        "value": ""
+      },
+      {
+        "dataElement": "UYuVIHot43a",
+        "value": ""
+      },
+      {
+        "dataElement": "cE0JLRDspz9",
+        "value": ""
+      },
+      {
+        "dataElement": "MWnDK640C17",
+        "value": ""
+      },
+      {
+        "dataElement": "MG6I5RT8YsE",
+        "value": ""
+      },
+      {
+        "dataElement": "Qx0v2TzHlS0",
+        "value": ""
+      },
+      {
+        "dataElement": "qywtB6np899",
+        "value": ""
+      },
+      {
+        "dataElement": "nkRWZpUQ55g",
+        "value": ""
+      },
+      {
+        "dataElement": "Tgt3yKYd2oD",
+        "value": ""
+      },
+      {
+        "dataElement": "LovSZ5zd8YL",
+        "value": ""
+      },
+      {
+        "dataElement": "ePONK5dlCAl",
+        "value": ""
+      },
+      {
+        "dataElement": "G3dUs7PuDqx",
+        "value": ""
+      },
+      {
+        "dataElement": "OKemd50jbHG",
+        "value": ""
+      }
+    ]
+  }
+
+
+  var options = {
+    url: apiConf.api.dhis2.url + "/api/events",
+    headers: {
+      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(enrollementData),
+  };
+
+  winston.info('Adding enrollment data event...');
+  request.post(options, function (error, response, body) {
+    if (error) {
+      callback(error);
+    } else {
+      var ResponseBody = JSON.parse(body);
+      if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
+        if (ResponseBody.httpStatusCode == 200) {
+          winston.info('enrollment data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+          callback(null, 'enrollment data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ')
+        } else {
+          winston.error('An error occured when trying to create enrollment data event ', ResponseBody.httpStatusCode, body.message)
+          callback('An error occured when trying to create enrollment data event ' + ResponseBody.message);
+        }
+      } else {
+        callback('An error occured, the server returned an empty body when creating enrollment data event');
+      }
+    }
+  });
+
+};
+
+var addHivCrfSection2 = function (fields, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
+  //createNewEventStageFollowUpInfo.json 
+  var followupData =
+  {
+    "program": "CYyICYiO5zo",
+    "orgUnit": organizationUnit,
+    "eventDate": utils.getNewDate(),
+    "status": "COMPLETED",
+    "storedBy": "Savics",
+    "programStage": "Em0sRsnHjoR",
+    "trackedEntityInstance": trackedEntityInstanceId,
+    "enrollment": enrollmentId,
+    "dataValues": [
+      {
+        "dataElement": "pbeBAIly2GT",
+        "value": ""
+      },
+      {
+        "dataElement": "txsxKp2l6y9",
+        "value": ""
+      },
+      {
+        "dataElement": "oLqMrGMI4Uf",
+        "value": ""
+      },
+      {
+        "dataElement": "I809QdRlgCb",
+        "value": ""
+      },
+      {
+        "dataElement": "tnMNaBmQaIy",
+        "value": ""
+      },
+      {
+        "dataElement": "wXcnNSYryUd",
+        "value": ""
+      },
+      {
+        "dataElement": "OCZt4UJitnh",
+        "value": ""
+      },
+      {
+        "dataElement": "yu67Iiw64UQ",
+        "value": ""
+      },
+      {
+        "dataElement": "p5U0vUS0Q3V",
+        "value": ""
+      },
+      {
+        "dataElement": "I79uRgVEyUc",
+        "value": ""
+      },
+      {
+        "dataElement": "UaCDJMTQRLz",
+        "value": ""
+      },
+      {
+        "dataElement": "kPkjR4qEhhn",
+        "value": ""
+      },
+      {
+        "dataElement": "OTAM6B4xZwf",
+        "value": ""
+      },
+      {
+        "dataElement": "Cgt39EInKQV",
+        "value": ""
+      },
+      {
+        "dataElement": "KrYJW9kvJS2",
+        "value": ""
+      },
+      {
+        "dataElement": "Nld1zMZwPxK",
+        "value": ""
+      },
+      {
+        "dataElement": "jYMNto3ELj5",
+        "value": ""
+      },
+      {
+        "dataElement": "jmwJSKQthb7",
+        "value": ""
+      },
+      {
+        "dataElement": "xMLGFpVb0Kh",
+        "value": ""
+      },
+      {
+        "dataElement": "KRTWX8CatfN",
+        "value": ""
+      },
+      {
+        "dataElement": "Nxu3IZxrngL",
+        "value": ""
+      },
+      {
+        "dataElement": "gZLYfulH1cx",
+        "value": ""
+      },
+      {
+        "dataElement": "dlbRyDDWVdz",
+        "value": ""
+      },
+      {
+        "dataElement": "MWnDK640C17",
+        "value": ""
+      },
+      {
+        "dataElement": "MG6I5RT8YsE",
+        "value": ""
+      },
+      {
+        "dataElement": "Tgt3yKYd2oD",
+        "value": ""
+      },
+      {
+        "dataElement": "LovSZ5zd8YL",
+        "value": ""
+      },
+      {
+        "dataElement": "ePONK5dlCAl",
+        "value": ""
+      },
+      {
+        "dataElement": "G3dUs7PuDqx",
+        "value": ""
+      },
+      {
+        "dataElement": "OKemd50jbHG",
+        "value": ""
+      },
+      {
+        "dataElement": "lrM4jhiDogd",
+        "value": ""
+      },
+      {
+        "dataElement": "kmA8X0Qwjor",
+        "value": ""
+      },
+      {
+        "dataElement": "L9lcjEkxHBv",
+        "value": ""
+      },
+      {
+        "dataElement": "eCbwnVkQ8Rt",
+        "value": ""
+      },
+      {
+        "dataElement": "OO8wNkgpAwK",
+        "value": ""
+      },
+      {
+        "dataElement": "BMf4geBAMFU",
+        "value": ""
+      },
+      {
+        "dataElement": "LpDBQwhUZ4U",
+        "value": ""
+      },
+      {
+        "dataElement": "yH3otrjN0qZ",
+        "value": ""
+      },
+      {
+        "dataElement": "EBAuC7pMu4O",
+        "value": ""
+      },
+      {
+        "dataElement": "nQGHwHA3ayC",
+        "value": ""
+      }
+
+    ]
+  }
 
 
 
@@ -716,89 +1247,34 @@ var addHivCaseBaseSurveillance = function (fields, organizationUnit, trackedEnti
       'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(recencyData),
+    body: JSON.stringify(followupData),
   };
 
-  winston.info('Adding Recency information and contact data event...');
+  winston.info('Adding followup data event...');
   request.post(options, function (error, response, body) {
     if (error) {
       callback(error);
     } else {
       var ResponseBody = JSON.parse(body);
-
-
-
       if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
         if (ResponseBody.httpStatusCode == 200) {
-          winston.info('Recency data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
-          
-          var options = {
-            url: apiConf.api.dhis2.url + "/api/events",
-            headers: {
-              'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(contactData),
-          };
-
-          winston.info('Adding Contacts data event...');
-          request.post(options, function (error, response, body) {
-            if (error) {
-              callback(error);
-            } else {
-              var ResponseBody = JSON.parse(body);
-        
-              if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
-                if (ResponseBody.httpStatusCode == 200) {
-                  winston.info('Contacts data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
-                  
-                  
-                  
-                  
-
-               
-                } else {
-                  winston.error('An error occured when trying to create Contacts data event ', ResponseBody.httpStatusCode, body.message)
-                  callback('An error occured when trying to create Contacts data event ' + ResponseBody.message);
-                }
-              } else {
-                callback('An error occured, the server returned an empty when creation Contacts data event');
-              }
-            }
-          });
-          
-
-
-
-
-
-
-
-
-        
+          winston.info('followup data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+          callback(null, 'followup data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ')
         } else {
-          winston.error('An error occured when trying to create recency data event ', ResponseBody.httpStatusCode, body.message)
-          callback('An error occured when trying to create recency data event ' + ResponseBody.message);
+          winston.error('An error occured when trying to create followup data event ', ResponseBody.httpStatusCode, body.message)
+          callback('An error occured when trying to create followup data event ' + ResponseBody.message);
         }
       } else {
-        callback('An error occured, the server returned an empty when creation recency data event');
+        callback('An error occured, the server returned an empty body when creating followup data event');
       }
     }
   });
+
 };
 
-var addHivCrfSection1 = function (fields, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
-  //createNewEventStageEnrollmentInfo.json  
 
 
-  callback(null, null);
-};
 
-var addHivCrfSection2 = function (fields, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
-  //createNewEventStageFollowUpInfo.json 
-
-  callback(null, null);
-};
 
 
 /**

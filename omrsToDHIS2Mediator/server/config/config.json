@@ -13,6 +13,9 @@
       }
     }
   },
+  "CaseBaseForme": "HIV CASE-BASED SURVEILLANCE Form - Index testing, partner notification, recency testing information",
+  "enrollmentForm": "Confidential HIV CRF - SECTION 1: Enrollment Information",
+  "followupForm": "Confidential HIV CRF - SECTION II: Follow up Information",
   "register": true,
   "heartbeat": true
 }
