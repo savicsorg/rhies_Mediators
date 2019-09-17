@@ -602,49 +602,49 @@ function setupApp() {
                                                                                                                                 }
                                                                                                                             };
                                                                                                                             
-                                                                                                                            res.sendStatus(200);
-//                                                                                                                            request.post(encounterOptions, function (error, response, body) {
-//                                                                                                                                if (error) {
-//                                                                                                                                    console.log("Encounter creation aborted for " + data.SampleID + ".");
-//                                                                                                                                    console.log(error);
-//                                                                                                                                    console.log(response.body);
-//
-//
-//                                                                                                                                    orchestrationResponse = error
-//                                                                                                                                    orchestrationResponse = {statusCode: 500, headers: headers}
-//                                                                                                                                    orchestrations = []
-//                                                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
-//                                                                                                                                    res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
-//                                                                                                                                } else {
-//
-//                                                                                                                                    //console.log('statusCode:', response && response.statusCode);
-//                                                                                                                                    //console.log('body:', body);
-//                                                                                                                                    //res.sendStatus(response.statusCode);
-//                                                                                                                                    needle
-//                                                                                                                                            .post(apiConf.api.openMrsUrl, data, {})
-//                                                                                                                                            .on('readable', function () {
-//
-//                                                                                                                                            })
-//                                                                                                                                            .on('done', function (err, resp) {
-//                                                                                                                                                if (response.statusCode == "201" || response.statusCode == "200") {
-//                                                                                                                                                    console.log("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
-//                                                                                                                                                } else {
-//                                                                                                                                                    console.log("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
-//                                                                                                                                                    console.log(response);
-//                                                                                                                                                }
-//
-//
-//                                                                                                                                                console.log('Transaction data posted OpenHIE', "to", apiConf.api.openMrsUrl);
-//                                                                                                                                                orchestrationResponse = "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID
-//                                                                                                                                                orchestrationResponse = {statusCode: response.statusCode, headers: headers}
-//                                                                                                                                                orchestrations = []
-//                                                                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, response.body))
-//                                                                                                                                                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, "OK", orchestrations, properties))
-//                                                                                                                                            })
-//
-//
-//                                                                                                                                }
-//                                                                                                                            });
+                                                                                                                            //res.sendStatus(200);
+                                                                                                                            request.post(encounterOptions, function (error, response, body) {
+                                                                                                                                if (error) {
+                                                                                                                                    console.log("Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                                    console.log(error);
+                                                                                                                                    console.log(response.body);
+
+
+                                                                                                                                    orchestrationResponse = error
+                                                                                                                                    orchestrationResponse = {statusCode: 500, headers: headers}
+                                                                                                                                    orchestrations = []
+                                                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
+                                                                                                                                    res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
+                                                                                                                                } else {
+
+                                                                                                                                    //console.log('statusCode:', response && response.statusCode);
+                                                                                                                                    //console.log('body:', body);
+                                                                                                                                    //res.sendStatus(response.statusCode);
+                                                                                                                                    needle
+                                                                                                                                            .post(apiConf.api.openMrsUrl, data, {})
+                                                                                                                                            .on('readable', function () {
+
+                                                                                                                                            })
+                                                                                                                                            .on('done', function (err, resp) {
+                                                                                                                                                if (response.statusCode == "201" || response.statusCode == "200") {
+                                                                                                                                                    console.log("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
+                                                                                                                                                } else {
+                                                                                                                                                    console.log("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
+                                                                                                                                                    console.log(response);
+                                                                                                                                                }
+
+
+                                                                                                                                                console.log('Transaction data posted OpenHIE', "to", apiConf.api.openMrsUrl);
+                                                                                                                                                orchestrationResponse = "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID
+                                                                                                                                                orchestrationResponse = {statusCode: response.statusCode, headers: headers}
+                                                                                                                                                orchestrations = []
+                                                                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, response.body))
+                                                                                                                                                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, "OK", orchestrations, properties))
+                                                                                                                                            })
+
+
+                                                                                                                                }
+                                                                                                                            });
 
 
 
