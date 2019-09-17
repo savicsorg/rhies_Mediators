@@ -1,17 +1,23 @@
 {
-  "api": {
-    "username": "root@openhim.org",
-    "password": "0000",
-    "apiURL": "https://core:8080",
-    "openMrsUrl": "http://172.17.0.1:4023/patient",
-    "urlPattern": "/test/",
-    "trustSelfSigned": "true"
-  },
-  "register": true,
-  "heartbeat": true,
-  "system": {
-    "logPath": "../logs/",
-    "deleteLogsAfter": "-1",
-    "environment": "dev"
-  }
+    "api": {
+        "username": "root@openhim.org",
+        "password": "0000",
+        "apiURL": "https://core:8080",
+        "openMrsUrl": "http://172.17.0.1:4023/patient",
+        "urlPattern": "/test/",
+        "trustSelfSigned": "true"
+    },
+    "register": true,
+    "heartbeat": true,
+    "system": {
+        "logPath": "../logs/",
+        "deleteLogsAfter": "-1",
+        "environment": "dev"
+    },
+    "locations": {
+        "l_448": {
+            "name": "Location-10",
+            "ip": "http://openmrs-tomcat:8080"
+        }
+    }
 }
