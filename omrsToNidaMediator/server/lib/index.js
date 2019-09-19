@@ -41,7 +41,7 @@ function setupApp() {
 
 
   var CronJob = require('cron').CronJob;
-  new CronJob('00 00 06 * * *', function () {
+  new CronJob('00 00 01 * * *', function () {
     /*
      * Runs every day 
      * at 01:00:00 AM.
@@ -190,13 +190,6 @@ exports.getNewNidaToken = function (callback) {
         nida.token = tokenInfo;
         nida.lastUpdate = currentDate;
         callback(null, tokenInfo);
-//        nconf.save(function (err) {
-//          if (err) {
-//            callback(err);
-//          } else {
-//            callback(null, tokenInfo);
-//          }
-//        });
       } else {
         callback('Server returned an empty or wrong token...');
       }
