@@ -15,6 +15,31 @@
         "environment": "dev"
     },
     "locations": {
+        "l_440": {
+            "hfname": "Remera HC",
+            "name": "Location-73",
+            "ip": "http://openmrs-tomcat-remera-hc-440:8080"
+        },
+        "l_442": {
+            "hfname": "Rukoma Sake HC",
+            "name": "Location-71",
+            "ip": "http://openmrs-tomcat-rukoma-sake-hc-442:8080"
+        },
+        "l_435": {
+            "hfname": "Kibungo HC",
+            "name": "Location-79",
+            "ip": "http://openmrs-tomcat-kibungo-hc-435:8080"
+        },
+        "l_434": {
+            "hfname": "Jarama HC",
+            "name": "Location-80",
+            "ip": "http://openmrs-tomcat-jarama-hc-434:8080"
+        },
+        "l_443": {
+            "hfname": "Rukumbeli HC",
+            "name": "Location-70",
+            "ip": "http://openmrs-tomcat-rukumbeli-hc-443:8080"
+        },
         "l_448": {
             "name": "Location-10",
             "ip": "http://openmrs-tomcat:8080"
