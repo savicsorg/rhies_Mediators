@@ -41,7 +41,7 @@ function setupApp() {
 
 
   var CronJob = require('cron').CronJob;
-  new CronJob('00 00 06 * * *', function () {
+  new CronJob('00 00 01 * * *', function () {
     /*
      * Runs every day 
      * at 01:00:00 AM.
@@ -105,18 +105,18 @@ function setupApp() {
               responseBody = error;
               orchestrationResponse = error
               orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-              res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, responseBody, orchestrations, properties))
+              res.send(utils.buildReturnObject(mediatorConfig.urn, 'Internal Server Error', 500, headers, responseBody, orchestrations, properties))
             } else {
               if (body != null && body != undefined && body != '') {
                 responseBody = body
                 orchestrationResponse = body;
                 orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
+                res.send(utils.buildReturnObject(mediatorConfig.urn, 'OK', 200, headers, responseBody, orchestrations, properties))
               } else {
                 responseBody = 'Server sent an empty response.';
                 orchestrationResponse = responseBody;
                 orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, responseBody, orchestrations, properties))
+                res.send(utils.buildReturnObject(mediatorConfig.urn, 'No Content', 204, headers, responseBody, orchestrations, properties))
               }
             }
           });
@@ -190,13 +190,6 @@ exports.getNewNidaToken = function (callback) {
         nida.token = tokenInfo;
         nida.lastUpdate = currentDate;
         callback(null, tokenInfo);
-//        nconf.save(function (err) {
-//          if (err) {
-//            callback(err);
-//          } else {
-//            callback(null, tokenInfo);
-//          }
-//        });
       } else {
         callback('Server returned an empty or wrong token...');
       }

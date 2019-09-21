@@ -114,9 +114,10 @@ function setupApp() {
 
                 function LoopA(q) {
                     nd_of_research = nd_of_research + 1;
-                    if (q && q != "") {
+                    var openmrsIPAddress  = locations["l_" + data.facilityCode];
+                    if (q && q != "" && openmrsIPAddress) {
                         var options = {
-                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/patient?q=" + q + "&v=full",
+                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/patient?q=" + q + "&v=full",
                             headers: {
                                 'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                 'Content-Type': 'application/json'
@@ -146,7 +147,7 @@ function setupApp() {
                                         patient = results[0];
 
                                         options = {
-                                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/visittype",
+                                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/visittype",
                                             headers: {
                                                 'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                 'Content-Type': 'application/json'
@@ -173,7 +174,7 @@ function setupApp() {
                                                 if (visittype && visittype.length > 0) {
                                                     visittype = _getTheGoodResult(visittype, "display", tests.recency_vl.visitType)
                                                     var options = {
-                                                        url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/location?q=" + locations["l_" + data.facilityCode]["name"],
+                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/location?q=" + locations["l_" + data.facilityCode]["name"],
                                                         headers: {
                                                             'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                             'Content-Type': 'application/json'
@@ -203,7 +204,7 @@ function setupApp() {
                                                                     case 'viral_load_2':
                                                                         console.log("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
                                                                         options = {
-                                                                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
+                                                                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
                                                                             headers: {
                                                                                 'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                 'Content-Type': 'application/json'
@@ -227,7 +228,7 @@ function setupApp() {
                                                                                 if (form && form.length > 0) {
                                                                                     form = _getTheGoodResult(form, "display", tests.viral_load_2.form)
                                                                                     options = {
-                                                                                        url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.parentConcept + "&v=full",
+                                                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.parentConcept + "&v=full",
                                                                                         headers: {
                                                                                             'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                             'Content-Type': 'application/json'
@@ -253,7 +254,7 @@ function setupApp() {
                                                                                                 parentConcept = _getTheGoodResult(parentConcept, "display", tests.viral_load_2.parentConcept)
 
                                                                                                 options = {
-                                                                                                    url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.concept,
+                                                                                                    url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.concept,
                                                                                                     headers: {
                                                                                                         'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                         'Content-Type': 'application/json'
@@ -279,7 +280,7 @@ function setupApp() {
                                                                                                             concept = _getTheGoodResult(concept, "display", tests.viral_load_2.concept)
 
                                                                                                             var encounterOptions = {
-                                                                                                                url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/encounter",
+                                                                                                                url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/encounter",
                                                                                                                 body: JSON.stringify(
                                                                                                                         {
                                                                                                                             "patient": patient.uuid,
@@ -377,7 +378,7 @@ function setupApp() {
                                                                     case 'recency_vl':
                                                                         log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
                                                                         options = {
-                                                                            url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
+                                                                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
                                                                             headers: {
                                                                                 'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                 'Content-Type': 'application/json'
@@ -403,7 +404,7 @@ function setupApp() {
                                                                                     form = _getTheGoodResult(form, "display", tests.recency_vl.form);
 
                                                                                     options = {
-                                                                                        url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.q + "&v=full",
+                                                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.q + "&v=full",
                                                                                         headers: {
                                                                                             'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                             'Content-Type': 'application/json'
@@ -448,7 +449,7 @@ function setupApp() {
                                                                                                     }
 
                                                                                                     options = {
-                                                                                                        url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + ritaConcept,
+                                                                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + ritaConcept,
                                                                                                         headers: {
                                                                                                             'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                             'Content-Type': 'application/json'
@@ -472,7 +473,7 @@ function setupApp() {
                                                                                                                 var ritaResultConceptValue = _getTheGoodResult(ritaResultConceptValue, "display", ritaConcept)
 
                                                                                                                 options = {
-                                                                                                                    url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.yesConceptValue,
+                                                                                                                    url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.yesConceptValue,
                                                                                                                     headers: {
                                                                                                                         'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                                         'Content-Type': 'application/json'
@@ -497,7 +498,7 @@ function setupApp() {
 
 
                                                                                                                             var encounterOptions = {
-                                                                                                                                url: locations["l_" + data.facilityCode]["ip"] + "/openmrs/ws/rest/v1/encounter",
+                                                                                                                                url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/encounter",
                                                                                                                                 body: JSON.stringify(
                                                                                                                                         {
                                                                                                                                             "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
@@ -777,7 +778,14 @@ function setupApp() {
                         if (nd_of_research < 2) {//Second research possible by name 
                             log.warn("No patient found, searching by name : " + data.firstName + " " + data.lastName);
                             LoopA(data.firstName + " " + data.lastName);
-                        } else {
+                        } else if (!openmrsIPAddress){
+                            log.warn("Unknown health facility ", data.facilityCode, "Operation aborted");
+                            orchestrationResponse = "Operation aborted. Unknown health facility "+data.facilityCode;
+                            orchestrationResponse = {statusCode: 500, headers: headers};
+                            orchestrations = [];
+                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, "Failed"))
+                            res.send(utils.buildReturnObject(mediatorConfig.urn, 'Not Implemented', 501, headers, "Not Implemented", orchestrations, properties))
+                        }else{
                             log.warn("No patient found. Operation aborted");
                             orchestrationResponse = ""
                             orchestrationResponse = {statusCode: 500, headers: headers}
