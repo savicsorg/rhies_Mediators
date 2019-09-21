@@ -31,6 +31,8 @@ var nida ={
     lastUpdate: undefined
 };
 
+var ENV = "prod";
+
 /**
  * setupApp - configures the http server for this mediator
  *
@@ -88,11 +90,11 @@ function setupApp() {
         } else {
           nconf.load();
           var options = {
-            url: apiConf.api.nida.getcitizenUrl,
+            url: apiConf.api.nida[ENV].getcitizenUrl,
             body: JSON.stringify(
               {
                 documentNumber: req.query.id,
-                keyPhrase: apiConf.api.nida.keyPhrase
+                keyPhrase: apiConf.api.nida[ENV].keyPhrase
               }),
             headers: {
               'Authorization': token,
@@ -166,11 +168,11 @@ function getNidaToken(callback) {
 exports.getNewNidaToken = function (callback) {
   //Query for Token
   var options = {
-    url: apiConf.api.nida.claimtokenUrl,
+    url: apiConf.api.nida[ENV].claimtokenUrl,
     body: JSON.stringify(
       {
-        username: apiConf.api.nida.user.name,
-        password: apiConf.api.nida.user.pwd,
+        username: apiConf.api.nida[ENV].user.name,
+        password: apiConf.api.nida[ENV].user.pwd
       }),
     headers: {
       'Content-Type': 'application/json',
