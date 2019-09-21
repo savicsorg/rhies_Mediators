@@ -17,5 +17,6 @@
   "enrollmentForm": "Confidential HIV CRF - SECTION 1: Enrollment Information",
   "followupForm": "Confidential HIV CRF - SECTION II: Follow up Information",
   "register": true,
+  "verbose" :true,
   "heartbeat": true
 }
