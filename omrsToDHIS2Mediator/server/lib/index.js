@@ -34,48 +34,63 @@ var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].
 function setupApp() {
   const app = express();
 
+  function reportEndOfProcess(req, res, error, statusCode, message) {
+    res.set('Content-Type', 'application/json+openhim')
+    var responseBody = message;
+    var stateLabel = "";
+    let orchestrations = [];
+
+    var headers = { 'content-type': 'application/json' }
+    if (error) {
+      stateLabel = "Failed";
+      winston.error(message, error);
+    } else {
+      stateLabel = "Successful";
+      winston.info(message);
+    }
+    var orchestrationResponse = { statusCode: statusCode, headers: headers }
+    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
+    res.send(utils.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
+  }
+
+
+
+
   app.all('*', (req, res) => {
     winston.info(`Processing ${req.method} request on ${req.url}`)
-    var responseBody = 'Primary Route Reached'
-    var headers = { 'content-type': 'application/json' }
-
-
-    // add logic to alter the request here
-
-    // capture orchestration data
-    var orchestrationResponse = { statusCode: 200, headers: headers }
-    let orchestrations = []
-    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-
-    // set content type header so that OpenHIM knows how to handle the response
-    res.set('Content-Type', 'application/json+openhim')
-
-
-    // construct return object
-    var properties = { property: 'Primary Route' }
-
     if (req.method == 'POST' && req.url == apiConf.api.urlPattern) {
       var form = new formidable.IncomingForm();
       form.parse(req, function (err, fields, files) {
         var data = fields;
+
         winston.info('Encounter received ...')
+        if (apiConf.verbose == true) {
+          if (utils.isFineValue(fields) == true && utils.isFineValue(fields.encounter) == true && utils.isFineValue(fields.encounter.obs) == true) {
+            console.log("--> Received encounter obs: ", JSON.stringify(fields.encounter.obs));
+          } else {
+            if (utils.isFineValue(fields) == true && utils.isFineValue(fields.encounter) == true) {
+              console.log("--> Received encounter: ", JSON.stringify(fields.encounter));
+            } else {
+              console.log("--> Received data: ", JSON.stringify(fields));
+            }
+          }
+        }
+
 
         //get DHIS2 Lab id with FOSA code
         getOrganizationUnit(fields, function (error, organizationUnit) {
           if (error) {
-            winston.error('error while retrieving for organization unit ...', error);
+            reportEndOfProcess(req, res, error, 500, 'error while retrieving for organization unit ...');
           } else {
             //Create or update entity instance
             upsertEntity(fields, organizationUnit, function (error, trackedEntityInstanceId) {
               if (error) {
-                winston.error('error while upserting entity instance id ...', error);
+                reportEndOfProcess(req, res, error, 500, 'error while upserting entity instance id ...');
               } else {
-
-
                 //Enroll entity instance
                 enrolleEntity(fields, organizationUnit, trackedEntityInstanceId, function (error, enrollmentId) {
                   if (error) {
-                    winston.error('error while enrolling entity instance id ', error);
+                    reportEndOfProcess(req, res, error, 500, 'error while enrolling entity instance id ');
                   } else {
                     //send incoming form
                     if (utils.isFineValue(fields.encounter.form) == true && utils.isFineValue(fields.encounter.form.display) == true) {
@@ -83,9 +98,9 @@ function setupApp() {
                       if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
                         addHivCaseBaseSurveillance(fields, organizationUnit, trackedEntityInstanceId, enrollmentId, function (error, resp) {
                           if (error) {
-                            winston.error('error while adding ', fields.encounter.form.display.trim, ', error : ', error);
+                            reportEndOfProcess(req, res, error, 500, 'error while adding ' + fields.encounter.form.display.trim());
                           } else {
-                            winston.info(fields.encounter.form.display.trim(), ' added with success');
+                            reportEndOfProcess(req, res, null, 200, fields.encounter.form.display.trim() + ' added with success');
                           }
                         })
                       }
@@ -93,9 +108,9 @@ function setupApp() {
                       if (fields.encounter.form.display.trim().toUpperCase() == apiConf.enrollmentForm.trim().toUpperCase()) {
                         addHivCrfSection1(fields, organizationUnit, trackedEntityInstanceId, enrollmentId, function (error, resp) {
                           if (error) {
-                            winston.error('error while adding ', fields.encounter.form.display.trim, ', error : ', error);
+                            reportEndOfProcess(req, res, error, 500, 'error while adding ' + fields.encounter.form.display.trim());
                           } else {
-                            winston.info(fields.encounter.form.display.trim(), ' added with success');
+                            reportEndOfProcess(req, res, null, 200, fields.encounter.form.display.trim() + ' added with success');
                           }
                         })
                       }
@@ -103,14 +118,14 @@ function setupApp() {
                       if (fields.encounter.form.display.trim().toUpperCase() == apiConf.followupForm.trim().toUpperCase()) {
                         addHivCrfSection2(fields, organizationUnit, trackedEntityInstanceId, enrollmentId, function (error, resp) {
                           if (error) {
-                            winston.error('error while adding ', fields.encounter.form.display.trim, ', error : ', error);
+                            reportEndOfProcess(req, res, error, 500, 'error while adding ' + fields.encounter.form.display.trim());
                           } else {
-                            winston.info(fields.encounter.form.display.trim(), ' added with success');
+                            reportEndOfProcess(req, res, null, 200, fields.encounter.form.display.trim() + ' added with success');
                           }
                         })
                       }
                     } else {
-                      winston.error('It is not possible to get the incoming form with the data received from OpenMRS');
+                      reportEndOfProcess(req, res, " ", 500, 'It is not possible to get the incoming form with the data received from OpenMRS');
                     }
                   }
                 })
@@ -118,7 +133,6 @@ function setupApp() {
             });
           }
         });
-        res.send(utils.buildReturnObject(mediatorConfig.urn, 'Successful', 200, headers, responseBody, orchestrations, properties))
       })
     }
   });
@@ -173,10 +187,12 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                   // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
                   // or we take what is on resp.trackedEntityInstance
                   formMapping.getValue(formMapping.form1MappingTable, fields, "ISfxedlVq7Y", function (result) {
+
+
                     if (utils.isFineValue(result) == true) {
-                      patientInstance.attributes[1].value = result;
+                      patientInstance.attributes.ISfxedlVq7Y = result;
                     } else {
-                      patientInstance.attributes[1].value = resp.attributes[1].value;
+                      patientInstance.attributes.ISfxedlVq7Y = resp.attributes.ISfxedlVq7Y;
                     }
 
                     var options = {
@@ -188,7 +204,7 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                       body: JSON.stringify(patientInstance),
                     };
 
-                    winston.info('Updating Entity instance ...')
+                    winston.info('1- Updating Entity instance ...')
                     request.put(options, function (error, response, body) {
                       if (error) {
                         callback(error);
@@ -196,33 +212,72 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                         var ResponseBody = JSON.parse(body);
                         if (utils.isFineValue(ResponseBody) == true) {
                           if (ResponseBody.httpStatusCode == 200) {
-                            winston.info('Entity instance ', resp.trackedEntityInstance, ' updated with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                            winston.info('1- Entity instance ', resp.trackedEntityInstance, ' updated with success ', ResponseBody.httpStatusCode, ResponseBody.message)
                             callback(null, resp.trackedEntityInstance);
                           } else {
-                            if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true) {
-                              callback("An error occured when trying to update an entity instance", ResponseBody.response.importSummaries[0].conflicts);
+                            if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true && utils.isFineValue(ResponseBody.response.importSummaries) == true) {
+                              callback("1- An error occured when trying to update an entity instance", ResponseBody.response.importSummaries[0].conflicts);
                             } else {
-                              winston.error('An error occured when trying to update an entity instance ', ResponseBody.httpStatusCode, body.message)
-                              callback('An error occured when trying to update an entity instance ' + ResponseBody.message);
+                              winston.error('1- An error occured when trying to update an entity instance ', ResponseBody.httpStatusCode, body.message)
+                              callback('1- An error occured when trying to update an entity instance ' + ResponseBody.message);
                             }
                           }
                         } else {
-                          callback('An error occured, the server returned an empty response when updating an entity instance');
+                          callback('1- An error occured, the server returned an empty response when updating an entity instance');
                         }
                       }
                     });
 
                   });
-                }
-              } else {
-                //No tracked entity instance found, creating...
+                } else {
 
+                  //update a patient without updating the date of ARV
+                  patientInstance.attributes.ISfxedlVq7Y = resp.attributes.ISfxedlVq7Y;
+
+                  var options = {
+                    url: apiConf.api.dhis2.url + "/api/trackedEntityInstances/" + resp.trackedEntityInstance,
+                    headers: {
+                      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(patientInstance),
+                  };
+
+                  winston.info('2- Updating Entity instance ...')
+                  request.put(options, function (error, response, body) {
+                    if (error) {
+                      callback(error);
+                    } else {
+                      var ResponseBody = JSON.parse(body);
+                      if (utils.isFineValue(ResponseBody) == true) {
+                        if (ResponseBody.httpStatusCode == 200) {
+                          winston.info('2- Entity instance ', resp.trackedEntityInstance, ' updated with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                          callback(null, resp.trackedEntityInstance);
+                        } else {
+                          if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true && utils.isFineValue(ResponseBody.response.importSummaries) == true) {
+                            callback("2- An error occured when trying to update an entity instance", ResponseBody.response.importSummaries[0].conflicts);
+                          } else {
+                            winston.error('2- An error occured when trying to update an entity instance ', ResponseBody.httpStatusCode, body.message)
+                            callback('2- An error occured when trying to update an entity instance ' + ResponseBody.message);
+                          }
+                        }
+                      } else {
+                        callback('2- An error occured, the server returned an empty response when updating an entity instance');
+                      }
+                    }
+                  });
+
+                }
+
+              } else {
+
+                //No tracked entity instance found, creating...
                 if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
                   // if received encounter have the right (start of ARV), we replace
                   // or we let like this
                   formMapping.getValue(formMapping.form1MappingTable, fields, "ISfxedlVq7Y", function (result) {
                     if (utils.isFineValue(result) == true) {
-                      patientInstance.attributes[1].value = result;
+                      patientInstance.attributes.ISfxedlVq7Y = result;
                     }
 
                     var options = {
@@ -234,7 +289,7 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                       body: JSON.stringify(patientInstance),
                     };
 
-                    winston.info('Creating Entity instance ...')
+                    winston.info('1- Creating Entity instance ...')
                     request.post(options, function (error, response, body) {
                       if (error) {
                         callback(error);
@@ -243,22 +298,61 @@ var upsertEntity = function (fields, organizationUnit, callback) {
 
                         if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
                           if (ResponseBody.httpStatusCode == 200) {
-                            winston.info('Entity instance ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                            winston.info('1- Entity instance ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
                             callback(null, ResponseBody.response.importSummaries[0].reference);
                           } else {
-                            if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true) {
-                              callback("An error occured when trying to create an entity instance", ResponseBody.response.importSummaries[0].conflicts);
+                            if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true && utils.isFineValue(ResponseBody.response.importSummaries) == true) {
+                              callback("1- An error occured when trying to create an entity instance", ResponseBody.response.importSummaries[0].conflicts);
                             } else {
                               winston.error('An error occured when trying to create an entity instance ', ResponseBody.httpStatusCode, body.message)
-                              callback('An error occured when trying to create an entity instance ' + ResponseBody.message);
+                              callback('1- An error occured when trying to create an entity instance ' + ResponseBody.message);
                             }
                           }
                         } else {
-                          callback('An error occured, the server returned an empty body when creating an entity instance');
+                          callback('1- An error occured, the server returned an empty body when creating an entity instance');
                         }
                       }
                     });
                   });
+
+
+                } else {
+
+
+                  var options = {
+                    url: apiConf.api.dhis2.url + "/api/trackedEntityInstances",
+                    headers: {
+                      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(patientInstance),
+                  };
+
+                  winston.info('2- Creating Entity instance ...')
+                  request.post(options, function (error, response, body) {
+                    if (error) {
+                      callback(error);
+                    } else {
+                      var ResponseBody = JSON.parse(body);
+
+                      if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
+                        if (ResponseBody.httpStatusCode == 200) {
+                          winston.info('2- Entity instance ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                          callback(null, ResponseBody.response.importSummaries[0].reference);
+                        } else {
+                          if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true && utils.isFineValue(ResponseBody.response.importSummaries) == true) {
+                            callback("2- An error occured when trying to create an entity instance", ResponseBody.response.importSummaries[0].conflicts);
+                          } else {
+                            winston.error('2- An error occured when trying to create an entity instance ', ResponseBody.httpStatusCode, body.message)
+                            callback('2- An error occured when trying to create an entity instance ' + ResponseBody.message);
+                          }
+                        }
+                      } else {
+                        callback('2- An error occured, the server returned an empty body when creating an entity instance');
+                      }
+                    }
+                  });
+
                 }
               }
             }
@@ -475,7 +569,7 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
       if (utils.isFineValue(resp) == true) {
 
         if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
-          // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
+          // if received encounter have the right ijTurgFUOPq (start of ARV) , we replace
           // or we take what is on resp.trackedEntityInstance
           formMapping.getValue(formMapping.form1MappingTable, fields, "ijTurgFUOPq", function (result) {
 
@@ -506,7 +600,7 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
                     winston.info('Enrollment ', resp.enrollment, ' done with success ', ResponseBody.httpStatusCode, ResponseBody.message)
                     callback(null, resp.enrollment);
                   } else {
-                    if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true) {
+                    if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true && utils.isFineValue(ResponseBody.response.importSummaries) == true) {
                       callback("An error occured when trying to update an Enrollment", ResponseBody.response.importSummaries[0].conflicts);
                     } else {
                       winston.error('An error occured when trying to update an Enrollment ', ResponseBody.httpStatusCode, body.message)
@@ -519,6 +613,42 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
               }
             });
           });
+        } else {
+
+          enrollementValue.enrollmentDate = resp.enrollmentDate;
+          var options = {
+            url: apiConf.api.dhis2.url + "/api/enrollments/" + resp.enrollment,
+            headers: {
+              'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(enrollementValue),
+          };
+
+          winston.info('1- Updating enrollment ...')
+          request.put(options, function (error, response, body) {
+            if (error) {
+              callback(error);
+            } else {
+              var ResponseBody = JSON.parse(body);
+              if (utils.isFineValue(ResponseBody) == true) {
+                if (ResponseBody.httpStatusCode == 200) {
+                  winston.info('1- Enrollment ', resp.enrollment, ' done with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                  callback(null, resp.enrollment);
+                } else {
+                  if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true && utils.isFineValue(ResponseBody.response.importSummaries) == true) {
+                    callback("1- An error occured when trying to update an Enrollment", ResponseBody.response.importSummaries[0].conflicts);
+                  } else {
+                    winston.error('1- An error occured when trying to update an Enrollment ', ResponseBody.httpStatusCode, body.message)
+                    callback('1- An error occured when trying to update an Enrollment ' + ResponseBody.message);
+                  }
+                }
+              } else {
+                callback('1- An error occured, the server returned an empty response when updating an Enrollment');
+              }
+            }
+          });
+
         }
       } else {
         if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
@@ -550,8 +680,8 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
                     winston.info('Enrollment ', ResponseBody.response.importSummaries[0].reference, ' done with success ', ResponseBody.httpStatusCode, ResponseBody.message)
                     callback(null, ResponseBody.response.importSummaries[0].reference);
                   } else {
-                    
-                    if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true) {
+
+                    if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true && utils.isFineValue(ResponseBody.response.importSummaries) == true) {
                       callback("An error occured when trying to create an enrollment ", ResponseBody.response.importSummaries[0].conflicts);
                     } else {
                       winston.error('An error occured when trying to create an enrollment ', ResponseBody.httpStatusCode, body.message)
@@ -564,6 +694,45 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
               }
             });
           });
+        } else {
+
+
+          var options = {
+            url: apiConf.api.dhis2.url + "/api/enrollments",
+            headers: {
+              'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(enrollementValue),
+          };
+
+          winston.info('2- Creating enrollment ...')
+          request.post(options, function (error, response, body) {
+            if (error) {
+              callback(error);
+            } else {
+
+              var ResponseBody = JSON.parse(body);
+              if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
+                if (ResponseBody.httpStatusCode == 200) {
+                  winston.info('2- Enrollment ', ResponseBody.response.importSummaries[0].reference, ' done with success ', ResponseBody.httpStatusCode, ResponseBody.message)
+                  callback(null, ResponseBody.response.importSummaries[0].reference);
+                } else {
+                  if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.response) == true && utils.isFineValue(ResponseBody.response.importSummaries) == true) {
+                    callback("2- An error occured when trying to create an enrollment ", ResponseBody.response.importSummaries[0].conflicts);
+                  } else {
+                    winston.error('2- An error occured when trying to create an enrollment ', ResponseBody.httpStatusCode, body.message)
+                    callback('2- An error occured when trying to create an enrollment ' + ResponseBody.message);
+                  }
+                }
+              } else {
+                callback('2- An error occured, the server returned an empty body when creating an enrollment');
+              }
+            }
+          });
+
+
+
         }
       }
     }
@@ -573,7 +742,7 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
 
 var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //1- sending createNewEventStageInfoRecencyContact
-  var dhsi2RecencyData = {
+  var dhsi2RecencyStructure = {
     "program": "CYyICYiO5zo",
     "orgUnit": organizationUnit,
     "eventDate": utils.getNewDate(),
@@ -621,7 +790,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
 
 
   //2- sending createNewEventStageInfoContacts
-  var dhsi2ContactData =
+  var dhsi2ContactStructure =
   {
     "program": "CYyICYiO5zo",
     "orgUnit": organizationUnit,
@@ -666,7 +835,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
 
 
   //3- sending createNewEventStageResultContactNotif
-  var dhsi2NotifData =
+  var dhsi2NotifStructure =
   {
     "program": "CYyICYiO5zo",
     "orgUnit": organizationUnit,
@@ -746,37 +915,45 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
 
 
   winston.info('Adding recency contact information ...');
-  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyData, function (error, result) {
+  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyStructure, 1, function (error, result) {
     if (error) {
       winston.error('An error occured when trying to add a recency contact information ', error);
+      callback('An error occured when trying to add a recency contact information');
     } else {
       winston.info('Recency contact information added with success ', result);
+
+      winston.info('Now, adding contacts information...');
+      formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, function (error, result) {
+        if (error) {
+          winston.error('An error occured when trying to add a contacts information ', error);
+          callback('An error occured when trying to add a contacts information ');
+        } else {
+          winston.info('Contacts information added with success ', result);
+
+          winston.info('Now, adding results of contacts notifications...');
+          formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, function (error, result) {
+            if (error) {
+              winston.error('An error occured when trying to add a results of contacts notifications', error);
+              callback('An error occured when trying to add a results of contacts notifications');
+            } else {
+              winston.info('Results of contacts notifications added with success', result);
+              callback(null, 'Results of contacts notifications added with success');
+            }
+          })
+        }
+      })
     }
   })
-
-  winston.info('Adding contacts information...');
-  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactData, function (error, result) {
-    if (error) {
-      winston.error('An error occured when trying to add a contacts information ', error);
-    } else {
-      winston.info('Contacts information added with success ', result);
-    }
-  })
-
-  winston.info('Adding results of contacts notifications...');
-  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifData, function (error, result) {
-    if (error) {
-      winston.error('An error occured when trying to add a results of contacts notifications ', error);
-    } else {
-      winston.info('Results of contacts notifications added with success ', result);
-    }
-  })
-
 };
 
-var addHivCrfSection1 = function (fields, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
+var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageEnrollmentInfo.json  
-  var enrollementData =
+  var patientBirhDate = ""
+  if (utils.isFineValue(incomingEncounter.patient.birthdate) == true) {
+    patientBirhDate = utils.convertToDate(incomingEncounter.patient.birthdate);
+  }
+
+  var dhis2EnrollementStructure =
   {
     "program": "CYyICYiO5zo",
     "orgUnit": organizationUnit,
@@ -821,7 +998,7 @@ var addHivCrfSection1 = function (fields, organizationUnit, trackedEntityInstanc
       },
       {
         "dataElement": "GwCiJLY0of4",
-        "value": ""
+        "value": patientBirhDate
       },
       {
         "dataElement": "c4KsTiEImGx",
@@ -1030,41 +1207,22 @@ var addHivCrfSection1 = function (fields, organizationUnit, trackedEntityInstanc
     ]
   }
 
-
-  var options = {
-    url: apiConf.api.dhis2.url + "/api/events",
-    headers: {
-      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(enrollementData),
-  };
-
-  winston.info('Adding enrollment data event...');
-  request.post(options, function (error, response, body) {
+  formMapping.pushFormToDhis2(formMapping.form2MappingTable, incomingEncounter, dhis2EnrollementStructure, 4, function (error, result) {
     if (error) {
-      callback(error);
+      winston.error('An error occured when trying to add an enrollment information', error);
+      callback('An error occured when trying to add an enrollment information');
     } else {
-      var ResponseBody = JSON.parse(body);
-      if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
-        if (ResponseBody.httpStatusCode == 200) {
-          winston.info('enrollment data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
-          callback(null, 'enrollment data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ')
-        } else {
-          winston.error('An error occured when trying to create enrollment data event ', ResponseBody.httpStatusCode, body.message)
-          callback('An error occured when trying to create enrollment data event ' + ResponseBody.message);
-        }
-      } else {
-        callback('An error occured, the server returned an empty body when creating enrollment data event');
-      }
+      winston.info('Enrollment data added with success', result);
+      callback(null, 'Enrollment dataadded with success');
     }
-  });
+  })
+
 
 };
 
-var addHivCrfSection2 = function (fields, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
+var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageFollowUpInfo.json 
-  var followupData =
+  var dhis2FollowupStructure =
   {
     "program": "CYyICYiO5zo",
     "orgUnit": organizationUnit,
@@ -1238,38 +1396,15 @@ var addHivCrfSection2 = function (fields, organizationUnit, trackedEntityInstanc
 
     ]
   }
-
-
-
-  var options = {
-    url: apiConf.api.dhis2.url + "/api/events",
-    headers: {
-      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(followupData),
-  };
-
-  winston.info('Adding followup data event...');
-  request.post(options, function (error, response, body) {
+  formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, function (error, result) {
     if (error) {
-      callback(error);
+      winston.error('An error occured when trying to add a follow up information', error);
+      callback('An error occured when trying to add a follow up information');
     } else {
-      var ResponseBody = JSON.parse(body);
-      if (utils.isFineValue(ResponseBody) == true && utils.isFineValue(ResponseBody.httpStatusCode) == true) {
-        if (ResponseBody.httpStatusCode == 200) {
-          winston.info('followup data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ', ResponseBody.httpStatusCode, ResponseBody.message)
-          callback(null, 'followup data event ', ResponseBody.response.importSummaries[0].reference, ' created with success ')
-        } else {
-          winston.error('An error occured when trying to create followup data event ', ResponseBody.httpStatusCode, body.message)
-          callback('An error occured when trying to create followup data event ' + ResponseBody.message);
-        }
-      } else {
-        callback('An error occured, the server returned an empty body when creating followup data event');
-      }
+      winston.info('Follow up information added with success', result);
+      callback(null, 'Follow up information added with success');
     }
-  });
-
+  })
 };
 
 
