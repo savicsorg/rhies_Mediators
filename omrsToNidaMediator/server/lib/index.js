@@ -118,7 +118,7 @@ function setupApp() {
                 responseBody = 'Server sent an empty response.';
                 orchestrationResponse = responseBody;
                 orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-                res.send(utils.buildReturnObject(mediatorConfig.urn, 'No Content', 204, headers, responseBody, orchestrations, properties))
+                res.send(utils.buildReturnObject(mediatorConfig.urn, responseBody, 200, headers, responseBody, orchestrations, properties))
               }
             }
           });
