@@ -40,7 +40,28 @@
             "name": "Location-70",
             "ip": "http://openmrs-tomcat-rukumbeli-hc-443:8080"
         },
+        "l_455": {
+            "hfname": "Nzangwa HC",
+            "name": "Location-11",
+            "ip": "http://openmrs-tomcat-nzangwa-hc-455:8080"
+        },
+        "l_558": {
+            "hfname": "Nyarugunga HC",
+            "name": "Location-478",
+            "ip": "http://openmrs-tomcat-nyarugunga-hc-558:8080"
+        },
+        "l_36": {
+            "hfname": "Masaka HC",
+            "name": "Location-470",
+            "ip": "http://openmrs-tomcat-masaka-hc-36:8080"
+        },
+        "l_29": {
+            "hfname": "Bethsaida HC",
+            "name": "Location-476",
+            "ip": "http://openmrs-tomcat-bethsaida-hc-29:8080"
+        },
         "l_448": {
+            "hfname": "Gihinga HC ",
             "name": "Location-10",
             "ip": "http://openmrs-tomcat:8080"
         }
