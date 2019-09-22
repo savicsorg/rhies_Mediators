@@ -2,7 +2,7 @@
   "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0e8",
   "version": "0.0.2",
   "name": "openMRS to DHIS2 mediator",
-  "description": "A mediator to post OpenMRS patient encounters to DHIS2",
+  "description": "A mediator to post OpenMRS CBS encounters to DHIS2",
   "defaultChannelConfig": [
     {
       "name": "openMRS to DHIS2 chanel",

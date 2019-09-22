@@ -60,6 +60,13 @@ exports.isFineValue = function (value) {
   }
 }
 
+exports.getPatientGenderDhis2Id = function (patient) {
+  if (patient.person.gender.toUpperCase() == "F" || patient.person.gender.toUpperCase() == "FEMAL") {
+    return "dP9kDCGW6C1";
+  } else {
+    return "SdIpSKZhA6a";
+  }
+}
 
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
@@ -76,6 +83,17 @@ exports.isDate = function (value) {
 
 exports.isNumeric = function (value) {
   return ((typeof value) == "number");
+}
+
+exports.convertToBoolean = function (value) {
+  if (exports.isString(value) == true) {
+    if ("YES OUI  1".toUpperCase().includes(value.toUpperCase())) {
+      return true;
+    }
+    return false
+  } else {
+    return false
+  }
 }
 
 exports.isString = function (value) {
