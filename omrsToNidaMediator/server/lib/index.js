@@ -43,19 +43,17 @@ function setupApp() {
 
 
   var CronJob = require('cron').CronJob;
-  new CronJob('00 00 01 * * *', function () {
+  new CronJob('00 00 */2 * * *', function () {
     /*
-     * Runs every day 
-     * at 01:00:00 AM.
-     * or Sunday.
+     * Runs every day, every 02 hours
      */
 
-    console.log('Setting Cron for token claiming....');
+    console.log(new date, 'Setting Cron for token claiming....');
     exports.getNewNidaToken(function (error, token) {
       if (error) {
         console.log('error while claiming for token...',error);
       } else {
-        console.log('Token retrieved with success');
+        console.log(new date, 'Token retrieved with success');
       }
     });
   }, null, true);
@@ -138,16 +136,16 @@ function getNidaToken(callback) {
   if (nida.token == undefined || nida.token == "" || nida.lastUpdate == undefined || nida.lastUpdate == "") {
 
     shouldGetNewToken = true;
-    console.log('first run, getting new token...');
+    console.log(new date, 'first run, getting new token...');
   } else {
     var currentTokenDate = moment(new Date(nida.lastUpdate));
     var currentDate = moment();
 
     if (currentDate.isSameOrAfter(currentTokenDate.add(1, 'days')) == true) {
       shouldGetNewToken = true;
-      console.log('different day, getting new token...');
+      console.log(new date, 'different day, getting new token...');
     } else {
-      console.log('Same day, leading to query...');
+      console.log(new date, 'Same day, leading to query...');
       shouldGetNewToken = false;
     }
 
