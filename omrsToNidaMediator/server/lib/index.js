@@ -48,12 +48,12 @@ function setupApp() {
      * Runs every day, every 02 hours
      */
 
-    console.log(new date, 'Setting Cron for token claiming....');
+    console.log(new Date(), 'Setting Cron for token claiming....');
     exports.getNewNidaToken(function (error, token) {
       if (error) {
         console.log('error while claiming for token...',error);
       } else {
-        console.log(new date, 'Token retrieved with success');
+        console.log(new Date(), 'Token retrieved with success');
       }
     });
   }, null, true);
@@ -136,16 +136,16 @@ function getNidaToken(callback) {
   if (nida.token == undefined || nida.token == "" || nida.lastUpdate == undefined || nida.lastUpdate == "") {
 
     shouldGetNewToken = true;
-    console.log(new date, 'first run, getting new token...');
+    console.log(new Date(), 'first run, getting new token...');
   } else {
     var currentTokenDate = moment(new Date(nida.lastUpdate));
     var currentDate = moment();
 
     if (currentDate.isSameOrAfter(currentTokenDate.add(1, 'days')) == true) {
       shouldGetNewToken = true;
-      console.log(new date, 'different day, getting new token...');
+      console.log(new Date(), 'different day, getting new token...');
     } else {
-      console.log(new date, 'Same day, leading to query...');
+      console.log(new Date(), 'Same day, leading to query...');
       shouldGetNewToken = false;
     }
 
