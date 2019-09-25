@@ -573,7 +573,7 @@ function setupApp() {
                                                                                                                                             },
                                                                                                                                             "encounterProviders": [{
                                                                                                                                                     "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                                                                                                    "provider": "prov877f-b5c3-4546-a1b1-533270e04721",
+                                                                                                                                                    "provider": "42d9557b-9ec1-4999-8aa3-14087c961b51",//Labware
                                                                                                                                                     "resourceVersion": "1.9"
                                                                                                                                                 }],
                                                                                                                                             "resourceVersion": "1.9"
