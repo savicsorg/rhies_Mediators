@@ -17,6 +17,10 @@ exports.form1MappingTable = [
 ];
 
 exports.form2MappingTable = [
+  {"43021ec7-dea2-48c9-aea2-fce89d6bcd8d" : "Frig0xURxjh" },
+  {"054266d6-b451-496a-892e-9249d52a0d44" : "dIAODvHtlhX" },
+  {"48a489e3-37f1-40df-8e7b-a2e7ba2371ec" : "NmD5WModmzT" },
+  {"6e7401f4-ed93-4c3f-a208-73ec7a1a9126" : "z9gpetn6EdK" },
   { "3ce84c8e-26fe-102b-80cb-0017a47871b2": "dP9kDCGW6C1" },
   { "3ce84b1c-26fe-102b-80cb-0017a47871b2": "SdIpSKZhA6a" },
   { "b45597da-318b-4dde-858b-da16f5950686": "qycXEyMMFMb" },
@@ -26,9 +30,9 @@ exports.form2MappingTable = [
   { "a17088c6-ea9e-4bf6-96ef-85cf9f06d432": "MyMV3TTWYmW" },
   { "3cdca69a-26fe-102b-80cb-0017a47871b2": "G0Jq8kyaJCD" },
   { "788e9f4c-5ba4-4a42-9974-83ea7128f0f8": "SzvTcCTNlGo" },
-  { "3cd6f600-26fe-102b-80cb-0017a47871b2": "g8fi0npqRPq" },
-  { "3cd6f86c-26fe-102b-80cb-0017a47871b2": "gt8qxD225Pw" },
-  { "3cd6fac4-26fe-102b-80cb-0017a47871b2": "x7GuGQEdbzx" },
+  { "3cd6f600-26fe-102b-80cb-0017a47871b2": "SjvT6az0YMa" },
+  { "3cd6f86c-26fe-102b-80cb-0017a47871b2": "AHH8ZhIlQ9z" },
+  { "c6d3d50b-d2a8-4d15-bfcc-c0c36e34f659": "oZhzCABE3Pr" },
   { "b4b0e241-e41a-4d46-89dd-e531cf6d8202": "NZe43UAOGmt" },
   { "819f5ebe-0b3e-44ba-b435-8f3d1b7bb130": "J9MtIYciHSh" },
   { "3cd28732-26fe-102b-80cb-0017a47871b2": "FPSW8E0pHU9" },
@@ -40,7 +44,6 @@ exports.form2MappingTable = [
   { "a116b5b4-8973-43ac-8007-c070b4199a53": "gJ58M7ClaMm" },
   { "a239017b-7bc1-421e-b348-d526e7ebd9d7": "yGhEu1ntCaf" },
   { "8726f435-566e-4c98-920d-b93ce22224b7": "eQFf5SRscrT" },
-  { "3cd6fac4-26fe-102b-80cb-0017a47871b2": "oZhzCABE3Pr" },
   { "efab937b-853e-47da-b97e-220f1bdff97d": "MABnwD1nt3B" },
   { "3cd6df26-26fe-102b-80cb-0017a47871b2": "PZo2sP0TOb6" },
   { "3cee0aca-26fe-102b-80cb-0017a47871b2": "fBMDDNWcRmw" },
@@ -54,7 +57,6 @@ exports.form2MappingTable = [
   { "8fa7c91c-5865-4216-bc10-f8857f116556": "hWsM7iCZ2Na" },
   { "3cdc8426-26fe-102b-80cb-0017a47871b2": "wxGTnGvzPcf" },
   { "0cf3bed0-e76a-4b0a-8e11-c61c945a0551": "RDQB5Zx8hMH" },
-  { "4587542b-f1aa-47ad-8bed-75a705433950": "NrWXvZg3WtW" },
   { "5f2ce4b3-dc0f-4345-98ad-4177329b2388": "jYMNto3ELj5" }
 ]
 
@@ -73,7 +75,7 @@ exports.form3MappingTable = [
 
 
 exports.form4MappingTable = [
-  { "3cd4a882-26fe-102b-80cb-0017a47871b2": "Tgt3yKYd2oD" }
+  { "aae8d7fe-8bbc-4d2e-926c-0e28b4d0e046": "Tgt3yKYd2oD" }
 ]
 
 
@@ -83,11 +85,47 @@ exports.form1MappingBooleanTable = [
 
 exports.form2MappingBooleanTable = [
   { "0cf3bed0-e76a-4b0a-8e11-c61c945a0551": "RDQB5Zx8hMH" },
-  { "4587542b-f1aa-47ad-8bed-75a705433950": "NrWXvZg3WtW" },
   { "5f2ce4b3-dc0f-4345-98ad-4177329b2388": "jYMNto3ELj5" }
 ]
 
+exports.districts = [
+  { "Nyarugenge": "jqrJGsWovJs" },
+  { "Gasabo": "fSyvbMUZWqJ" },
+  { "Kicukiro": "rEmeA5Z7HcP" },
+  { "Nyanza": "MJ0JLxsTP70" },
+  { "Gisagara": "N9pKxz10nwa" },
+  { "Nyaruguru": "lU5vBlNgAW5" },
+  { "Nyamagabe": "jy5judMZtzS" },
+  { "Ruhango": "n95lDV3pgL5" },
+  { "Muhanga": "zuLjFsLTx2m" },
+  { "Kamonyi": "vb9Wtsjv0OS" },
+  { "Karongi": "DJKWdcLdPOI" },
+  { "Rutsiro": "DG8h5ijGxgO" },
+  { "Nyabihu": "ARCA1tta4rF" },
+  { "Ngororero": "urGSAaskBqL" },
+  { "Rusizi": "M6o8DrKq6P3" },
+  { "Nyamasheke": "PBHtCUM6nkg" },
+  { "Rulindo": "BtzzCdcgFli" },
+  { "Gakenke": "pXalpffB0lo" },
+  { "Musanze": "rNmqHqUm4Cf" },
+  { "Burera": "bFXwg69YOeD" },
+  { "Gicumbi": "o5Gxx8zOilJ" },
+  { "Rwamagana": "PnnZRLwoD66" },
+  { "Nyagatare": "QMTKhz1j2mA" },
+  { "Gatsibo": "WOjncnBz0hi" },
+  { "Kayonza": "fcW5X82FfpG" },
+  { "Kirehe": "VqMwIodXtFZ" },
+  { "Ngoma": "ERRCgvW7La1" },
+  { "Bugesera": "XxBlJkEmJGQ" }
+]
 
+exports.provinces = [
+  { "Kigali Province": "nBLRIqKNNOu" },
+  { "Southern Province/Amajyepfo": "qICVQ5VD0Y7" },
+  { "Western Province/Uburengerazuba": "psfB4ksRKp2" },
+  { "Northern Province/Amajyaruguru": "tuaLIYpCQzv" },
+  { "Eastern Province/Uburasirazuba": "jUMVwrUlNqG" }
+]
 
 
 exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, index, booleanMappingTable, callback) {
@@ -141,7 +179,7 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
             console.log("--> Confidential HIV CRF - SECTION II: Follow up Information ", options.body);
           }
 
-          if (index == 5) {
+          if (index == 6) {
             console.log("--> CBS Recency VL ", options.body);
           }
         }
@@ -179,6 +217,9 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
     myLoopA(0);
   }
 }
+
+
+
 
 exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTable, dhis2Id, callback) {
 
