@@ -17,52 +17,27 @@
     "locations": {
         "l_440": {
             "hfname": "Remera HC",
-            "name": "Location-73",
+            "uuid":"f31f21e9-2ac7-48e6-9701-3a116ed1035f",
             "ip": "http://openmrs-tomcat-remera-hc-440:8080"
-        },
-        "l_442": {
-            "hfname": "Rukoma Sake HC",
-            "name": "Location-71",
-            "ip": "http://openmrs-tomcat-rukoma-sake-hc-442:8080"
-        },
-        "l_435": {
-            "hfname": "Kibungo HC",
-            "name": "Location-79",
-            "ip": "http://openmrs-tomcat-kibungo-hc-435:8080"
-        },
-        "l_434": {
-            "hfname": "Jarama HC",
-            "name": "Location-80",
-            "ip": "http://openmrs-tomcat-jarama-hc-434:8080"
-        },
-        "l_443": {
-            "hfname": "Rukumbeli HC",
-            "name": "Location-70",
-            "ip": "http://openmrs-tomcat-rukumbeli-hc-443:8080"
-        },
-        "l_455": {
-            "hfname": "Nzangwa HC",
-            "name": "Location-11",
-            "ip": "http://openmrs-tomcat-nzangwa-hc-455:8080"
         },
         "l_558": {
             "hfname": "Nyarugunga HC",
-            "name": "Location-478",
+            "uuid":"24016001-d38b-4f79-b427-428bc2e8c4ca",
             "ip": "http://openmrs-tomcat-nyarugunga-hc-558:8080"
         },
         "l_36": {
             "hfname": "Masaka HC",
-            "name": "Location-470",
+            "uuid": "76cca1a1-2f13-49c1-b2b8-7703de3ac642",
             "ip": "http://openmrs-tomcat-masaka-hc-36:8080"
         },
         "l_29": {
             "hfname": "Bethsaida HC",
-            "name": "Location-476",
+            "uuid": "20731cc8-5464-4782-a019-5db7b24a0e0a",
             "ip": "http://openmrs-tomcat-bethsaida-hc-29:8080"
         },
         "l_448": {
             "hfname": "Gihinga HC ",
-            "name": "Location-10",
+            "uuid": "ec098275-651d-4852-9603-aa0e1d88297f",
             "ip": "http://openmrs-tomcat:8080"
         }
     }

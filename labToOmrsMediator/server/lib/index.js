@@ -114,7 +114,7 @@ function setupApp() {
 
                 function LoopA(q) {
                     nd_of_research = nd_of_research + 1;
-                    var openmrsIPAddress  = locations["l_" + data.facilityCode];
+                    var openmrsIPAddress = locations["l_" + data.facilityCode];
                     if (q && q != "" && openmrsIPAddress) {
                         var options = {
                             url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/patient?q=" + q + "&v=full",
@@ -127,7 +127,7 @@ function setupApp() {
                         var testType = data.TestId.toLowerCase();
 
                         //// 1. Patient
-                        log.info("Search for the patient " + q, locations["l_" + data.facilityCode]["name"]);
+                        log.info("Search for the patient " + q, locations["l_" + data.facilityCode]["hfname"]);
                         request.get(options, function (error, response, body) {
                             if (error) {
                                 log.error("Error on patient research. Encounter creation aborted for " + data.SampleID + ".");
@@ -173,50 +173,53 @@ function setupApp() {
                                                 var visittype = JSON.parse(body).results;
                                                 if (visittype && visittype.length > 0) {
                                                     visittype = _getTheGoodResult(visittype, "display", tests.recency_vl.visitType)
-                                                    var options = {
-                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/location?q=" + locations["l_" + data.facilityCode]["name"],
-                                                        headers: {
-                                                            'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
-                                                            'Content-Type': 'application/json'
-                                                        }
-                                                    }
 
                                                     //// 2. Location 
-                                                    log.info("Search for the location '" + locations["l_" + data.facilityCode]["name"] + "'...");
-                                                    request.get(options, function (error, response, body) {
-                                                        if (error) {
-                                                            log.error("Error when searching the location. Encounter creation aborted for " + data.SampleID + ".");
-                                                            log.error(error);
+                                                    log.info("Search for the location '" + locations["l_" + data.facilityCode]["hfname"] + "'...");
 
+                                                    location = locations["l_" + data.facilityCode];
+                                                    switch (testType) {
+                                                        case 'viral_load_2':
+                                                            console.log("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                            options = {
+                                                                url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
+                                                                headers: {
+                                                                    'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
+                                                                    'Content-Type': 'application/json'
+                                                                }
+                                                            }
 
+                                                            //// 2. Form
+                                                            log.info("Search for the form '" + tests.viral_load_2.form + "'...");
+                                                            request.get(options, function (error, response, body) {
+                                                                if (error) {
+                                                                    log.error("Error on form search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                    log.error(error);
 
-                                                            orchestrationResponse = error
-                                                            orchestrationResponse = {statusCode: 500, headers: headers}
-                                                            orchestrations = []
-                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
-                                                            res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
-                                                        } else {
-                                                            var location = JSON.parse(body).results;
-                                                            if (location && location.length > 0) {
-                                                                location = _getTheGoodResult(location, "display", locations["l_" + data.facilityCode]["name"]);
-
-                                                                switch (testType) {
-                                                                    case 'viral_load_2':
-                                                                        console.log("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                                    orchestrationResponse = error
+                                                                    orchestrationResponse = {statusCode: 500, headers: headers}
+                                                                    orchestrations = []
+                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
+                                                                    res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
+                                                                } else {
+                                                                    var form = JSON.parse(body).results;
+                                                                    if (form && form.length > 0) {
+                                                                        form = _getTheGoodResult(form, "display", tests.viral_load_2.form)
                                                                         options = {
-                                                                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/form?q=" + tests.viral_load_2.form + "&v=full",
+                                                                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.parentConcept + "&v=full",
                                                                             headers: {
                                                                                 'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                 'Content-Type': 'application/json'
                                                                             }
                                                                         }
 
-                                                                        //// 2. Form
-                                                                        log.info("Search for the form '" + tests.viral_load_2.form + "'...");
+                                                                        //// 3. Parent concept
+                                                                        log.info("Search for encounter concept ");
                                                                         request.get(options, function (error, response, body) {
                                                                             if (error) {
-                                                                                log.error("Error on form search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                log.error("Error on encounter concept search. Encounter creation aborted for " + data.SampleID + ".");
                                                                                 log.error(error);
+
 
                                                                                 orchestrationResponse = error
                                                                                 orchestrationResponse = {statusCode: 500, headers: headers}
@@ -224,22 +227,23 @@ function setupApp() {
                                                                                 orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                             } else {
-                                                                                var form = JSON.parse(body).results;
-                                                                                if (form && form.length > 0) {
-                                                                                    form = _getTheGoodResult(form, "display", tests.viral_load_2.form)
+                                                                                var parentConcept = JSON.parse(body).results;
+                                                                                if (parentConcept && parentConcept.length > 0) {
+                                                                                    parentConcept = _getTheGoodResult(parentConcept, "display", tests.viral_load_2.parentConcept)
+
                                                                                     options = {
-                                                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.parentConcept + "&v=full",
+                                                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.concept,
                                                                                         headers: {
                                                                                             'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                             'Content-Type': 'application/json'
                                                                                         }
-                                                                                    }
+                                                                                    };
 
-                                                                                    //// 3. Parent concept
-                                                                                    log.info("Search for encounter concept ");
+                                                                                    //// 4. Concept
+                                                                                    log.info("Search for obs concept ");
                                                                                     request.get(options, function (error, response, body) {
                                                                                         if (error) {
-                                                                                            log.error("Error on encounter concept search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                            log.error("Error on obs concept search. Encounter creation aborted for " + data.SampleID + ".");
                                                                                             log.error(error);
 
 
@@ -249,25 +253,62 @@ function setupApp() {
                                                                                             orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                         } else {
-                                                                                            var parentConcept = JSON.parse(body).results;
-                                                                                            if (parentConcept && parentConcept.length > 0) {
-                                                                                                parentConcept = _getTheGoodResult(parentConcept, "display", tests.viral_load_2.parentConcept)
+                                                                                            var concept = JSON.parse(body).results;
+                                                                                            if (concept && concept.length > 0) {
+                                                                                                concept = _getTheGoodResult(concept, "display", tests.viral_load_2.concept)
 
-                                                                                                options = {
-                                                                                                    url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.viral_load_2.concept,
+                                                                                                var encounterOptions = {
+                                                                                                    url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/encounter",
+                                                                                                    body: JSON.stringify(
+                                                                                                            {
+                                                                                                                "patient": patient.uuid,
+                                                                                                                "form": form.uuid, //uuid of the concerned form in openmrs
+                                                                                                                "encounterType": form.encounterType.uuid, //uuid of encounterType
+                                                                                                                "location": location.uuid, //uuid of localtion
+                                                                                                                "encounterDatetime": (new Date()).toISOString(),
+                                                                                                                "obs": [
+                                                                                                                    {
+                                                                                                                        "concept": parentConcept.uuid, //uuid of perent concept
+                                                                                                                        "person": patient.uuid, //uuid of patient
+                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                        "groupMembers": [
+                                                                                                                            {
+                                                                                                                                "concept": concept.uuid, //uuid of concept
+                                                                                                                                "person": patient.uuid, //uuid of patient
+                                                                                                                                "location": location.uuid, //uuid of location
+                                                                                                                                "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                "value": data.Result.copies, //hiv concentration value (copie/ml) comming from labware
+                                                                                                                                "resourceVersion": "1.8"//OpenMRS version
+                                                                                                                            }
+                                                                                                                        ],
+                                                                                                                        "location": location.uuid//uuid of location
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                                "visit": {
+                                                                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
+                                                                                                                    "patient": patient.uuid,
+                                                                                                                    "visitType": visittype.uuid,
+                                                                                                                    "location": location.uuid,
+                                                                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
+                                                                                                                },
+                                                                                                                "encounterProviders": [{
+                                                                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
+                                                                                                                        "provider": "prov9b01-f749-4b3f-b8fe-8f6d460003bb",
+                                                                                                                        "resourceVersion": "1.9"//OpenMRS version
+                                                                                                                    }]
+                                                                                                            }
+                                                                                                    ),
                                                                                                     headers: {
                                                                                                         'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                         'Content-Type': 'application/json'
                                                                                                     }
                                                                                                 };
 
-                                                                                                //// 4. Concept
-                                                                                                log.info("Search for obs concept ");
-                                                                                                request.get(options, function (error, response, body) {
+                                                                                                request.post(encounterOptions, function (error, response, body) {
                                                                                                     if (error) {
-                                                                                                        log.error("Error on obs concept search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
                                                                                                         log.error(error);
-
+                                                                                                        log.error(response.body);
 
                                                                                                         orchestrationResponse = error
                                                                                                         orchestrationResponse = {statusCode: 500, headers: headers}
@@ -275,123 +316,85 @@ function setupApp() {
                                                                                                         orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                     } else {
-                                                                                                        var concept = JSON.parse(body).results;
-                                                                                                        if (concept && concept.length > 0) {
-                                                                                                            concept = _getTheGoodResult(concept, "display", tests.viral_load_2.concept)
+                                                                                                        needle
+                                                                                                                .post(apiConf.api.openMrsUrl, data, {})
+                                                                                                                .on('readable', function () {
 
-                                                                                                            var encounterOptions = {
-                                                                                                                url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/encounter",
-                                                                                                                body: JSON.stringify(
-                                                                                                                        {
-                                                                                                                            "patient": patient.uuid,
-                                                                                                                            "form": form.uuid, //uuid of the concerned form in openmrs
-                                                                                                                            "encounterType": form.encounterType.uuid, //uuid of encounterType
-                                                                                                                            "location": location.uuid, //uuid of localtion
-                                                                                                                            "encounterDatetime": (new Date()).toISOString(),
-                                                                                                                            "obs": [
-                                                                                                                                {
-                                                                                                                                    "concept": parentConcept.uuid, //uuid of perent concept
-                                                                                                                                    "person": patient.uuid, //uuid of patient
-                                                                                                                                    "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                    "groupMembers": [
-                                                                                                                                        {
-                                                                                                                                            "concept": concept.uuid, //uuid of concept
-                                                                                                                                            "person": patient.uuid, //uuid of patient
-                                                                                                                                            "location": location.uuid, //uuid of location
-                                                                                                                                            "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                            "value": data.Result.copies, //hiv concentration value (copie/ml) comming from labware
-                                                                                                                                            "resourceVersion": "1.8"//OpenMRS version
-                                                                                                                                        }
-                                                                                                                                    ],
-                                                                                                                                    "location": location.uuid//uuid of location
-                                                                                                                                }
-                                                                                                                            ],
-                                                                                                                            "visit": {
-                                                                                                                                //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-                                                                                                                                "patient": patient.uuid,
-                                                                                                                                "visitType": visittype.uuid,
-                                                                                                                                "location": location.uuid,
-                                                                                                                                "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-                                                                                                                            },
-                                                                                                                            "encounterProviders": [{
-                                                                                                                                    "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                                                                                    "provider": "prov9b01-f749-4b3f-b8fe-8f6d460003bb",
-                                                                                                                                    "resourceVersion": "1.9"//OpenMRS version
-                                                                                                                                }]
-                                                                                                                        }
-                                                                                                                ),
-                                                                                                                headers: {
-                                                                                                                    'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
-                                                                                                                    'Content-Type': 'application/json'
-                                                                                                                }
-                                                                                                            };
+                                                                                                                })
+                                                                                                                .on('done', function (err, resp) {
+                                                                                                                    if (response.statusCode == "201" || response.statusCode == "200") {
+                                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID);
+                                                                                                                    } else {
+                                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
+                                                                                                                        log.error(response);
+                                                                                                                    }
 
-                                                                                                            request.post(encounterOptions, function (error, response, body) {
-                                                                                                                if (error) {
-                                                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                    log.error(error);
-                                                                                                                    log.error(response.body);
 
-                                                                                                                    orchestrationResponse = error
-                                                                                                                    orchestrationResponse = {statusCode: 500, headers: headers}
+                                                                                                                    log.info('Transaction data posted OpenHIE', "to", apiConf.api.openMrsUrl);
+                                                                                                                    orchestrationResponse = "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID
+                                                                                                                    orchestrationResponse = {statusCode: response.statusCode, headers: headers}
                                                                                                                     orchestrations = []
-                                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
-                                                                                                                    res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
-                                                                                                                } else {
-                                                                                                                    needle
-                                                                                                                            .post(apiConf.api.openMrsUrl, data, {})
-                                                                                                                            .on('readable', function () {
-
-                                                                                                                            })
-                                                                                                                            .on('done', function (err, resp) {
-                                                                                                                                if (response.statusCode == "201" || response.statusCode == "200") {
-                                                                                                                                    log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
-                                                                                                                                } else {
-                                                                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
-                                                                                                                                    log.error(response);
-                                                                                                                                }
-
-
-                                                                                                                                log.info('Transaction data posted OpenHIE', "to", apiConf.api.openMrsUrl);
-                                                                                                                                orchestrationResponse = "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID
-                                                                                                                                orchestrationResponse = {statusCode: response.statusCode, headers: headers}
-                                                                                                                                orchestrations = []
-                                                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, response.body))
-                                                                                                                                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, "OK", orchestrations, properties))
-                                                                                                                            })
-                                                                                                                }
-                                                                                                            });
-
-
-                                                                                                        }
+                                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, response.body))
+                                                                                                                    res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, "OK", orchestrations, properties))
+                                                                                                                })
                                                                                                     }
                                                                                                 });
+
+
                                                                                             }
                                                                                         }
                                                                                     });
-                                                                                }//TODO Manage the case no form found here
+                                                                                }
                                                                             }
                                                                         });
+                                                                    }//TODO Manage the case no form found here
+                                                                }
+                                                            });
 
 
-                                                                        break;
-                                                                    case 'recency_vl':
-                                                                        log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                            break;
+                                                        case 'recency_vl':
+                                                            log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                            options = {
+                                                                url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
+                                                                headers: {
+                                                                    'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
+                                                                    'Content-Type': 'application/json'
+                                                                }
+                                                            }
+
+                                                            //// 2. Form 
+                                                            log.info("Search for the form '" + tests.recency_vl.form + "'...");
+                                                            request.get(options, function (error, response, body) {
+                                                                if (error) {
+                                                                    log.warn("Form " + tests.recency_vl.form + " not found!");
+                                                                    log.error("Error on search. Encounter creation aborted for " + data.SampleID + ".");
+                                                                    log.error(error);
+
+                                                                    orchestrationResponse = error
+                                                                    orchestrationResponse = {statusCode: 500, headers: headers}
+                                                                    orchestrations = []
+                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
+                                                                    res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
+                                                                } else {
+                                                                    var form = JSON.parse(body).results;
+                                                                    if (form && form.length > 0) {
+                                                                        form = _getTheGoodResult(form, "display", tests.recency_vl.form);
+
                                                                         options = {
-                                                                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/form?q=" + tests.recency_vl.form + "&v=full",
+                                                                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.q + "&v=full",
                                                                             headers: {
                                                                                 'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                 'Content-Type': 'application/json'
                                                                             }
                                                                         }
 
-                                                                        //// 2. Form 
-                                                                        log.info("Search for the form '" + tests.recency_vl.form + "'...");
+                                                                        //// 3.0. Get the RECENCY concepts list
+                                                                        log.info("Search for the RECENCY list ...");
                                                                         request.get(options, function (error, response, body) {
                                                                             if (error) {
-                                                                                log.warn("Form " + tests.recency_vl.form + " not found!");
-                                                                                log.error("Error on search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                                log.error(error);
+                                                                                log.log(error);
+
 
                                                                                 orchestrationResponse = error
                                                                                 orchestrationResponse = {statusCode: 500, headers: headers}
@@ -399,64 +402,63 @@ function setupApp() {
                                                                                 orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                 res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                             } else {
-                                                                                var form = JSON.parse(body).results;
-                                                                                if (form && form.length > 0) {
-                                                                                    form = _getTheGoodResult(form, "display", tests.recency_vl.form);
+                                                                                var recencies = JSON.parse(body).results;
+                                                                                if (recencies && recencies.length > 0) {
+                                                                                    var recencyAssayResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayResultConcept)
+                                                                                    var recencyAssayTestConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayTestConcept)
+                                                                                    var recencyViralLoadResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadResultConcept)
+                                                                                    var recencyViralLoadResultDateConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadResultDateConcept)
+                                                                                    var recencyViralLoadTestDateConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadTestDateConcept)
+                                                                                    var recentConceptValue = _getTheGoodResult(recencies, "display", tests.recency_vl.recentConceptValue)
+                                                                                    var recencyViralLoadConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadConcept)
 
-                                                                                    options = {
-                                                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.q + "&v=full",
-                                                                                        headers: {
-                                                                                            'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
-                                                                                            'Content-Type': 'application/json'
-                                                                                        }
-                                                                                    }
+                                                                                    if (data.Result && data.Result.copies) {
 
-                                                                                    //// 3.0. Get the RECENCY concepts list
-                                                                                    log.info("Search for the RECENCY list ...");
-                                                                                    request.get(options, function (error, response, body) {
-                                                                                        if (error) {
-                                                                                            log.log(error);
-
-
-                                                                                            orchestrationResponse = error
-                                                                                            orchestrationResponse = {statusCode: 500, headers: headers}
-                                                                                            orchestrations = []
-                                                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
-                                                                                            res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
+                                                                                        var ritaConcept = "RECENT";
+                                                                                        if (data.Result.copies == "NEGATIVE") {
+                                                                                            ritaConcept = "INVALID";
                                                                                         } else {
-                                                                                            var recencies = JSON.parse(body).results;
-                                                                                            if (recencies && recencies.length > 0) {
-                                                                                                var recencyAssayResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayResultConcept)
-                                                                                                var recencyAssayTestConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayTestConcept)
-                                                                                                var recencyViralLoadResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadResultConcept)
-                                                                                                var recencyViralLoadResultDateConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadResultDateConcept)
-                                                                                                var recencyViralLoadTestDateConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadTestDateConcept)
-                                                                                                var recentConceptValue = _getTheGoodResult(recencies, "display", tests.recency_vl.recentConceptValue)
-                                                                                                var recencyViralLoadConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadConcept)
+                                                                                            var copiesml = parseInt(data.Result.copies, 10);
+                                                                                            if (copiesml > 1000) {
+                                                                                                ritaConcept = "RECENT";
+                                                                                            } else {
+                                                                                                ritaConcept = "LONG-TERM";
+                                                                                            }
+                                                                                        }
 
-                                                                                                if (data.Result && data.Result.copies) {
+                                                                                        options = {
+                                                                                            url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + ritaConcept,
+                                                                                            headers: {
+                                                                                                'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
+                                                                                                'Content-Type': 'application/json'
+                                                                                            }
+                                                                                        }
 
-                                                                                                    var ritaConcept = "RECENT";
-                                                                                                    if (data.Result.copies == "NEGATIVE") {
-                                                                                                        ritaConcept = "INVALID";
-                                                                                                    } else {
-                                                                                                        var copiesml = parseInt(data.Result.copies, 10);
-                                                                                                        if (copiesml > 1000) {
-                                                                                                            ritaConcept = "RECENT";
-                                                                                                        } else {
-                                                                                                            ritaConcept = "LONG-TERM";
-                                                                                                        }
-                                                                                                    }
+                                                                                        //// 3.1. Get the RITA Concept
+                                                                                        request.get(options, function (error, response, body) {
+                                                                                            if (error) {
+                                                                                                log.error(error);
+
+
+                                                                                                orchestrationResponse = error
+                                                                                                orchestrationResponse = {statusCode: 500, headers: headers}
+                                                                                                orchestrations = []
+                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
+                                                                                                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
+                                                                                            } else {
+                                                                                                var ritaResultConceptValue = JSON.parse(body).results;
+                                                                                                if (ritaResultConceptValue && ritaResultConceptValue.length > 0) {
+                                                                                                    var ritaResultConceptValue = _getTheGoodResult(ritaResultConceptValue, "display", ritaConcept)
 
                                                                                                     options = {
-                                                                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + ritaConcept,
+                                                                                                        url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.yesConceptValue,
                                                                                                         headers: {
                                                                                                             'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                             'Content-Type': 'application/json'
                                                                                                         }
                                                                                                     }
 
-                                                                                                    //// 3.1. Get the RITA Concept
+                                                                                                    //// 3.2. Get the YES Concept
                                                                                                     request.get(options, function (error, response, body) {
                                                                                                         if (error) {
                                                                                                             log.error(error);
@@ -468,22 +470,105 @@ function setupApp() {
                                                                                                             orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                         } else {
-                                                                                                            var ritaResultConceptValue = JSON.parse(body).results;
-                                                                                                            if (ritaResultConceptValue && ritaResultConceptValue.length > 0) {
-                                                                                                                var ritaResultConceptValue = _getTheGoodResult(ritaResultConceptValue, "display", ritaConcept)
+                                                                                                            var yesConceptValue = JSON.parse(body).results;
+                                                                                                            if (yesConceptValue && yesConceptValue.length > 0) {
+                                                                                                                var yesConceptValue = _getTheGoodResult(yesConceptValue, "display", tests.recency_vl.yesConceptValue)
 
-                                                                                                                options = {
-                                                                                                                    url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/concept?q=" + tests.recency_vl.yesConceptValue,
+
+                                                                                                                var encounterOptions = {
+                                                                                                                    url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/encounter",
+                                                                                                                    body: JSON.stringify(
+                                                                                                                            {
+                                                                                                                                "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
+                                                                                                                                "patient": patient.uuid,
+                                                                                                                                "location": location.uuid,
+                                                                                                                                "form": form.uuid,
+                                                                                                                                "encounterType": form.encounterType.uuid,
+                                                                                                                                "obs": [
+                                                                                                                                    {
+                                                                                                                                        "concept": recencyAssayTestConcept.uuid,
+                                                                                                                                        "person": patient.uuid,
+                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                        "location": location.uuid,
+                                                                                                                                        "voided": false,
+                                                                                                                                        "value": {
+                                                                                                                                            "uuid": yesConceptValue.uuid //ALWAYS YES concept
+                                                                                                                                        },
+                                                                                                                                        "resourceVersion": "1.8"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "concept": recencyViralLoadConcept.uuid, //RECENCY VIRAL LOAD: YES
+                                                                                                                                        "person": patient.uuid,
+                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                        "location": location.uuid,
+                                                                                                                                        "voided": false,
+                                                                                                                                        "value": {
+                                                                                                                                            "uuid": yesConceptValue.uuid //ALWAYS YES concept
+                                                                                                                                        }
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "concept": recencyViralLoadResultConcept.uuid,
+                                                                                                                                        "person": patient.uuid,
+                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                        "location": location.uuid,
+                                                                                                                                        "voided": false,
+                                                                                                                                        "value": data.Result.copies,
+                                                                                                                                        "resourceVersion": "1.8"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "concept": recencyViralLoadResultDateConcept.uuid,
+                                                                                                                                        "person": patient.uuid,
+                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                        "location": location.uuid,
+                                                                                                                                        "voided": false,
+                                                                                                                                        "value": (new Date(data.DateReleased.trim())).toISOString(),
+                                                                                                                                        "resourceVersion": "1.8"
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        "concept": recencyViralLoadTestDateConcept.uuid,
+                                                                                                                                        "person": patient.uuid,
+                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                        "location": location.uuid,
+                                                                                                                                        "voided": false,
+                                                                                                                                        "value": (new Date(data.DateReleased.trim())).toISOString()
+                                                                                                                                    }, {
+                                                                                                                                        "concept": recencyAssayResultConcept.uuid, //RITA RESULT
+                                                                                                                                        "person": patient.uuid,
+                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                                                                                        "location": location.uuid,
+                                                                                                                                        "voided": false,
+                                                                                                                                        "value": {
+                                                                                                                                            "uuid": ritaResultConceptValue.uuid // RECENT, LONG-TERM or INVALID
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                ],
+                                                                                                                                "visit": {
+                                                                                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
+                                                                                                                                    "patient": patient.uuid,
+                                                                                                                                    "visitType": visittype.uuid,
+                                                                                                                                    "location": location.uuid,
+                                                                                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
+                                                                                                                                },
+                                                                                                                                "encounterProviders": [{
+                                                                                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
+                                                                                                                                        "provider": "42d9557b-9ec1-4999-8aa3-14087c961b51", //Labware
+                                                                                                                                        "resourceVersion": "1.9"
+                                                                                                                                    }],
+                                                                                                                                "resourceVersion": "1.9"
+                                                                                                                            }
+                                                                                                                    ),
                                                                                                                     headers: {
                                                                                                                         'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
                                                                                                                         'Content-Type': 'application/json'
                                                                                                                     }
-                                                                                                                }
+                                                                                                                };
 
-                                                                                                                //// 3.2. Get the YES Concept
-                                                                                                                request.get(options, function (error, response, body) {
+                                                                                                                //res.sendStatus(200);
+                                                                                                                request.post(encounterOptions, function (error, response, body) {
                                                                                                                     if (error) {
+                                                                                                                        log.warn("Encounter creation aborted for " + data.SampleID + ".");
                                                                                                                         log.error(error);
+                                                                                                                        log.error(response.body);
 
 
                                                                                                                         orchestrationResponse = error
@@ -492,163 +577,43 @@ function setupApp() {
                                                                                                                         orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                                         res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                                     } else {
-                                                                                                                        var yesConceptValue = JSON.parse(body).results;
-                                                                                                                        if (yesConceptValue && yesConceptValue.length > 0) {
-                                                                                                                            var yesConceptValue = _getTheGoodResult(yesConceptValue, "display", tests.recency_vl.yesConceptValue)
+
+                                                                                                                        //console.log('statusCode:', response && response.statusCode);
+                                                                                                                        //console.log('body:', body);
+                                                                                                                        //res.sendStatus(response.statusCode);
+                                                                                                                        needle
+                                                                                                                                .post(apiConf.api.openMrsUrl, data, {})
+                                                                                                                                .on('readable', function () {
+
+                                                                                                                                })
+                                                                                                                                .on('done', function (err, resp) {
+                                                                                                                                    if (response.statusCode == "201" || response.statusCode == "200") {
+                                                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID);
+                                                                                                                                    } else {
+                                                                                                                                        log.warn("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
+                                                                                                                                        log.error(response);
+                                                                                                                                    }
 
 
-                                                                                                                            var encounterOptions = {
-                                                                                                                                url: openmrsIPAddress.ip + "/openmrs/ws/rest/v1/encounter",
-                                                                                                                                body: JSON.stringify(
-                                                                                                                                        {
-                                                                                                                                            "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
-                                                                                                                                            "patient": patient.uuid,
-                                                                                                                                            "location": location.uuid,
-                                                                                                                                            "form": form.uuid,
-                                                                                                                                            "encounterType": form.encounterType.uuid,
-                                                                                                                                            "obs": [
-                                                                                                                                                {
-                                                                                                                                                    "concept": recencyAssayTestConcept.uuid,
-                                                                                                                                                    "person": patient.uuid,
-                                                                                                                                                    "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                                    "location": location.uuid,
-                                                                                                                                                    "voided": false,
-                                                                                                                                                    "value": {
-                                                                                                                                                        "uuid": yesConceptValue.uuid //ALWAYS YES concept
-                                                                                                                                                    },
-                                                                                                                                                    "resourceVersion": "1.8"
-                                                                                                                                                },
-                                                                                                                                                {
-                                                                                                                                                    "concept": recencyViralLoadConcept.uuid, //RECENCY VIRAL LOAD: YES
-                                                                                                                                                    "person": patient.uuid,
-                                                                                                                                                    "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                                    "location": location.uuid,
-                                                                                                                                                    "voided": false,
-                                                                                                                                                    "value": {
-                                                                                                                                                        "uuid": yesConceptValue.uuid //ALWAYS YES concept
-                                                                                                                                                    }
-                                                                                                                                                },
-                                                                                                                                                {
-                                                                                                                                                    "concept": recencyViralLoadResultConcept.uuid,
-                                                                                                                                                    "person": patient.uuid,
-                                                                                                                                                    "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                                    "location": location.uuid,
-                                                                                                                                                    "voided": false,
-                                                                                                                                                    "value": data.Result.copies,
-                                                                                                                                                    "resourceVersion": "1.8"
-                                                                                                                                                },
-                                                                                                                                                {
-                                                                                                                                                    "concept": recencyViralLoadResultDateConcept.uuid,
-                                                                                                                                                    "person": patient.uuid,
-                                                                                                                                                    "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                                    "location": location.uuid,
-                                                                                                                                                    "voided": false,
-                                                                                                                                                    "value": (new Date(data.DateReleased.trim())).toISOString(),
-                                                                                                                                                    "resourceVersion": "1.8"
-                                                                                                                                                },
-                                                                                                                                                {
-                                                                                                                                                    "concept": recencyViralLoadTestDateConcept.uuid,
-                                                                                                                                                    "person": patient.uuid,
-                                                                                                                                                    "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                                    "location": location.uuid,
-                                                                                                                                                    "voided": false,
-                                                                                                                                                    "value": (new Date(data.DateReleased.trim())).toISOString()
-                                                                                                                                                }, {
-                                                                                                                                                    "concept": recencyAssayResultConcept.uuid, //RITA RESULT
-                                                                                                                                                    "person": patient.uuid,
-                                                                                                                                                    "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                                    "location": location.uuid,
-                                                                                                                                                    "voided": false,
-                                                                                                                                                    "value": {
-                                                                                                                                                        "uuid": ritaResultConceptValue.uuid // RECENT, LONG-TERM or INVALID
-                                                                                                                                                    }
-                                                                                                                                                }
-                                                                                                                                            ],
-                                                                                                                                            "visit": {
-                                                                                                                                                //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-                                                                                                                                                "patient": patient.uuid,
-                                                                                                                                                "visitType": visittype.uuid,
-                                                                                                                                                "location": location.uuid,
-                                                                                                                                                "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-                                                                                                                                            },
-                                                                                                                                            "encounterProviders": [{
-                                                                                                                                                    "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                                                                                                    "provider": "42d9557b-9ec1-4999-8aa3-14087c961b51",//Labware
-                                                                                                                                                    "resourceVersion": "1.9"
-                                                                                                                                                }],
-                                                                                                                                            "resourceVersion": "1.9"
-                                                                                                                                        }
-                                                                                                                                ),
-                                                                                                                                headers: {
-                                                                                                                                    'Authorization': 'Basic ' + Buffer.from("geoffrey:Ganyugxy1").toString('base64'),
-                                                                                                                                    'Content-Type': 'application/json'
-                                                                                                                                }
-                                                                                                                            };
-                                                                                                                            
-                                                                                                                            //res.sendStatus(200);
-                                                                                                                            request.post(encounterOptions, function (error, response, body) {
-                                                                                                                                if (error) {
-                                                                                                                                    log.warn("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                                    log.error(error);
-                                                                                                                                    log.error(response.body);
-
-
-                                                                                                                                    orchestrationResponse = error
-                                                                                                                                    orchestrationResponse = {statusCode: 500, headers: headers}
+                                                                                                                                    log.info('Transaction data posted OpenHIE', "to", apiConf.api.openMrsUrl);
+                                                                                                                                    orchestrationResponse = "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID
+                                                                                                                                    orchestrationResponse = {statusCode: response.statusCode, headers: headers}
                                                                                                                                     orchestrations = []
-                                                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
-                                                                                                                                    res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
-                                                                                                                                } else {
-
-                                                                                                                                    //console.log('statusCode:', response && response.statusCode);
-                                                                                                                                    //console.log('body:', body);
-                                                                                                                                    //res.sendStatus(response.statusCode);
-                                                                                                                                    needle
-                                                                                                                                            .post(apiConf.api.openMrsUrl, data, {})
-                                                                                                                                            .on('readable', function () {
-
-                                                                                                                                            })
-                                                                                                                                            .on('done', function (err, resp) {
-                                                                                                                                                if (response.statusCode == "201" || response.statusCode == "200") {
-                                                                                                                                                    log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID);
-                                                                                                                                                } else {
-                                                                                                                                                    log.warn("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
-                                                                                                                                                    log.error(response);
-                                                                                                                                                }
+                                                                                                                                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, response.body))
+                                                                                                                                    res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, "OK", orchestrations, properties))
+                                                                                                                                })
 
 
-                                                                                                                                                log.info('Transaction data posted OpenHIE', "to", apiConf.api.openMrsUrl);
-                                                                                                                                                orchestrationResponse = "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["name"] + "'.", "Sample ID: ", data.SampleID
-                                                                                                                                                orchestrationResponse = {statusCode: response.statusCode, headers: headers}
-                                                                                                                                                orchestrations = []
-                                                                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, response.body))
-                                                                                                                                                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, "OK", orchestrations, properties))
-                                                                                                                                            })
-
-
-                                                                                                                                }
-                                                                                                                            });
-
-
-
-
-
-                                                                                                                        } else {
-                                                                                                                            log.warn("Concept not found!", locations["l_" + data.facilityCode]["name"]);
-                                                                                                                            log.error("Encounter creation aborted for " + data.SampleID + ".");
-
-                                                                                                                            orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
-                                                                                                                            orchestrationResponse = {statusCode: 500, headers: headers}
-                                                                                                                            orchestrations = []
-                                                                                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
-                                                                                                                            res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
-                                                                                                                        }
                                                                                                                     }
                                                                                                                 });
-                                                                                                            } else {
-                                                                                                                log.warn("Concept not found!", locations["l_" + data.facilityCode]["name"]);
-                                                                                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
 
+
+
+
+
+                                                                                                            } else {
+                                                                                                                log.warn("Concept not found!", locations["l_" + data.facilityCode]["hfname"]);
+                                                                                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
 
                                                                                                                 orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                                                 orchestrationResponse = {statusCode: 500, headers: headers}
@@ -659,8 +624,9 @@ function setupApp() {
                                                                                                         }
                                                                                                     });
                                                                                                 } else {
-                                                                                                    log.warn("Data with empty result received!");
+                                                                                                    log.warn("Concept not found!", locations["l_" + data.facilityCode]["hfname"]);
                                                                                                     log.error("Encounter creation aborted for " + data.SampleID + ".");
+
 
                                                                                                     orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                                     orchestrationResponse = {statusCode: 500, headers: headers}
@@ -668,22 +634,22 @@ function setupApp() {
                                                                                                     orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
                                                                                                     res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                                 }
-                                                                                            } else {
-                                                                                                log.warn("RECENCY concept list not found!", locations["l_" + data.facilityCode]["name"]);
-                                                                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
-
-
-                                                                                                orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
-                                                                                                orchestrationResponse = {statusCode: 500, headers: headers}
-                                                                                                orchestrations = []
-                                                                                                orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
-                                                                                                res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
                                                                                             }
-                                                                                        }
-                                                                                    });
+                                                                                        });
+                                                                                    } else {
+                                                                                        log.warn("Data with empty result received!");
+                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+
+                                                                                        orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
+                                                                                        orchestrationResponse = {statusCode: 500, headers: headers}
+                                                                                        orchestrations = []
+                                                                                        orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
+                                                                                        res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
+                                                                                    }
                                                                                 } else {
-                                                                                    log.warn("Form " + tests.recency_vl.form + " not found!", locations["l_" + data.facilityCode]["name"]);
+                                                                                    log.warn("RECENCY concept list not found!", locations["l_" + data.facilityCode]["hfname"]);
                                                                                     log.error("Encounter creation aborted for " + data.SampleID + ".");
+
 
                                                                                     orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
                                                                                     orchestrationResponse = {statusCode: 500, headers: headers}
@@ -693,23 +659,33 @@ function setupApp() {
                                                                                 }
                                                                             }
                                                                         });
+                                                                    } else {
+                                                                        log.warn("Form " + tests.recency_vl.form + " not found!", locations["l_" + data.facilityCode]["hfname"]);
+                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
 
-                                                                        break;
-                                                                    case 'hiv_recency':
-                                                                        //TODO
-                                                                        log.info("New HIV recency result from Labware. SampleID: '" + data.SampleID + "'", data);
-                                                                        orchestrationResponse = "Operation succeeded"
-                                                                        orchestrationResponse = {statusCode: 200, headers: headers}
-                                                                        orchestrations = [];
+                                                                        orchestrationResponse = "Encounter creation aborted for " + data.SampleID + "."
+                                                                        orchestrationResponse = {statusCode: 500, headers: headers}
+                                                                        orchestrations = []
                                                                         orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
-                                                                        res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, "OK", orchestrations, properties))
-                                                                        break;
-                                                                }//END Switch
-                                                            }//TODO Manage the case no form found here
-                                                        }
-                                                    });
+                                                                        res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, body, orchestrations, properties))
+                                                                    }
+                                                                }
+                                                            });
+
+                                                            break;
+                                                        case 'hiv_recency':
+                                                            //TODO
+                                                            log.info("New HIV recency result from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                            orchestrationResponse = "Operation succeeded"
+                                                            orchestrationResponse = {statusCode: 200, headers: headers}
+                                                            orchestrations = [];
+                                                            orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, body))
+                                                            res.send(utils.buildReturnObject(mediatorConfig.urn, 'Success', 200, headers, "OK", orchestrations, properties))
+                                                            break;
+                                                    }//END Switch
+
                                                 } else {
-                                                    log.warn("Visite type not found!", locations["l_" + data.facilityCode]["name"]);
+                                                    log.warn("Visite type not found!", locations["l_" + data.facilityCode]["hfname"]);
                                                     log.error("Encounter creation aborted for " + data.SampleID + ".");
 
 
@@ -726,7 +702,7 @@ function setupApp() {
                                             log.warn("No patient found, searching by name: " + data.firstName + " " + data.lastName);
                                             LoopA(data.firstName + " " + data.lastName);
                                         } else {
-                                            log.warn("No patient found in " + locations["l_" + data.facilityCode]["name"], "Name: " + data.firstName + " " + data.lastName);
+                                            log.warn("No patient found in " + locations["l_" + data.facilityCode]["hfname"], "Name: " + data.firstName + " " + data.lastName);
                                             log.error("Encounter creation aborted for " + data.SampleID + ".");
 
 
@@ -778,14 +754,14 @@ function setupApp() {
                         if (nd_of_research < 2) {//Second research possible by name 
                             log.warn("No patient found, searching by name : " + data.firstName + " " + data.lastName);
                             LoopA(data.firstName + " " + data.lastName);
-                        } else if (!openmrsIPAddress){
+                        } else if (!openmrsIPAddress) {
                             log.warn("Unknown health facility ", data.facilityCode, "Operation aborted");
-                            orchestrationResponse = "Operation aborted. Unknown health facility "+data.facilityCode;
+                            orchestrationResponse = "Operation aborted. Unknown health facility " + data.facilityCode;
                             orchestrationResponse = {statusCode: 500, headers: headers};
                             orchestrations = [];
                             orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, "Failed"))
                             res.send(utils.buildReturnObject(mediatorConfig.urn, 'Not Implemented', 501, headers, "Not Implemented", orchestrations, properties))
-                        }else{
+                        } else {
                             log.warn("No patient found. Operation aborted");
                             orchestrationResponse = ""
                             orchestrationResponse = {statusCode: 500, headers: headers}
