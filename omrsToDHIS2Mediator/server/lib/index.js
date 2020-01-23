@@ -500,7 +500,7 @@ var getOrganizationUnit = function (fields, callback) {
     if (utils.isFineValue(fields.location.description) == true && fields.location.description.includes(":") == true) {
 
       //FOSAID: 448 TYPE: CS
-      var labFosaId = fields.location.description.split(":")[1].trim().split(" ")[0].trim();
+      var labFosaId = fields.location.description.split(":")[1].trim().split(" ")[1].trim();
       winston.info('Getting DHIS2 organizationUnit with location fosa id ', labFosaId)
       var options = {
         url: apiConf.api.dhis2.url + "/api/organisationUnits.json?fields=id&&filter=code:eq:" + labFosaId,
