@@ -2,7 +2,7 @@
   "api": {
     "username": "root@openhim.org",
     "password": "0000",
-    "apiURL": "https://localhost:8080",
+    "apiURL": "https://openhim-core:8080",
     "trustSelfSigned": "true",
     "urlPattern": "/report/",
     "dhis2": {
