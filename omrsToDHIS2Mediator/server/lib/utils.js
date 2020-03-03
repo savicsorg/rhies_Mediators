@@ -146,32 +146,32 @@ exports.getDHIS2RelationOfContact = function (uuid) {
       case 'a71fff61-4db8-43ce-98f8-5de7f689f560':
         return 'ABFDAJwKeRZ';
         break;
-      case '':
-        return '';
+      case 'e42027db-5008-4cb0-8131-af2d84f59734':
+        return 'C58YCNuA64x';
         break;
-      case '':
-        return '';
+      case 'ca27eadb-c14d-414e-8db9-694b3831e719':
+        return 'zDFb1kASBZ8';
         break;
-      case '':
-        return '';
+      case 'a8415b6a-065d-4cd6-9c70-4cdcec7bf8ef':
+        return 'gTyCR0HFnjp';
         break;
-      case '':
-        return '';
+      case 'f95bdebd-c174-4eaa-86cf-067f78db5364':
+        return 'c6lPSpoY2T5';
         break;
-      case '':
-        return '';
+      case '825ee96c-5277-4b29-bece-7d94e654da34':
+        return 'LUcOAQklmNQ';
         break;
-      case '':
-        return '';
+      case '7f0dd8e6-f0c3-4cb1-a81e-24391fc7200b':
+        return 'S9NJxxEdqyk';
         break;
-      case '':
-        return '';
+      case '98463468-4bc0-4df0-8b78-ad5e208c5d2a':
+        return 'BRDfNrkhRRW';
         break;
-      case '':
-        return '';
+      case '1394d37f-38ca-4f8a-a486-ac46e0ed7523':
+        return 'XJERkeIHfcE';
         break;
-      case '':
-        return '';
+      case 'd0385b0e-c9ac-4f63-ab8d-b6273c029f9d':
+        return 'iKzBZiMwvGw';
         break;                 
       default:
         return '';
