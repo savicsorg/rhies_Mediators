@@ -272,38 +272,14 @@ exports.getDHIS2ReasonContactNotReceived = function (uuid) {
 exports.getDHIS2ContactNotifier = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
-      case '':
-        return '';
+      case 'd12bec46-f525-41b2-99c6-bd51bda4046c':
+        return 'gD4MJ7POPEz';
         break;
-      case '':
-        return '';
+      case 'f7908667-e296-4be4-b41e-26bc4b5ceccb':
+        return 'OG01ZScE7Xb';
         break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
+      case 'ab6fcd11-6531-4fcf-bfb2-a214b88c0d29':
+        return 'zwjBu20ltE5';
         break;                 
       default:
         return '';
