@@ -875,7 +875,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   } else {
     omrsUntestedContactGivenTestKit = "";
   }
-
+  //End of UUID retrieving
   
   
   //1- sending createNewEventStageInfoRecencyContact
