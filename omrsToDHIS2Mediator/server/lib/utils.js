@@ -293,39 +293,27 @@ exports.getDHIS2ContactNotifier = function (uuid) {
 exports.getDHIS2NotificationApproach = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
-      case '':
-        return '';
+      case 'c1ef1230-a9f7-4593-bdc8-1e9a08d45968':
+        return 'ld7eCEmHmL0';
         break;
-      case '':
-        return '';
+      case '5e053da8-f8ac-4f4d-902f-dba756a312a5':
+        return 'V85Z8rIMnOO';
         break;
-      case '':
-        return '';
+      case 'e7fbe2c7-b9c4-4caa-83f3-3fc327a225c4':
+        return 'RwjddwTRVM4';
         break;
-      case '':
-        return '';
+      case '35de662a-63de-4dbc-92c4-2b08165406ab':
+        return 'IuNYK8OIZYq';
         break;
-      case '':
-        return '';
+      case 'd195e749-fa4a-43e3-8ceb-a72f25fb2be4':
+        return 'jdo1YiXyfKn';
         break;
-      case '':
-        return '';
+      case '6c93ead4-d189-4476-a81d-1bef16bda6a4':
+        return 'PCJldbuZKlB';
         break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;                 
+      case '8919a43c-fdee-4861-9fd8-ff068d4d740c':
+        return 'BN8qSnZM57k';
+        break;              
       default:
         return '';
     }
