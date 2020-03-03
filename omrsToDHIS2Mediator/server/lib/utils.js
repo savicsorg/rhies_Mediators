@@ -137,6 +137,366 @@ exports.getDHIS2RecencyAssayResult = function (uuid) {
 }
 
 
+exports.getDHIS2RelationOfContact = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '78240034-73f3-46d8-b688-81fb99f27056':
+        return 'mzWU3p77ybU';
+        break;
+      case 'a71fff61-4db8-43ce-98f8-5de7f689f560':
+        return 'ABFDAJwKeRZ';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2ContactHivStatus = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2PlanedReferenceType = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2ReasonContactNotReceived = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2ContactNotifier = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2NotificationApproach = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2ReasonContactNotTested = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2ContactHivResult = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;
+      case '':
+        return '';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
