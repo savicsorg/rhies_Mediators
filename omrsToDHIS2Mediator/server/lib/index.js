@@ -763,12 +763,17 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   var omrsRecencyAssayResultValue = "";
   var omrsRelationOfContactValue = "";
   var omrsContactHivStatusValue = "";
+  var omrsRiskOfViolenceValue = "";
   var omrsPlannedReferenceTypeValue = "";
+  var omrsContactInvitedValue = "";
+  var omrsContactReceivedValue = "";
   var omrsReasonContactNotReceivedValue = "";
   var omrsContactNotifierValue = "";
   var omrsNotificationApproachValue = "";
+  var omrsContactTestedValue = "";
   var omrsReasonContactNotTestedValue = ""; //This one must be modified in OpenMRS to dropdown, because it's free text
   var omrsContactHivResultValue = "";
+  var omrsUntestedContactGivenTestKitValue = "";
 
   
   
