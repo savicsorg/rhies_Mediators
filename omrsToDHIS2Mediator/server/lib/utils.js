@@ -334,31 +334,7 @@ exports.getDHIS2ReasonContactNotTested = function (uuid) {
         break;
       case '':
         return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;                 
+        break;              
       default:
         return '';
     }
@@ -371,38 +347,11 @@ exports.getDHIS2ReasonContactNotTested = function (uuid) {
 exports.getDHIS2ContactHivResult = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
-      case '':
-        return '';
+      case '3cd3a7a2-26fe-102b-80cb-0017a47871b2':
+        return 'HgLe4Xenycn';
         break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
+      case '3cd28732-26fe-102b-80cb-0017a47871b2':
+        return 'YEOVngsByWK';
         break;                 
       default:
         return '';
