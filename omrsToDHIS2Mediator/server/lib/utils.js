@@ -206,39 +206,27 @@ exports.getDHIS2ContactHivStatus = function (uuid) {
 exports.getDHIS2PlanedReferenceType = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
-      case '':
-        return '';
+      case 'c1ef1230-a9f7-4593-bdc8-1e9a08d45968':
+        return 'AbJydX5nX3k';
         break;
-      case '':
-        return '';
+      case '5e053da8-f8ac-4f4d-902f-dba756a312a5':
+        return 'IV8M4e6l5oI';
         break;
-      case '':
-        return '';
+      case 'e7fbe2c7-b9c4-4caa-83f3-3fc327a225c4':
+        return 'Fl4NhPnptVk';
         break;
-      case '':
-        return '';
+      case '35de662a-63de-4dbc-92c4-2b08165406ab':
+        return 'loFQ4dZf0eq';
         break;
-      case '':
-        return '';
+      case 'd195e749-fa4a-43e3-8ceb-a72f25fb2be4':
+        return 'MCTcHYKya23';
         break;
-      case '':
-        return '';
+      case '6c93ead4-d189-4476-a81d-1bef16bda6a4':
+        return 'PVLjZ2ZWQVS';
         break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;                 
+      case '8919a43c-fdee-4861-9fd8-ff068d4d740c':
+        return 'Sr5tjR2oQHf';
+        break;            
       default:
         return '';
     }
