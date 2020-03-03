@@ -203,7 +203,7 @@ exports.getDHIS2ContactHivStatus = function (uuid) {
 }
 
 
-exports.getDHIS2PlanedReferenceType = function (uuid) {
+exports.getDHIS2PlannedReferenceType = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
       case 'c1ef1230-a9f7-4593-bdc8-1e9a08d45968':
@@ -239,39 +239,27 @@ exports.getDHIS2PlanedReferenceType = function (uuid) {
 exports.getDHIS2ReasonContactNotReceived = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
-      case '':
-        return '';
+      case 'e5dbe475-9116-4ed6-9349-6ab652bf9b13':
+        return 'aALfEtMhQbD';
         break;
-      case '':
-        return '';
+      case '535dcc8a-71fb-47a1-89c6-1e0247ac4b6b':
+        return 'KoBWJrNz0wM';
         break;
-      case '':
-        return '';
+      case '4db56fa7-e8cc-4ab4-b1bb-22a603dfdb35':
+        return 'vYReWqiCniP';
         break;
-      case '':
-        return '';
+      case '5a3402d4-983b-4015-b673-5d76b6a7beef':
+        return 'TyZkSOjZczV';
         break;
-      case '':
-        return '';
+      case '55bf58e2-48ff-41cf-a4a4-4b4feba2a140':
+        return 'YRAKNkQqLE0';
         break;
-      case '':
-        return '';
+      case '12beb608-5f22-43d1-afc0-f7aef355051d':
+        return 'XrI9DVozzi8';
         break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;                 
+      case '2138c5f5-ce1d-4e96-9b9b-c1ca6fc21510':
+        return 'TJ4eVIVbxgL';
+        break;           
       default:
         return '';
     }
