@@ -185,39 +185,15 @@ exports.getDHIS2RelationOfContact = function (uuid) {
 exports.getDHIS2ContactHivStatus = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
-      case '':
-        return '';
+      case '3cd3a7a2-26fe-102b-80cb-0017a47871b2':
+        return 'ITvtdUBslbU';
         break;
-      case '':
-        return '';
+      case '3cd28732-26fe-102b-80cb-0017a47871b2':
+        return 'Pey8Tb56rwN';
         break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;
-      case '':
-        return '';
-        break;                 
+      case '3cd6fac4-26fe-102b-80cb-0017a47871b2':
+        return 'kNRJ08nuqpC';
+        break;           
       default:
         return '';
     }
