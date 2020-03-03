@@ -759,6 +759,20 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
 
 
 var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
+  //Declaration of all the variables for DHIS2 dropdown
+  var omrsRecencyAssayResultValue = "";
+  var omrsRelationOfContactValue = "";
+  var omrsContactHivStatusValue = "";
+  var omrsPlannedReferenceTypeValue = "";
+  var omrsReasonContactNotReceivedValue = "";
+  var omrsContactNotifierValue = "";
+  var omrsNotificationApproachValue = "";
+  var omrsReasonContactNotTestedValue = ""; //This one must be modified in OpenMRS to dropdown, because it's free text
+  var omrsContactHivResultValue = "";
+
+  
+  
+  
   //1- sending createNewEventStageInfoRecencyContact
   var dhsi2RecencyStructure = {
     "program": "CYyICYiO5zo",
@@ -806,7 +820,6 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   }
 
 
-
   //2- sending createNewEventStageInfoContacts
   var dhsi2ContactStructure =
   {
@@ -849,7 +862,6 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
       }
     ]
   }
-
 
 
   //3- sending createNewEventStageResultContactNotif

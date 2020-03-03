@@ -9,7 +9,6 @@ const apiConf = process.env.NODE_ENV === 'test' ? require('../config/test') : re
 
 
 
-
 exports.buildOrchestration = (name, beforeTimestamp, method, url, requestHeaders, requestContent, res, body) => {
   let uri = new URI(url)
   return {
@@ -30,6 +29,7 @@ exports.buildOrchestration = (name, beforeTimestamp, method, url, requestHeaders
     }
   }
 }
+
 
 exports.isFineValue = function (value) {
   if (value === null) {
@@ -66,6 +66,7 @@ exports.isFineValue = function (value) {
   }
 }
 
+
 exports.getPatientGenderDhis2Id = function (patient) {
   if (patient.person.gender.toUpperCase() == "F" || patient.person.gender.toUpperCase() == "FEMAL") {
     return "dP9kDCGW6C1";
@@ -73,6 +74,7 @@ exports.getPatientGenderDhis2Id = function (patient) {
     return "SdIpSKZhA6a";
   }
 }
+
 
 exports.getPatientMaritalStatusDhis2Id = function (patient) {
   if (exports.isFineValue(patient.person.attributes) == true) {
@@ -91,6 +93,7 @@ exports.getPatientMaritalStatusDhis2Id = function (patient) {
   }
   return "";
 }
+
 
 exports.getConceptValue = function (obs, uuid) {
   if (exports.isFineValue(obs) == true) {
@@ -362,6 +365,24 @@ exports.getDHIS2ContactHivResult = function (uuid) {
 }
 
 
+exports.getDHIS2OuiNonResponse = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cd6f600-26fe-102b-80cb-0017a47871b2':
+        return 'C2BW6i7KIr9';
+        break;
+      case '3cd6f86c-26fe-102b-80cb-0017a47871b2':
+        return 'R4fVlOAVmEw';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
@@ -375,9 +396,11 @@ exports.isDate = function (value) {
   }
 }
 
+
 exports.isNumeric = function (value) {
   return ((typeof value) == "number");
 }
+
 
 exports.convertToBoolean = function (value) {
   if (exports.isString(value) == true) {
@@ -390,9 +413,11 @@ exports.convertToBoolean = function (value) {
   }
 }
 
+
 exports.isString = function (value) {
   return ((typeof value) == "string");
 }
+
 
 exports.isObject = function (value) {
   return ((typeof value) == "object");
@@ -403,14 +428,15 @@ exports.getNewDate = function () {
   return moment(new Date()).format('YYYY-MM-DD');
 }
 
+
 exports.convertToDate = function (value) {
   return moment(value).format('YYYY-MM-DD');
 }
 
+
 exports.convertToNumber = function (value) {
   return parseInt(value, 10);
 }
-
 
 
 exports.getdhis2ProvinceDistrictIds = function (patient, ) {
@@ -476,6 +502,7 @@ exports.getDhis2District = function (value, callback) {
   });
 }
 
+
 exports.getDhis2DropdownValue = function (value, callback) {
   var options = {
     url: apiConf.api.dhis2.url + "/api/options.json?&filter=id:eq:" + value + "&fields=code",
@@ -498,6 +525,7 @@ exports.getDhis2DropdownValue = function (value, callback) {
     }
   });
 }
+
 
 exports.buildReturnObject = (urn, status, statusCode, headers, responseBody, orchestrations, properties) => {
   var response = {
