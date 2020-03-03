@@ -119,6 +119,23 @@ exports.getDHIS2Occupation = function (uuid) {
 }
 
 
+exports.getDHIS2RecencyAssayResult = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '819f5ebe-0b3e-44ba-b435-8f3d1b7bb130':
+        return 'MCaRcKcQByZ';
+        break;
+      case '9340dede-5124-49cf-9b3c-5153cc0e537f':
+        return 'Uz46DvWmRpz';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
 
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
