@@ -520,6 +520,25 @@ exports.getDHIS2HivTestingClinic = function (uuid) {
 }
 
 
+exports.getDHIS2YesNoResponse = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cd6f600-26fe-102b-80cb-0017a47871b2':
+        return 'I7B4r9m1iIZ';
+        break;
+      case '3cd6f86c-26fe-102b-80cb-0017a47871b2':
+        return 'g9WSz3pDHf1';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
