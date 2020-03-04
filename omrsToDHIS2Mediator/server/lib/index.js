@@ -1174,154 +1174,154 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
 
   //Retrieve the UUID for each dropdown concept from OpenMRS
   //Begining of UUID retrieving 
-  var omrsARTStartLocation = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsARTStartLocation = utils.getConceptValue(incomingEncounter.encounter.obs, "d3892b43-18be-4870-8d9b-02f5318f9cd5");
   if (utils.isFineValue(omrsARTStartLocation) == true && utils.isFineValue(omrsARTStartLocation.name) == true && utils.isFineValue(omrsARTStartLocation.name.name) == true) {
     omrsARTStartLocation = omrsARTStartLocation.uuid;
   } else {
     omrsARTStartLocation = "";
   }
 
-  var omrsIndexCaseType = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsIndexCaseType = utils.getConceptValue(incomingEncounter.encounter.obs, "b45597da-318b-4dde-858b-da16f5950686");
   if (utils.isFineValue(omrsIndexCaseType) == true && utils.isFineValue(omrsIndexCaseType.name) == true && utils.isFineValue(omrsIndexCaseType.name.name) == true) {
     omrsIndexCaseType = omrsIndexCaseType.uuid;
   } else {
     omrsIndexCaseType = "";
   }
 
-  var omrsResidencyType = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsResidencyType = utils.getConceptValue(incomingEncounter.encounter.obs, "59525e15-fc5e-4bc4-9e29-87954348c15f");
   if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsResidencyType.name) == true && utils.isFineValue(omrsResidencyType.name.name) == true) {
     omrsResidencyType = omrsResidencyType.uuid;
   } else {
     omrsResidencyType = "";
   }
   
-  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs, "3cd97286-26fe-102b-80cb-0017a47871b2");
   if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsOccupationType.name) == true && utils.isFineValue(omrsOccupationType.name.name) == true) {
     omrsOccupationType = omrsOccupationType.uuid;
   } else {
     omrsOccupationType = "";
   }
 
-  var omrsVASWCLast12m = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsVASWCLast12m = utils.getConceptValue(incomingEncounter.encounter.obs, "788e9f4c-5ba4-4a42-9974-83ea7128f0f8");
   if (utils.isFineValue(omrsVASWCLast12m) == true && utils.isFineValue(omrsVASWCLast12m.name) == true && utils.isFineValue(omrsVASWCLast12m.name.name) == true) {
     omrsVASWCLast12m = omrsVASWCLast12m.uuid;
   } else {
     omrsVASWCLast12m = "";
   }
 
-  var omrsSexWithMale = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsSexWithMale = utils.getConceptValue(incomingEncounter.encounter.obs, "a116b5b4-8973-43ac-8007-c070b4199a53");
   if (utils.isFineValue(omrsSexWithMale) == true && utils.isFineValue(omrsSexWithMale.name) == true && utils.isFineValue(omrsSexWithMale.name.name) == true) {
     omrsSexWithMale = omrsSexWithMale.uuid;
   } else {
     omrsSexWithMale = "";
   }
 
-  var omrsSexWithFemale = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsSexWithFemale = utils.getConceptValue(incomingEncounter.encounter.obs, "8191ff34-f72e-4f67-af0a-82acebca682a");
   if (utils.isFineValue(omrsSexWithFemale) == true && utils.isFineValue(omrsSexWithFemale.name) == true && utils.isFineValue(omrsSexWithFemale.name.name) == true) {
     omrsSexWithFemale = omrsSexWithFemale.uuid;
   } else {
     omrsSexWithFemale = "";
   }
 
-  var omrsSexWithHivPositifPerson = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsSexWithHivPositifPerson = utils.getConceptValue(incomingEncounter.encounter.obs, "b195b807-2213-4831-aeb8-0ac03cd139e4");
   if (utils.isFineValue(omrsSexWithHivPositifPerson) == true && utils.isFineValue(omrsSexWithHivPositifPerson.name) == true && utils.isFineValue(omrsSexWithHivPositifPerson.name.name) == true) {
     omrsSexWithHivPositifPerson = omrsSexWithHivPositifPerson.uuid;
   } else {
     omrsSexWithHivPositifPerson = "";
   }
 
-  var omrsSexWithComSexWorker = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsSexWithComSexWorker = utils.getConceptValue(incomingEncounter.encounter.obs, "d37d8242-2626-4404-94fd-5e78877457ab");
   if (utils.isFineValue(omrsSexWithComSexWorker) == true && utils.isFineValue(omrsSexWithComSexWorker.name) == true && utils.isFineValue(omrsSexWithComSexWorker.name.name) == true) {
     omrsSexWithComSexWorker = omrsSexWithComSexWorker.uuid;
   } else {
     omrsSexWithComSexWorker = "";
   }
 
-  var omrsSexWithMultiplePartner = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsSexWithMultiplePartner = utils.getConceptValue(incomingEncounter.encounter.obs, "a239017b-7bc1-421e-b348-d526e7ebd9d7");
   if (utils.isFineValue(omrsSexWithMultiplePartner) == true && utils.isFineValue(omrsSexWithMultiplePartner.name) == true && utils.isFineValue(omrsSexWithMultiplePartner.name.name) == true) {
     omrsSexWithMultiplePartner = omrsSexWithMultiplePartner.uuid;
   } else {
     omrsSexWithMultiplePartner = "";
   }
 
-  var omrsBeComSexWorker = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsBeComSexWorker = utils.getConceptValue(incomingEncounter.encounter.obs, "8726f435-566e-4c98-920d-b93ce22224b7");
   if (utils.isFineValue(omrsBeComSexWorker) == true && utils.isFineValue(omrsBeComSexWorker.name) == true && utils.isFineValue(omrsBeComSexWorker.name.name) == true) {
     omrsBeComSexWorker = omrsBeComSexWorker.uuid;
   } else {
     omrsBeComSexWorker = "";
   }
 
-  var omrsHivTestingClinic = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsHivTestingClinic = utils.getConceptValue(incomingEncounter.encounter.obs, "151a4503-8b27-4d17-9ebf-a94cdf02e028");
   if (utils.isFineValue(omrsHivTestingClinic) == true && utils.isFineValue(omrsHivTestingClinic.name) == true && utils.isFineValue(omrsHivTestingClinic.name.name) == true) {
     omrsHivTestingClinic = omrsHivTestingClinic.uuid;
   } else {
     omrsHivTestingClinic = "";
   }
 
-  var omrsRecencyAssayTestDone = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsRecencyAssayTestDone = utils.getConceptValue(incomingEncounter.encounter.obs, "e06cffdb-024c-45af-b148-fa275d368fc0");
   if (utils.isFineValue(omrsRecencyAssayTestDone) == true && utils.isFineValue(omrsRecencyAssayTestDone.name) == true && utils.isFineValue(omrsRecencyAssayTestDone.name.name) == true) {
     omrsRecencyAssayTestDone = omrsRecencyAssayTestDone.uuid;
   } else {
     omrsRecencyAssayTestDone = "";
   }
 
-  var omrsForm2RecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsForm2RecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "b4b0e241-e41a-4d46-89dd-e531cf6d8202");
   if (utils.isFineValue(omrsForm2RecencyAssayResult) == true && utils.isFineValue(omrsForm2RecencyAssayResult.name) == true && utils.isFineValue(omrsForm2RecencyAssayResult.name.name) == true) {
     omrsForm2RecencyAssayResult = omrsForm2RecencyAssayResult.uuid;
   } else {
     omrsForm2RecencyAssayResult = "";
   }
 
-  var omrsFinalRitaRecencyResult = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsFinalRitaRecencyResult = utils.getConceptValue(incomingEncounter.encounter.obs, "a2053e28-9ce9-4647-8a96-6f1b7c62f429");
   if (utils.isFineValue(omrsFinalRitaRecencyResult) == true && utils.isFineValue(omrsFinalRitaRecencyResult.name) == true && utils.isFineValue(omrsFinalRitaRecencyResult.name.name) == true) {
     omrsFinalRitaRecencyResult = omrsFinalRitaRecencyResult.uuid;
   } else {
     omrsFinalRitaRecencyResult = "";
   }
 
-  var omrsFinalRitaInconclusive = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsFinalRitaInconclusive = utils.getConceptValue(incomingEncounter.encounter.obs, "ba4b8a83-54ab-44f3-a7c5-4495ddf055bc");
   if (utils.isFineValue(omrsFinalRitaInconclusive) == true && utils.isFineValue(omrsFinalRitaInconclusive.name) == true && utils.isFineValue(omrsFinalRitaInconclusive.name.name) == true) {
     omrsFinalRitaInconclusive = omrsFinalRitaInconclusive.uuid;
   } else {
     omrsFinalRitaInconclusive = "";
   }
 
-  var omrsConselledOnLinkage = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsConselledOnLinkage = utils.getConceptValue(incomingEncounter.encounter.obs, "a80a32ae-7683-49cd-abda-1cd946f0f445");
   if (utils.isFineValue(omrsConselledOnLinkage) == true && utils.isFineValue(omrsConselledOnLinkage.name) == true && utils.isFineValue(omrsConselledOnLinkage.name.name) == true) {
     omrsConselledOnLinkage = omrsConselledOnLinkage.uuid;
   } else {
     omrsConselledOnLinkage = "";
   }
 
-  var omrsLinkedToTreatment = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsLinkedToTreatment = utils.getConceptValue(incomingEncounter.encounter.obs, "0cf3bed0-e76a-4b0a-8e11-c61c945a0551");
   if (utils.isFineValue(omrsLinkedToTreatment) == true && utils.isFineValue(omrsLinkedToTreatment.name) == true && utils.isFineValue(omrsLinkedToTreatment.name.name) == true) {
     omrsLinkedToTreatment = omrsLinkedToTreatment.uuid;
   } else {
     omrsLinkedToTreatment = "";
   }
 
-  var omrsLinkedToTreatmentAtThisFacility = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsLinkedToTreatmentAtThisFacility = utils.getConceptValue(incomingEncounter.encounter.obs, "a1ce679f-1f65-468c-97c3-c81d7ff38399");
   if (utils.isFineValue(omrsLinkedToTreatmentAtThisFacility) == true && utils.isFineValue(omrsLinkedToTreatmentAtThisFacility.name) == true && utils.isFineValue(omrsLinkedToTreatmentAtThisFacility.name.name) == true) {
     omrsLinkedToTreatmentAtThisFacility = omrsLinkedToTreatmentAtThisFacility.uuid;
   } else {
     omrsLinkedToTreatmentAtThisFacility = "";
   }
 
-  var omrsInitiatedOnTPT = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsInitiatedOnTPT = utils.getConceptValue(incomingEncounter.encounter.obs, "c341a733-630f-420f-ace6-80f6d463bc39");
   if (utils.isFineValue(omrsInitiatedOnTPT) == true && utils.isFineValue(omrsInitiatedOnTPT.name) == true && utils.isFineValue(omrsInitiatedOnTPT.name.name) == true) {
     omrsInitiatedOnTPT = omrsInitiatedOnTPT.uuid;
   } else {
     omrsInitiatedOnTPT = "";
   }
 
-  var omrsReasonNotInitOnTPT = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsReasonNotInitOnTPT = utils.getConceptValue(incomingEncounter.encounter.obs, "97533455-8642-4b0a-947a-f730bf39da09");
   if (utils.isFineValue(omrsReasonNotInitOnTPT) == true && utils.isFineValue(omrsReasonNotInitOnTPT.name) == true && utils.isFineValue(omrsReasonNotInitOnTPT.name.name) == true) {
     omrsReasonNotInitOnTPT = omrsReasonNotInitOnTPT.uuid;
   } else {
     omrsReasonNotInitOnTPT = "";
   }
 
-  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
   if (utils.isFineValue(omrsStable) == true && utils.isFineValue(omrsStable.name) == true && utils.isFineValue(omrsStable.name.name) == true) {
     omrsStable = omrsStable.uuid;
   } else {
