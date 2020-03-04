@@ -758,6 +758,7 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
 }
 
 
+// Beginning of the CASE BASE SURVEILLANCE
 var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //Declaration of all the variables for DHIS2 dropdown
   var omrsRecencyAssayResultValue = "";
@@ -906,212 +907,216 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                           omrsReasonContactNotTestedValue = result;
                           utils.getDhis2DropdownValue(utils.getDHIS2ContactHivResult(omrsContactHivResult), function (result) {
                             omrsContactHivResultValue = result;
+                            utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
+                              omrsUntestedContactGivenTestKitValue = result;
 
-                            //1- sending createNewEventStageInfoRecencyContact
-                            var dhsi2RecencyStructure = {
-                              "program": "CYyICYiO5zo",
-                              "orgUnit": organizationUnit,
-                              "eventDate": utils.getNewDate(),
-                              "status": "COMPLETED",
-                              "storedBy": "Savics",
-                              "programStage": "r45yv7rwDEO",
-                              "trackedEntityInstance": trackedEntityInstanceId,
-                              "enrollment": enrollmentId,
-                              "dataValues": [
-                                {
-                                  "dataElement": "SNcELOKJCTs",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "K4l00GKVInN",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "W58gazENRqS",
-                                  "value": omrsRecencyAssayResultValue
-                                },
-                                {
-                                  "dataElement": "xHo7COhyMKM",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "KX4MrpcRuAb",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "GyqLOJRotuL",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "FsbargPR5hR",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "buRJTweOy6h",
-                                  "value": ""
-                                }
-                              ]
-                            }
-
-
-                            //2- sending createNewEventStageInfoContacts
-                            var dhsi2ContactStructure =
-                            {
-                              "program": "CYyICYiO5zo",
-                              "orgUnit": organizationUnit,
-                              "eventDate": utils.getNewDate(),
-                              "status": "COMPLETED",
-                              "storedBy": "amza",
-                              "programStage": "RtQV53iuq7z",
-                              "trackedEntityInstance": trackedEntityInstanceId,
-                              "enrollment": enrollmentId,
-                              "dataValues": [
-                                {
-                                  "dataElement": "CIh22FjXvOR",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "m3pQUNk6AeL",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "Zxkghqkbn7p",
-                                  "value": omrsRelationOfContactValue
-                                },
-                                {
-                                  "dataElement": "scledbnTVVK",
-                                  "value": omrsContactHivStatusValue
-                                },
-                                {
-                                  "dataElement": "mfAyPSJA74t",
-                                  "value": omrsRiskOfViolenceValue
-                                },
-                                {
-                                  "dataElement": "iz0c8aW79QH",
-                                  "value": omrsPlannedReferenceTypeValue
-                                },
-                                {
-                                  "dataElement": "MgkDDuHQHeN",
-                                  "value": ""
-                                }
-                              ]
-                            }
-
-
-                            //3- sending createNewEventStageResultContactNotif
-                            var dhsi2NotifStructure =
-                            {
-                              "program": "CYyICYiO5zo",
-                              "orgUnit": organizationUnit,
-                              "eventDate": utils.getNewDate(),
-                              "status": "COMPLETED",
-                              "storedBy": "Savics",
-                              "programStage": "b9rxVAiJaxA",
-                              "trackedEntityInstance": trackedEntityInstanceId,
-                              "enrollment": enrollmentId,
-                              "dataValues": [
-                                {
-                                  "dataElement": "VsEnL2R7crc",
-                                  "value": omrsContactInvitedValue
-                                },
-                                {
-                                  "dataElement": "VuZnWho10cr",
-                                  "value": omrsContactReceivedValue
-                                },
-                                {
-                                  "dataElement": "SUL0FdHdNyq",
-                                  "value": omrsContactTestedValue
-                                },
-                                {
-                                  "dataElement": "y0Z5EVxKowc",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "iTx0txf0FVj",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "jJxPUCWKW1K",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "i5f4SA6TGRt",
-                                  "value": omrsReasonContactNotReceivedValue
-                                },
-                                {
-                                  "dataElement": "Y7RU4f1g49C",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "GE0hAdM6xMg",
-                                  "value": omrsContactNotifierValue
-                                },
-                                {
-                                  "dataElement": "r3DvI1uxJM0",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "UXx7mkioReb",
-                                  "value": omrsNotificationApproachValue
-                                },
-                                {
-                                  "dataElement": "kVoTnMfXnyt",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "sCvxPIDQ66r",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "r1PVDg5nIGZ",
-                                  "value": ""
-                                },
-                                {
-                                  "dataElement": "OsZRlnXq7Qk",
-                                  "value": omrsReasonContactNotTestedValue
-                                },
-                                {
-                                  "dataElement": "yRpn8oL0vxv",
-                                  "value": omrsContactHivResultValue
-                                }
-                              ]
-                            }
-
-
-                            winston.info('Adding recency contact information ...');
-                            formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyStructure, 1, formMapping.form1MappingBooleanTable, function (error, result) {
-                              if (error) {
-                                winston.error('An error occured when trying to add a recency contact information ', error);
-                                callback('An error occured when trying to add a recency contact information');
-                              } else {
-                                winston.info('Recency contact information added with success ', result);
-                                callback(null, 'Recency contact information added with success');
-
-
-                                winston.info('Now, adding contacts information...');
-                                formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
-                                  if (error) {
-                                    winston.error('An error occured when trying to add a contacts information ', error);
-                                    callback('An error occured when trying to add a contacts information ');
-                                  } else {
-                                    winston.info('Contacts information added with success ', result);
-
-                                    winston.info('Now, adding results of contacts notifications...');
-                                    formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
-                                      if (error) {
-                                        winston.error('An error occured when trying to add a results of contacts notifications', error);
-                                        callback('An error occured when trying to add a results of contacts notifications');
-                                      } else {
-                                        winston.info('Results of contacts notifications added with success', result);
-                                        callback(null, 'Results of contacts notifications added with success');
-                                      }
-                                    })
+                              //1- sending createNewEventStageInfoRecencyContact
+                              var dhsi2RecencyStructure = {
+                                "program": "CYyICYiO5zo",
+                                "orgUnit": organizationUnit,
+                                "eventDate": utils.getNewDate(),
+                                "status": "COMPLETED",
+                                "storedBy": "Savics",
+                                "programStage": "r45yv7rwDEO",
+                                "trackedEntityInstance": trackedEntityInstanceId,
+                                "enrollment": enrollmentId,
+                                "dataValues": [
+                                  {
+                                    "dataElement": "SNcELOKJCTs",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "K4l00GKVInN",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "W58gazENRqS",
+                                    "value": omrsRecencyAssayResultValue
+                                  },
+                                  {
+                                    "dataElement": "xHo7COhyMKM",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "KX4MrpcRuAb",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "GyqLOJRotuL",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "FsbargPR5hR",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "buRJTweOy6h",
+                                    "value": ""
                                   }
-                                })
+                                ]
                               }
+
+
+                              //2- sending createNewEventStageInfoContacts
+                              var dhsi2ContactStructure =
+                              {
+                                "program": "CYyICYiO5zo",
+                                "orgUnit": organizationUnit,
+                                "eventDate": utils.getNewDate(),
+                                "status": "COMPLETED",
+                                "storedBy": "amza",
+                                "programStage": "RtQV53iuq7z",
+                                "trackedEntityInstance": trackedEntityInstanceId,
+                                "enrollment": enrollmentId,
+                                "dataValues": [
+                                  {
+                                    "dataElement": "CIh22FjXvOR",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "m3pQUNk6AeL",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "Zxkghqkbn7p",
+                                    "value": omrsRelationOfContactValue
+                                  },
+                                  {
+                                    "dataElement": "scledbnTVVK",
+                                    "value": omrsContactHivStatusValue
+                                  },
+                                  {
+                                    "dataElement": "mfAyPSJA74t",
+                                    "value": omrsRiskOfViolenceValue
+                                  },
+                                  {
+                                    "dataElement": "iz0c8aW79QH",
+                                    "value": omrsPlannedReferenceTypeValue
+                                  },
+                                  {
+                                    "dataElement": "MgkDDuHQHeN",
+                                    "value": ""
+                                  }
+                                ]
+                              }
+
+
+                              //3- sending createNewEventStageResultContactNotif
+                              var dhsi2NotifStructure =
+                              {
+                                "program": "CYyICYiO5zo",
+                                "orgUnit": organizationUnit,
+                                "eventDate": utils.getNewDate(),
+                                "status": "COMPLETED",
+                                "storedBy": "Savics",
+                                "programStage": "b9rxVAiJaxA",
+                                "trackedEntityInstance": trackedEntityInstanceId,
+                                "enrollment": enrollmentId,
+                                "dataValues": [
+                                  {
+                                    "dataElement": "VsEnL2R7crc",
+                                    "value": omrsContactInvitedValue
+                                  },
+                                  {
+                                    "dataElement": "VuZnWho10cr",
+                                    "value": omrsContactReceivedValue
+                                  },
+                                  {
+                                    "dataElement": "SUL0FdHdNyq",
+                                    "value": omrsContactTestedValue
+                                  },
+                                  {
+                                    "dataElement": "y0Z5EVxKowc",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "iTx0txf0FVj",
+                                    "value": omrsUntestedContactGivenTestKitValue
+                                  },
+                                  {
+                                    "dataElement": "jJxPUCWKW1K",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "i5f4SA6TGRt",
+                                    "value": omrsReasonContactNotReceivedValue
+                                  },
+                                  {
+                                    "dataElement": "Y7RU4f1g49C",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "GE0hAdM6xMg",
+                                    "value": omrsContactNotifierValue
+                                  },
+                                  {
+                                    "dataElement": "r3DvI1uxJM0",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "UXx7mkioReb",
+                                    "value": omrsNotificationApproachValue
+                                  },
+                                  {
+                                    "dataElement": "kVoTnMfXnyt",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "sCvxPIDQ66r",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "r1PVDg5nIGZ",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "OsZRlnXq7Qk",
+                                    "value": omrsReasonContactNotTestedValue
+                                  },
+                                  {
+                                    "dataElement": "yRpn8oL0vxv",
+                                    "value": omrsContactHivResultValue
+                                  }
+                                ]
+                              }
+
+
+                              winston.info('Adding recency contact information ...');
+                              //Beginning of Data pushing
+                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyStructure, 1, formMapping.form1MappingBooleanTable, function (error, result) {
+                                if (error) {
+                                  winston.error('An error occured when trying to add a recency contact information ', error);
+                                  callback('An error occured when trying to add a recency contact information');
+                                } else {
+                                  winston.info('Recency contact information added with success ', result);
+                                  callback(null, 'Recency contact information added with success');
+
+
+                                  winston.info('Now, adding contacts information...');
+                                  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
+                                    if (error) {
+                                      winston.error('An error occured when trying to add a contacts information ', error);
+                                      callback('An error occured when trying to add a contacts information ');
+                                    } else {
+                                      winston.info('Contacts information added with success ', result);
+
+                                      winston.info('Now, adding results of contacts notifications...');
+                                      formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
+                                        if (error) {
+                                          winston.error('An error occured when trying to add a results of contacts notifications', error);
+                                          callback('An error occured when trying to add a results of contacts notifications');
+                                        } else {
+                                          winston.info('Results of contacts notifications added with success', result);
+                                          callback(null, 'Results of contacts notifications added with success');
+                                        }
+                                      })
+                                    }
+                                  })
+                                }
+                              });
+                              //End of data pushing
+
                             });
-
-
                           });
                         });
                       });
@@ -1125,8 +1130,11 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
       });
     });
   });
+  //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
 
 };
+// End of the CASE BASE SURVEILLANCE
+
 
 var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageEnrollmentInfo.json  
