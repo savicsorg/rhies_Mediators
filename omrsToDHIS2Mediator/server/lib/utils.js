@@ -538,6 +538,29 @@ exports.getDHIS2YesNoResponse = function (uuid) {
 }
 
 
+exports.getDHIS2Form2RecencyAssayResult = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case 'fb3b2a61-4f4b-46b2-9187-9ec769349a44':
+        return 'DlNtNOCwYMB';
+        break;
+      case '819f5ebe-0b3e-44ba-b435-8f3d1b7bb130':
+        return 'J9MtIYciHSh';
+        break;
+      case '3cd28732-26fe-102b-80cb-0017a47871b2':
+        return 'FPSW8E0pHU9';
+        break;
+      case '9340dede-5124-49cf-9b3c-5153cc0e537f':
+        return 'mdAUkRi9txc';
+        break;                
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
 
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
