@@ -589,6 +589,27 @@ exports.getDHIS2ReasonNotInitiatedOnTPT = function (uuid) {
 }
 
 
+exports.getDHIS2FinalRitaRecencyResult = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case 'fb3b2a61-4f4b-46b2-9187-9ec769349a44':
+        return 'zauCXHkR38N';
+        break;
+      case '819f5ebe-0b3e-44ba-b435-8f3d1b7bb130':
+        return 'znjxam2pcAs';
+        break;
+      case '9340dede-5124-49cf-9b3c-5153cc0e537f':
+        return 'XIr1rKSNWmR';
+        break;     
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100

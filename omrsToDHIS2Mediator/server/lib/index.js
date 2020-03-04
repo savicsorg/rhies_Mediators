@@ -1138,13 +1138,37 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
 
 var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageEnrollmentInfo.json  
+  //Declaration of all the variables for DHIS2 dropdown and patient data
   var patientBirhDate = "";
   var patientGender = "";
   var patientMaritalStatus = "";
-  var patientOccupation = "";
+  var patientOccupation = ""; // Employment status
   var patientAddressObject = "";
   var patientProvince = "";
   var patientDistrict = "";
+
+  var patientIndexCaseType = "";
+  var patientARTStartLocation = "";
+  var patientResidencyType = "";
+  var patientOccupationType = "";
+  var patientVASWCLast12m = "";
+  var patientSexWithMale = "";
+  var patientSexWithFemale = "";
+  var patientSexWithHivPositifPerson = "";
+  var patienSexWithComSexWorker = "";
+  var patientSexWithMultiplePartner = "";
+  var patientBeComSexWorker = "";
+  var patientHivTestingClinic = "";
+  var patientRecencyAssayTestDone = "";
+  var patientForm2RecencyAssayResult = "";
+  var patientFinalRitaRecencyResult = "";
+  var patientFinalRitaInconclusive = "";
+  var patientConselledOnLinkage = "";
+  var patientLinkedToTreatment = "";
+  var patientLinkedToTreatmentAtThisFacility = "";
+  var patientInitiatedOnTPT = "";
+  var patientReasonNotInitOnTPT = "";
+  var patientStable = "";
 
   if (utils.isFineValue(incomingEncounter.patient.person.birthdate) == true) {
     patientBirhDate = utils.convertToDate(incomingEncounter.patient.person.birthdate);
