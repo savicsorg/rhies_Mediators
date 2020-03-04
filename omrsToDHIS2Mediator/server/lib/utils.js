@@ -88,6 +88,8 @@ exports.getPatientMaritalStatusDhis2Id = function (patient) {
         return "hnIhYohBRIY"
       } else if (patient.person.attributes[i].uui == "3cd6e96c-26fe-102b-80cb-0017a47871b2") {
         return "cifrFF43poD"
+      } else if (patient.person.attributes[i].uui == "3cd6e246-26fe-102b-80cb-0017a47871b2") {
+        return "GglecqlxEWq"
       }
     }
   }
