@@ -761,20 +761,20 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
 // Beginning of the CASE BASE SURVEILLANCE
 var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //Declaration of all the variables for DHIS2 dropdown
-  var omrsRecencyAssayResultValue = "";
-  var omrsRelationOfContactValue = "";
-  var omrsContactHivStatusValue = "";
-  var omrsRiskOfViolenceValue = "";
-  var omrsPlannedReferenceTypeValue = "";
-  var omrsContactInvitedValue = "";
-  var omrsContactReceivedValue = "";
-  var omrsReasonContactNotReceivedValue = "";
-  var omrsContactNotifierValue = "";
-  var omrsNotificationApproachValue = "";
-  var omrsContactTestedValue = "";
-  var omrsReasonContactNotTestedValue = ""; //This one must be modified in OpenMRS to dropdown, because it's free text
-  var omrsContactHivResultValue = "";
-  var omrsUntestedContactGivenTestKitValue = "";
+  var patientRecencyAssayResultValue = "";
+  var patientRelationOfContactValue = "";
+  var patientContactHivStatusValue = "";
+  var patientRiskOfViolenceValue = "";
+  var patientPlannedReferenceTypeValue = "";
+  var patientContactInvitedValue = "";
+  var patientContactReceivedValue = "";
+  var patientReasonContactNotReceivedValue = "";
+  var patientContactNotifierValue = "";
+  var patientNotificationApproachValue = "";
+  var patientContactTestedValue = "";
+  var patientReasonContactNotTestedValue = ""; //This one must be modified in OpenMRS to dropdown, because it's free text
+  var patientContactHivResultValue = "";
+  var patientUntestedContactGivenTestKitValue = "";
 
 
   //Retrieve the UUID for each dropdown concept from OpenMRS
@@ -882,33 +882,33 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   //Retrieving the matching value of the concept from DHIS2 for each dropdown
   //Biginning of the retrieving
   utils.getDhis2DropdownValue(utils.getDHIS2RecencyAssayResult(omrsRecencyAssayResult), function (result) {
-    omrsRecencyAssayResultValue = result;
+    patientRecencyAssayResultValue = result;
     utils.getDhis2DropdownValue(utils.getDHIS2RelationOfContact(omrsRelationOfContact), function (result) {
-      omrsRelationOfContactValue = result;
+      patientRelationOfContactValue = result;
       utils.getDhis2DropdownValue(utils.getDHIS2ContactHivStatus(omrsContactHivStatus), function (result) {
-        omrsContactHivStatusValue = result;
+        patientContactHivStatusValue = result;
         utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsRiskOfViolence), function (result) {
-          omrsRiskOfViolenceValue = result;
+          patientRiskOfViolenceValue = result;
           utils.getDhis2DropdownValue(utils.getDHIS2PlannedReferenceType(omrsPlannedReferenceType), function (result) {
-            omrsPlannedReferenceTypeValue = result;
+            patientPlannedReferenceTypeValue = result;
             utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactInvited), function (result) {
-              omrsContactInvitedValue = result;
+              patientContactInvitedValue = result;
               utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactReceived), function (result) {
-                omrsContactReceivedValue = result;
+                patientContactReceivedValue = result;
                 utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotReceived(omrsReasonContactNotReceived), function (result) {
-                  omrsReasonContactNotReceivedValue = result;
+                  patientReasonContactNotReceivedValue = result;
                   utils.getDhis2DropdownValue(utils.getDHIS2ContactNotifier(omrsContactNotifier), function (result) {
-                    omrsContactNotifierValue = result;
+                    patientContactNotifierValue = result;
                     utils.getDhis2DropdownValue(utils.getDHIS2NotificationApproach(omrsNotificationApproach), function (result) {
-                      omrsNotificationApproachValue = result;
+                      patientNotificationApproachValue = result;
                       utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactTested), function (result) {
-                        omrsContactTestedValue = result;
+                        patientContactTestedValue = result;
                         utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotTested(omrsReasonContactNotTested), function (result) {
-                          omrsReasonContactNotTestedValue = result;
+                          patientReasonContactNotTestedValue = result;
                           utils.getDhis2DropdownValue(utils.getDHIS2ContactHivResult(omrsContactHivResult), function (result) {
-                            omrsContactHivResultValue = result;
+                            patientContactHivResultValue = result;
                             utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
-                              omrsUntestedContactGivenTestKitValue = result;
+                              patientUntestedContactGivenTestKitValue = result;
 
                               //1- sending createNewEventStageInfoRecencyContact
                               var dhsi2RecencyStructure = {
@@ -931,7 +931,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "W58gazENRqS",
-                                    "value": omrsRecencyAssayResultValue
+                                    "value": patientRecencyAssayResultValue
                                   },
                                   {
                                     "dataElement": "xHo7COhyMKM",
@@ -979,19 +979,19 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "Zxkghqkbn7p",
-                                    "value": omrsRelationOfContactValue
+                                    "value": patientRelationOfContactValue
                                   },
                                   {
                                     "dataElement": "scledbnTVVK",
-                                    "value": omrsContactHivStatusValue
+                                    "value": patientContactHivStatusValue
                                   },
                                   {
                                     "dataElement": "mfAyPSJA74t",
-                                    "value": omrsRiskOfViolenceValue
+                                    "value": patientRiskOfViolenceValue
                                   },
                                   {
                                     "dataElement": "iz0c8aW79QH",
-                                    "value": omrsPlannedReferenceTypeValue
+                                    "value": patientPlannedReferenceTypeValue
                                   },
                                   {
                                     "dataElement": "MgkDDuHQHeN",
@@ -1015,15 +1015,15 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                 "dataValues": [
                                   {
                                     "dataElement": "VsEnL2R7crc",
-                                    "value": omrsContactInvitedValue
+                                    "value": patientContactInvitedValue
                                   },
                                   {
                                     "dataElement": "VuZnWho10cr",
-                                    "value": omrsContactReceivedValue
+                                    "value": patientContactReceivedValue
                                   },
                                   {
                                     "dataElement": "SUL0FdHdNyq",
-                                    "value": omrsContactTestedValue
+                                    "value": patientContactTestedValue
                                   },
                                   {
                                     "dataElement": "y0Z5EVxKowc",
@@ -1031,7 +1031,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "iTx0txf0FVj",
-                                    "value": omrsUntestedContactGivenTestKitValue
+                                    "value": patientUntestedContactGivenTestKitValue
                                   },
                                   {
                                     "dataElement": "jJxPUCWKW1K",
@@ -1039,7 +1039,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "i5f4SA6TGRt",
-                                    "value": omrsReasonContactNotReceivedValue
+                                    "value": patientReasonContactNotReceivedValue
                                   },
                                   {
                                     "dataElement": "Y7RU4f1g49C",
@@ -1047,7 +1047,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "GE0hAdM6xMg",
-                                    "value": omrsContactNotifierValue
+                                    "value": patientContactNotifierValue
                                   },
                                   {
                                     "dataElement": "r3DvI1uxJM0",
@@ -1055,7 +1055,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "UXx7mkioReb",
-                                    "value": omrsNotificationApproachValue
+                                    "value": patientNotificationApproachValue
                                   },
                                   {
                                     "dataElement": "kVoTnMfXnyt",
@@ -1071,11 +1071,11 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "OsZRlnXq7Qk",
-                                    "value": omrsReasonContactNotTestedValue
+                                    "value": patientReasonContactNotTestedValue
                                   },
                                   {
                                     "dataElement": "yRpn8oL0vxv",
-                                    "value": omrsContactHivResultValue
+                                    "value": patientContactHivResultValue
                                   }
                                 ]
                               }
