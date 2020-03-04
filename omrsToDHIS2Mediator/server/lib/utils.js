@@ -347,6 +347,7 @@ exports.getDHIS2ReasonContactNotTested = function (uuid) {
 }
 
 
+
 exports.getDHIS2ContactHivResult = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
@@ -411,6 +412,33 @@ exports.getDHIS2ARTStartLocation = function (uuid) {
         break;
       case '8fa7c91c-5865-4216-bc10-f8857f116556':
         return 'Uuj3Wc8u7Az';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2ResidencyType = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '054266d6-b451-496a-892e-9249d52a0d44':
+        return 'dIAODvHtlhX';
+        break;
+      case '48a489e3-37f1-40df-8e7b-a2e7ba2371ec':
+        return 'vT0iGs8IW51';
+        break;
+      case '6e7401f4-ed93-4c3f-a208-73ec7a1a9126':
+        return 'z9gpetn6EdK';
+        break;
+      case '48a489e3-37f1-40df-8e7b-a2e7ba2371ec':
+        return 'NmD5WModmzT';
+        break;
+      case '43021ec7-dea2-48c9-aea2-fce89d6bcd8d':
+        return 'Frig0xURxjh';
         break;                 
       default:
         return '';
