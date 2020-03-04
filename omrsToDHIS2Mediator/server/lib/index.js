@@ -1136,6 +1136,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
 // End of the CASE BASE SURVEILLANCE
 
 
+// Beginning of the ENROLLEMENT INFORMATION
 var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageEnrollmentInfo.json  
   //Declaration of all the variables for DHIS2 dropdown and patient data
@@ -1147,28 +1148,28 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientProvince = "";
   var patientDistrict = "";
 
-  var patientIndexCaseType = "";
-  var patientARTStartLocation = "";
-  var patientResidencyType = "";
-  var patientOccupationType = "";
-  var patientVASWCLast12m = "";
-  var patientSexWithMale = "";
-  var patientSexWithFemale = "";
-  var patientSexWithHivPositifPerson = "";
+  var patientIndexCaseTypeValue = "";
+  var patientARTStartLocationValue = "";
+  var patientResidencyTypeValue = "";
+  var patientOccupationTypeValue = "";
+  var patientVASWCLast12mValue = "";
+  var patientSexWithMaleValue = "";
+  var patientSexWithFemaleValue = "";
+  var patientSexWithHivPositifPersonValue = "";
   var patienSexWithComSexWorker = "";
-  var patientSexWithMultiplePartner = "";
-  var patientBeComSexWorker = "";
-  var patientHivTestingClinic = "";
-  var patientRecencyAssayTestDone = "";
-  var patientForm2RecencyAssayResult = "";
-  var patientFinalRitaRecencyResult = "";
-  var patientFinalRitaInconclusive = "";
-  var patientConselledOnLinkage = "";
-  var patientLinkedToTreatment = "";
-  var patientLinkedToTreatmentAtThisFacility = "";
-  var patientInitiatedOnTPT = "";
-  var patientReasonNotInitOnTPT = "";
-  var patientStable = "";
+  var patientSexWithMultiplePartnerValue = "";
+  var patientBeComSexWorkerValue = "";
+  var patientHivTestingClinicValue = "";
+  var patientRecencyAssayTestDoneValue = "";
+  var patientForm2RecencyAssayResultValue = "";
+  var patientFinalRitaRecencyResultValue = "";
+  var patientFinalRitaInconclusiveValue = "";
+  var patientConselledOnLinkageValue = "";
+  var patientLinkedToTreatmentValue = "";
+  var patientLinkedToTreatmentAtThisFacilityValue = "";
+  var patientInitiatedOnTPTValue = "";
+  var patientReasonNotInitOnTPTValue = "";
+  var patientStableValue = "";
 
   if (utils.isFineValue(incomingEncounter.patient.person.birthdate) == true) {
     patientBirhDate = utils.convertToDate(incomingEncounter.patient.person.birthdate);
@@ -1484,6 +1485,8 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
     });
   });
 };
+//End of the ENROLLEMENT INFORMATION
+
 
 var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageFollowUpInfo.json 
