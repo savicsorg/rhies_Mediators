@@ -562,6 +562,33 @@ exports.getDHIS2Form2RecencyAssayResult = function (uuid) {
 }
 
 
+exports.getDHIS2ReasonNotInitiatedOnTPT = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case 'bf6340df-3048-497b-9afe-3c574db3b362':
+        return 'xODDyc7G5bz';
+        break;
+      case '58e3707d-3310-4560-b7a8-ad963ad302cb':
+        return 'c5v4ICtJ3wn';
+        break;
+      case '8f77f097-f2d4-4c26-97c6-a32863dd2dec':
+        return 'NWhBWwl7RqM';
+        break;
+      case '39cecd62-41b5-4673-a6aa-54cb5fd1246b':
+        return 'NUbmYicRCUp';
+        break;
+      case '3c4ef122-ce21-4b2f-b9e7-65f5d84a7758':
+        return 'nOenSUVffWd';
+        break;               
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
