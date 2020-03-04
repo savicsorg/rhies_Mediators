@@ -451,6 +451,24 @@ exports.getDHIS2ResidencyType = function (uuid) {
 }
 
 
+exports.getDHIS2OccupationType = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cd9757e-26fe-102b-80cb-0017a47871b2':
+        return 'W5jXNN7ugjW';
+        break;
+      case '3cd976f0-26fe-102b-80cb-0017a47871b2':
+        return 'FB6f2GGlkuB';
+        break;                 
+      default:
+        return 'CAbIozgNu5L'; //Other occupation, because of unmatching data between OpenMRS and DHIS2
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
