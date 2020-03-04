@@ -493,6 +493,33 @@ exports.getDHIS2YesNoRefuseUnknown = function (uuid) {
 }
 
 
+exports.getDHIS2HivTestingClinic = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cdc8426-26fe-102b-80cb-0017a47871b2':
+        return 'wxGTnGvzPcf';
+        break;
+      case '0a48138e-f478-4ad7-bb10-d9efdbf9fe27':
+        return 'LOYaimPK3ky';
+        break;
+      case '2b9fd535-2222-4418-9249-ddb851362424':
+        return 'u6TRk2Z7yws';
+        break; 
+      case '8fa7c91c-5865-4216-bc10-f8857f116556':
+        return 'hWsM7iCZ2Na';
+        break;
+      case 'd261f305-93ee-47ef-a327-0243783637e0':
+        return 'EurkobCvjG4';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
