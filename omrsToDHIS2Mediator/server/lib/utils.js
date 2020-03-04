@@ -469,6 +469,30 @@ exports.getDHIS2OccupationType = function (uuid) {
 }
 
 
+exports.getDHIS2YesNoRefuseUnknown = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cd6f600-26fe-102b-80cb-0017a47871b2':
+        return 'SjvT6az0YMa';
+        break;
+      case '3cd6f86c-26fe-102b-80cb-0017a47871b2':
+        return 'AHH8ZhIlQ9z';
+        break;
+      case 'efab937b-853e-47da-b97e-220f1bdff97d':
+        return 'MABnwD1nt3B';
+        break; 
+      case '3cd6fac4-26fe-102b-80cb-0017a47871b2':
+        return 'oZhzCABE3Pr';
+        break;                
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
