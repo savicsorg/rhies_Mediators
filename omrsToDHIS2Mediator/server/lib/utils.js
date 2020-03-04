@@ -383,6 +383,44 @@ exports.getDHIS2OuiNonResponse = function (uuid) {
 }
 
 
+
+//Form 2 DHIS2 Dropdown retrieving function
+exports.getDHIS2IndexCaseType = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '87842c52-dc3d-41d7-9baa-9c0da45c5df4':
+        return 'EWjLBp7rpZf';
+        break;
+      case 'c7df527f-eef0-4cdc-b142-c5a387b4c363':
+        return 'rFmwPYhSTmm';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2ARTStartLocation = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case 'e4a2d73e-fa66-42cf-b9e4-c61da0fb041a':
+        return 'ZcjMMzq1Dcv';
+        break;
+      case '8fa7c91c-5865-4216-bc10-f8857f116556':
+        return 'Uuj3Wc8u7Az';
+        break;                 
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
