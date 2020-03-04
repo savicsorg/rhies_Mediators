@@ -1156,7 +1156,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientSexWithMaleValue = "";
   var patientSexWithFemaleValue = "";
   var patientSexWithHivPositifPersonValue = "";
-  var patienSexWithComSexWorker = "";
+  var patienSexWithComSexWorkerValue = "";
   var patientSexWithMultiplePartnerValue = "";
   var patientBeComSexWorkerValue = "";
   var patientHivTestingClinicValue = "";
@@ -1170,6 +1170,165 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientInitiatedOnTPTValue = "";
   var patientReasonNotInitOnTPTValue = "";
   var patientStableValue = "";
+
+
+  //Retrieve the UUID for each dropdown concept from OpenMRS
+  //Begining of UUID retrieving 
+  var omrsARTStartLocation = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsARTStartLocation) == true && utils.isFineValue(omrsARTStartLocation.name) == true && utils.isFineValue(omrsARTStartLocation.name.name) == true) {
+    omrsARTStartLocation = omrsARTStartLocation.uuid;
+  } else {
+    omrsARTStartLocation = "";
+  }
+
+  var omrsIndexCaseType = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsIndexCaseType) == true && utils.isFineValue(omrsIndexCaseType.name) == true && utils.isFineValue(omrsIndexCaseType.name.name) == true) {
+    omrsIndexCaseType = omrsIndexCaseType.uuid;
+  } else {
+    omrsIndexCaseType = "";
+  }
+
+  var omrsResidencyType = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsResidencyType.name) == true && utils.isFineValue(omrsResidencyType.name.name) == true) {
+    omrsResidencyType = omrsResidencyType.uuid;
+  } else {
+    omrsResidencyType = "";
+  }
+  
+  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsOccupationType.name) == true && utils.isFineValue(omrsOccupationType.name.name) == true) {
+    omrsOccupationType = omrsOccupationType.uuid;
+  } else {
+    omrsOccupationType = "";
+  }
+
+  var omrsVASWCLast12m = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsVASWCLast12m) == true && utils.isFineValue(omrsVASWCLast12m.name) == true && utils.isFineValue(omrsVASWCLast12m.name.name) == true) {
+    omrsVASWCLast12m = omrsVASWCLast12m.uuid;
+  } else {
+    omrsVASWCLast12m = "";
+  }
+
+  var omrsSexWithMale = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsSexWithMale) == true && utils.isFineValue(omrsSexWithMale.name) == true && utils.isFineValue(omrsSexWithMale.name.name) == true) {
+    omrsSexWithMale = omrsSexWithMale.uuid;
+  } else {
+    omrsSexWithMale = "";
+  }
+
+  var omrsSexWithFemale = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsSexWithFemale) == true && utils.isFineValue(omrsSexWithFemale.name) == true && utils.isFineValue(omrsSexWithFemale.name.name) == true) {
+    omrsSexWithFemale = omrsSexWithFemale.uuid;
+  } else {
+    omrsSexWithFemale = "";
+  }
+
+  var omrsSexWithHivPositifPerson = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsSexWithHivPositifPerson) == true && utils.isFineValue(omrsSexWithHivPositifPerson.name) == true && utils.isFineValue(omrsSexWithHivPositifPerson.name.name) == true) {
+    omrsSexWithHivPositifPerson = omrsSexWithHivPositifPerson.uuid;
+  } else {
+    omrsSexWithHivPositifPerson = "";
+  }
+
+  var omrsSexWithComSexWorker = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsSexWithComSexWorker) == true && utils.isFineValue(omrsSexWithComSexWorker.name) == true && utils.isFineValue(omrsSexWithComSexWorker.name.name) == true) {
+    omrsSexWithComSexWorker = omrsSexWithComSexWorker.uuid;
+  } else {
+    omrsSexWithComSexWorker = "";
+  }
+
+  var omrsSexWithMultiplePartner = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsSexWithMultiplePartner) == true && utils.isFineValue(omrsSexWithMultiplePartner.name) == true && utils.isFineValue(omrsSexWithMultiplePartner.name.name) == true) {
+    omrsSexWithMultiplePartner = omrsSexWithMultiplePartner.uuid;
+  } else {
+    omrsSexWithMultiplePartner = "";
+  }
+
+  var omrsBeComSexWorker = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsBeComSexWorker) == true && utils.isFineValue(omrsBeComSexWorker.name) == true && utils.isFineValue(omrsBeComSexWorker.name.name) == true) {
+    omrsBeComSexWorker = omrsBeComSexWorker.uuid;
+  } else {
+    omrsBeComSexWorker = "";
+  }
+
+  var omrsHivTestingClinic = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsHivTestingClinic) == true && utils.isFineValue(omrsHivTestingClinic.name) == true && utils.isFineValue(omrsHivTestingClinic.name.name) == true) {
+    omrsHivTestingClinic = omrsHivTestingClinic.uuid;
+  } else {
+    omrsHivTestingClinic = "";
+  }
+
+  var omrsRecencyAssayTestDone = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsRecencyAssayTestDone) == true && utils.isFineValue(omrsRecencyAssayTestDone.name) == true && utils.isFineValue(omrsRecencyAssayTestDone.name.name) == true) {
+    omrsRecencyAssayTestDone = omrsRecencyAssayTestDone.uuid;
+  } else {
+    omrsRecencyAssayTestDone = "";
+  }
+
+  var omrsForm2RecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsForm2RecencyAssayResult) == true && utils.isFineValue(omrsForm2RecencyAssayResult.name) == true && utils.isFineValue(omrsForm2RecencyAssayResult.name.name) == true) {
+    omrsForm2RecencyAssayResult = omrsForm2RecencyAssayResult.uuid;
+  } else {
+    omrsForm2RecencyAssayResult = "";
+  }
+
+  var omrsFinalRitaRecencyResult = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsFinalRitaRecencyResult) == true && utils.isFineValue(omrsFinalRitaRecencyResult.name) == true && utils.isFineValue(omrsFinalRitaRecencyResult.name.name) == true) {
+    omrsFinalRitaRecencyResult = omrsFinalRitaRecencyResult.uuid;
+  } else {
+    omrsFinalRitaRecencyResult = "";
+  }
+
+  var omrsFinalRitaInconclusive = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsFinalRitaInconclusive) == true && utils.isFineValue(omrsFinalRitaInconclusive.name) == true && utils.isFineValue(omrsFinalRitaInconclusive.name.name) == true) {
+    omrsFinalRitaInconclusive = omrsFinalRitaInconclusive.uuid;
+  } else {
+    omrsFinalRitaInconclusive = "";
+  }
+
+  var omrsConselledOnLinkage = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsConselledOnLinkage) == true && utils.isFineValue(omrsConselledOnLinkage.name) == true && utils.isFineValue(omrsConselledOnLinkage.name.name) == true) {
+    omrsConselledOnLinkage = omrsConselledOnLinkage.uuid;
+  } else {
+    omrsConselledOnLinkage = "";
+  }
+
+  var omrsLinkedToTreatment = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsLinkedToTreatment) == true && utils.isFineValue(omrsLinkedToTreatment.name) == true && utils.isFineValue(omrsLinkedToTreatment.name.name) == true) {
+    omrsLinkedToTreatment = omrsLinkedToTreatment.uuid;
+  } else {
+    omrsLinkedToTreatment = "";
+  }
+
+  var omrsLinkedToTreatmentAtThisFacility = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsLinkedToTreatmentAtThisFacility) == true && utils.isFineValue(omrsLinkedToTreatmentAtThisFacility.name) == true && utils.isFineValue(omrsLinkedToTreatmentAtThisFacility.name.name) == true) {
+    omrsLinkedToTreatmentAtThisFacility = omrsLinkedToTreatmentAtThisFacility.uuid;
+  } else {
+    omrsLinkedToTreatmentAtThisFacility = "";
+  }
+
+  var omrsInitiatedOnTPT = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsInitiatedOnTPT) == true && utils.isFineValue(omrsInitiatedOnTPT.name) == true && utils.isFineValue(omrsInitiatedOnTPT.name.name) == true) {
+    omrsInitiatedOnTPT = omrsInitiatedOnTPT.uuid;
+  } else {
+    omrsInitiatedOnTPT = "";
+  }
+
+  var omrsReasonNotInitOnTPT = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsReasonNotInitOnTPT) == true && utils.isFineValue(omrsReasonNotInitOnTPT.name) == true && utils.isFineValue(omrsReasonNotInitOnTPT.name.name) == true) {
+    omrsReasonNotInitOnTPT = omrsReasonNotInitOnTPT.uuid;
+  } else {
+    omrsReasonNotInitOnTPT = "";
+  }
+
+  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "");
+  if (utils.isFineValue(omrsStable) == true && utils.isFineValue(omrsStable.name) == true && utils.isFineValue(omrsStable.name.name) == true) {
+    omrsStable = omrsStable.uuid;
+  } else {
+    omrsStable = "";
+  }
+  //End of UUID retrieving
+
 
   if (utils.isFineValue(incomingEncounter.patient.person.birthdate) == true) {
     patientBirhDate = utils.convertToDate(incomingEncounter.patient.person.birthdate);
