@@ -1351,293 +1351,353 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
         omrsOccupationValue = "";
       }
 
-      //getting occupation from DHIS2
+      //Retrieving all the dropdown value from DHIS2
       utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
         patientOccupation = result;
         utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
           patientMaritalStatus = result;
-          var dhis2EnrollementStructure =
-          {
-            "program": "CYyICYiO5zo",
-            "orgUnit": organizationUnit,
-            "eventDate": utils.getNewDate(),
-            "status": "COMPLETED",
-            "storedBy": "Savics",
-            "programStage": "pBAeqPjnhdF",
-            "trackedEntityInstance": trackedEntityInstanceId,
-            "enrollment": enrollmentId,
-            "dataValues": [
-              {
-                "dataElement": "pbeBAIly2GT",
-                "value": ""
-              },
-              {
-                "dataElement": "qycXEyMMFMb",
-                "value": ""
-              },
-              {
-                "dataElement": "txsxKp2l6y9",
-                "value": ""
-              },
-              {
-                "dataElement": "oLqMrGMI4Uf",
-                "value": ""
-              },
-              {
-                "dataElement": "I809QdRlgCb",
-                "value": ""
-              },
-              {
-                "dataElement": "tnMNaBmQaIy",
-                "value": ""
-              },
-              {
-                "dataElement": "wXcnNSYryUd",
-                "value": ""
-              },
-              {
-                "dataElement": "aYhoeOchJYM",
-                "value": ""
-              },
-              {
-                "dataElement": "GwCiJLY0of4",
-                "value": patientBirhDate
-              },
-              {
-                "dataElement": "c4KsTiEImGx",
-                "value": patientGender
-              },
-              {
-                "dataElement": "qsCPZIJLpYo",
-                "value": ""
-              },
-              {
-                "dataElement": "ZvH6DY75uR1",
-                "value": ""
-              },
-              {
-                "dataElement": "p5U0vUS0Q3V",
-                "value": ""
-              },
-              {
-                "dataElement": "I79uRgVEyUc",
-                "value": ""
-              },
-              {
-                "dataElement": "UaCDJMTQRLz",
-                "value": ""
-              },
-              {
-                "dataElement": "kPkjR4qEhhn",
-                "value": patientDistrict
-              },
-              {
-                "dataElement": "PZo2sP0TOb6",
-                "value": patientMaritalStatus
-              },
-              {
-                "dataElement": "NrWXvZg3WtW",
-                "value": patientOccupation
-              },
-              {
-                "dataElement": "Cgt39EInKQV",
-                "value": ""
-              },
-              {
-                "dataElement": "SzvTcCTNlGo",
-                "value": ""
-              },
-              {
-                "dataElement": "G0Jq8kyaJCD",
-                "value": ""
-              },
-              {
-                "dataElement": "xHo7COhyMKM",
-                "value": ""
-              },
-              {
-                "dataElement": "MyMV3TTWYmW",
-                "value": ""
-              },
-              {
-                "dataElement": "SNAaIVKCh78",
-                "value": ""
-              },
-              {
-                "dataElement": "eUVdYRa8qUo",
-                "value": ""
-              },
-              {
-                "dataElement": "KY4a5xCSKgT",
-                "value": ""
-              },
-              {
-                "dataElement": "VQPCeakHIpV",
-                "value": ""
-              },
-              {
-                "dataElement": "NFOu3OCGMKl",
-                "value": ""
-              },
-              {
-                "dataElement": "NZe43UAOGmt",
-                "value": ""
-              },
-              {
-                "dataElement": "ccYYcYf78sz",
-                "value": ""
-              },
-              {
-                "dataElement": "Ba8VCAO9Nqi",
-                "value": ""
-              },
-              {
-                "dataElement": "yu2bxd3xVIg",
-                "value": ""
-              },
-              {
-                "dataElement": "ptZMCKSxvU8",
-                "value": ""
-              },
-              {
-                "dataElement": "qBYsHDuUBIv",
-                "value": ""
-              },
-              {
-                "dataElement": "nMJKcTFHGj0",
-                "value": ""
-              },
-              {
-                "dataElement": "qBYsHDuUBIv",
-                "value": ""
-              },
-              {
-                "dataElement": "DDHl9CtiqaC",
-                "value": ""
-              },
-              {
-                "dataElement": "RDQB5Zx8hMH",
-                "value": ""
-              },
-              {
-                "dataElement": "ocgzZ6BdT8W",
-                "value": ""
-              },
-              {
-                "dataElement": "ZodoxM8PakE",
-                "value": ""
-              },
-              {
-                "dataElement": "ERqqYuUtigv",
-                "value": ""
-              },
-              {
-                "dataElement": "kJIuYQpa9Lc",
-                "value": ""
-              },
-              {
-                "dataElement": "ivqLch0DMXv",
-                "value": ""
-              },
-              {
-                "dataElement": "gNjou1Bq6dz",
-                "value": ""
-              },
-              {
-                "dataElement": "jYMNto3ELj5",
-                "value": ""
-              },
-              {
-                "dataElement": "mKVpD68KeIO",
-                "value": ""
-              },
-              {
-                "dataElement": "jmwJSKQthb7",
-                "value": ""
-              },
-              {
-                "dataElement": "UYuVIHot43a",
-                "value": ""
-              },
-              {
-                "dataElement": "cE0JLRDspz9",
-                "value": ""
-              },
-              {
-                "dataElement": "MWnDK640C17",
-                "value": ""
-              },
-              {
-                "dataElement": "MG6I5RT8YsE",
-                "value": ""
-              },
-              {
-                "dataElement": "Qx0v2TzHlS0",
-                "value": ""
-              },
-              {
-                "dataElement": "qywtB6np899",
-                "value": ""
-              },
-              {
-                "dataElement": "nkRWZpUQ55g",
-                "value": ""
-              },
-              {
-                "dataElement": "Tgt3yKYd2oD",
-                "value": ""
-              },
-              {
-                "dataElement": "LovSZ5zd8YL",
-                "value": ""
-              },
-              {
-                "dataElement": "ePONK5dlCAl",
-                "value": ""
-              },
-              {
-                "dataElement": "G3dUs7PuDqx",
-                "value": ""
-              },
-              {
-                "dataElement": "OKemd50jbHG",
-                "value": ""
-              },
-              {
-                "dataElement": "gJ58M7ClaMm",
-                "value": ""
-              },
-              {
-                "dataElement": "yGhEu1ntCaf",
-                "value": ""
-              },
-              {
-                "dataElement": "eQFf5SRscrT",
-                "value": ""
-              },
-              {
-                "dataElement": "fB1hxxwcdye",
-                "value": ""
-              },
-              {
-                "dataElement": "ZfoeEa3kNYe",
-                "value": ""
-              },
-              {
-                "dataElement": "fHHFiV0HP0V",
-                "value": ""
-              },
-            ]
-          }
+          utils.getDhis2DropdownValue(utils.getDHIS2ARTStartLocation(omrsARTStartLocation), function (result) {
+            patientARTStartLocationValue = result;
+            utils.getDhis2DropdownValue(utils.getDHIS2IndexCaseType(omrsIndexCaseType), function (result) {
+              patientIndexCaseTypeValue = result;
+              utils.getDhis2DropdownValue(utils.getDHIS2ResidencyType(omrsResidencyType), function (result) {
+                patientResidencyTypeValue = result;
+                utils.getDhis2DropdownValue(utils.getDHIS2OccupationType(omrsOccupationType), function (result) {
+                  patientOccupationTypeValue = result;
+                  utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsVASWCLast12m), function (result) {
+                    patientVASWCLast12mValue = result;
+                    utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithMale), function (result) {
+                      patientSexWithMaleValue = result;
+                      utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithFemale), function (result) {
+                        patientSexWithFemaleValue = result;
+                        utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithHivPositifPerson), function (result) {
+                          patientSexWithHivPositifPersonValue = result;
+                          utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithComSexWorker), function (result) {
+                            patientSexWithComSexWorkerValue = result;
+                            utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithMultiplePartner), function (result) {
+                              patientSexWithMultiplePartnerValue = result;
+                              utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsBeComSexWorker), function (result) {
+                                patientBeComSexWorkerValue = result;
+                                utils.getDhis2DropdownValue(utils.getDHIS2HivTestingClinic(omrsHivTestingClinic), function (result) {
+                                  patientHivTestingClinicValue = result;
+                                  utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsRecencyAssayTestDone), function (result) {
+                                    patientRecencyAssayTestDoneValue = result;
+                                    utils.getDhis2DropdownValue(utils.getDHIS2Form2RecencyAssayResult(omrsForm2RecencyAssayResult), function (result) {
+                                      patientForm2RecencyAssayResultValue = result;
+                                      utils.getDhis2DropdownValue(utils.getDHIS2FinalRitaRecencyResult(omrsFinalRitaRecencyResult), function (result) {
+                                        patientFinalRitaRecencyResultValue = result;
+                                        utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsFinalRitaInconclusive), function (result) {
+                                          patientFinalRitaInconclusiveValue = result;
+                                          patientConselledOnLinkageValue = utils.getDHIS2Boolean(omrsConselledOnLinkage);
+                                          patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
+                                          patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
+                                          patientInitiatedOnTPTValue = utils.getDHIS2Boolean(omrsInitiatedOnTPT);
+                                          patientStableValue = utils.getDHIS2Boolean(omrsStable);
+                                          utils.getDhis2DropdownValue(utils.getDHIS2ReasonNotInitiatedOnTPT(omrsReasonNotInitOnTPT), function (result) {
+                                            patientReasonNotInitOnTPTValue = result;
 
-          formMapping.pushFormToDhis2(formMapping.form2MappingTable, incomingEncounter, dhis2EnrollementStructure, 4, formMapping.form2MappingBooleanTable, function (error, result) {
-            if (error) {
-              winston.error('An error occured when trying to add an enrollment information', error);
-              callback('An error occured when trying to add an enrollment information');
-            } else {
-              winston.info('Enrollment data added with success', result);
-              callback(null, 'Enrollment dataadded with success');
-            }
+                                            var dhis2EnrollementStructure =
+                                            {
+                                              "program": "CYyICYiO5zo",
+                                              "orgUnit": organizationUnit,
+                                              "eventDate": utils.getNewDate(),
+                                              "status": "COMPLETED",
+                                              "storedBy": "Savics",
+                                              "programStage": "pBAeqPjnhdF",
+                                              "trackedEntityInstance": trackedEntityInstanceId,
+                                              "enrollment": enrollmentId,
+                                              "dataValues": [
+                                                {
+                                                  "dataElement": "pbeBAIly2GT",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "qycXEyMMFMb",
+                                                  "value": patientARTStartLocationValue
+                                                },
+                                                {
+                                                  "dataElement": "txsxKp2l6y9",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "oLqMrGMI4Uf",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "I809QdRlgCb",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "tnMNaBmQaIy",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "wXcnNSYryUd",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "aYhoeOchJYM",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "GwCiJLY0of4",
+                                                  "value": patientBirhDate
+                                                },
+                                                {
+                                                  "dataElement": "c4KsTiEImGx",
+                                                  "value": patientGender
+                                                },
+                                                {
+                                                  "dataElement": "qsCPZIJLpYo",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ZvH6DY75uR1",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "p5U0vUS0Q3V",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "I79uRgVEyUc",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "UaCDJMTQRLz",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "kPkjR4qEhhn",
+                                                  "value": patientDistrict
+                                                },
+                                                {
+                                                  "dataElement": "PZo2sP0TOb6",
+                                                  "value": patientMaritalStatus
+                                                },
+                                                {
+                                                  "dataElement": "NrWXvZg3WtW",
+                                                  "value": patientOccupation
+                                                },
+                                                {
+                                                  "dataElement": "Cgt39EInKQV",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "SzvTcCTNlGo",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "G0Jq8kyaJCD",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "xHo7COhyMKM",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "MyMV3TTWYmW",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "SNAaIVKCh78",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "eUVdYRa8qUo",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "KY4a5xCSKgT",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "VQPCeakHIpV",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "NFOu3OCGMKl",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "NZe43UAOGmt",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ccYYcYf78sz",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "Ba8VCAO9Nqi",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "yu2bxd3xVIg",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ptZMCKSxvU8",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "qBYsHDuUBIv",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "nMJKcTFHGj0",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "qBYsHDuUBIv",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "DDHl9CtiqaC",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "RDQB5Zx8hMH",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ocgzZ6BdT8W",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ZodoxM8PakE",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ERqqYuUtigv",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "kJIuYQpa9Lc",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ivqLch0DMXv",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "gNjou1Bq6dz",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "jYMNto3ELj5",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "mKVpD68KeIO",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "jmwJSKQthb7",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "UYuVIHot43a",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "cE0JLRDspz9",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "MWnDK640C17",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "MG6I5RT8YsE",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "Qx0v2TzHlS0",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "qywtB6np899",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "nkRWZpUQ55g",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "Tgt3yKYd2oD",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "LovSZ5zd8YL",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ePONK5dlCAl",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "G3dUs7PuDqx",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "OKemd50jbHG",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "gJ58M7ClaMm",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "yGhEu1ntCaf",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "eQFf5SRscrT",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "fB1hxxwcdye",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "ZfoeEa3kNYe",
+                                                  "value": ""
+                                                },
+                                                {
+                                                  "dataElement": "fHHFiV0HP0V",
+                                                  "value": ""
+                                                },
+                                              ]
+                                            }
+
+                                            formMapping.pushFormToDhis2(formMapping.form2MappingTable, incomingEncounter, dhis2EnrollementStructure, 4, formMapping.form2MappingBooleanTable, function (error, result) {
+                                              if (error) {
+                                                winston.error('An error occured when trying to add an enrollment information', error);
+                                                callback('An error occured when trying to add an enrollment information');
+                                              } else {
+                                                winston.info('Enrollment data added with success', result);
+                                                callback(null, 'Enrollment dataadded with success');
+                                              }
+                                            });
+
+
+
+                                          });
+                                        });
+                                      });
+                                    });
+                                  });
+                                });
+                              });
+                            });
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
           });
         });
       });
