@@ -1453,7 +1453,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "ZvH6DY75uR1",
-                                                  "value": ""
+                                                  "value": patientResidencyTypeValue
                                                 },
                                                 {
                                                   "dataElement": "p5U0vUS0Q3V",
@@ -1481,11 +1481,11 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "Cgt39EInKQV",
-                                                  "value": ""
+                                                  "value": patientOccupationTypeValue
                                                 },
                                                 {
                                                   "dataElement": "SzvTcCTNlGo",
-                                                  "value": ""
+                                                  "value": patientVASWCLast12mValue
                                                 },
                                                 {
                                                   "dataElement": "G0Jq8kyaJCD",
@@ -1509,11 +1509,11 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "KY4a5xCSKgT",
-                                                  "value": ""
+                                                  "value": patientHivTestingClinicValue
                                                 },
                                                 {
                                                   "dataElement": "VQPCeakHIpV",
-                                                  "value": ""
+                                                  "value": patientRecencyAssayTestDoneValue
                                                 },
                                                 {
                                                   "dataElement": "NFOu3OCGMKl",
@@ -1521,7 +1521,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "NZe43UAOGmt",
-                                                  "value": ""
+                                                  "value": patientForm2RecencyAssayResultValue
                                                 },
                                                 {
                                                   "dataElement": "ccYYcYf78sz",
@@ -1541,23 +1541,19 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "qBYsHDuUBIv",
-                                                  "value": ""
+                                                  "value": patientFinalRitaRecencyResultValue
                                                 },
                                                 {
                                                   "dataElement": "nMJKcTFHGj0",
-                                                  "value": ""
-                                                },
-                                                {
-                                                  "dataElement": "qBYsHDuUBIv",
-                                                  "value": ""
+                                                  "value": patientFinalRitaInconclusiveValue
                                                 },
                                                 {
                                                   "dataElement": "DDHl9CtiqaC",
-                                                  "value": ""
+                                                  "value": patientConselledOnLinkageValue
                                                 },
                                                 {
                                                   "dataElement": "RDQB5Zx8hMH",
-                                                  "value": ""
+                                                  "value": patientLinkedToTreatmentValue
                                                 },
                                                 {
                                                   "dataElement": "ocgzZ6BdT8W",
@@ -1565,7 +1561,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "ZodoxM8PakE",
-                                                  "value": ""
+                                                  "value": patientLinkedToTreatmentAtThisFacilityValue
                                                 },
                                                 {
                                                   "dataElement": "ERqqYuUtigv",
@@ -1573,7 +1569,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "kJIuYQpa9Lc",
-                                                  "value": ""
+                                                  "value": patientInitiatedOnTPTValue
                                                 },
                                                 {
                                                   "dataElement": "ivqLch0DMXv",
@@ -1581,11 +1577,11 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "gNjou1Bq6dz",
-                                                  "value": ""
+                                                  "value": patientReasonNotInitOnTPTValue
                                                 },
                                                 {
                                                   "dataElement": "jYMNto3ELj5",
-                                                  "value": ""
+                                                  "value": patientStableValue
                                                 },
                                                 {
                                                   "dataElement": "mKVpD68KeIO",
@@ -1645,27 +1641,27 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "gJ58M7ClaMm",
-                                                  "value": ""
+                                                  "value": patientSexWithMaleValue
                                                 },
                                                 {
                                                   "dataElement": "yGhEu1ntCaf",
-                                                  "value": ""
+                                                  "value": patientSexWithMultiplePartnerValue
                                                 },
                                                 {
                                                   "dataElement": "eQFf5SRscrT",
-                                                  "value": ""
+                                                  "value": patientBeComSexWorkerValue
                                                 },
                                                 {
                                                   "dataElement": "fB1hxxwcdye",
-                                                  "value": ""
+                                                  "value": patientSexWithComSexWorkerValue
                                                 },
                                                 {
                                                   "dataElement": "ZfoeEa3kNYe",
-                                                  "value": ""
+                                                  "value": patientSexWithFemaleValue
                                                 },
                                                 {
                                                   "dataElement": "fHHFiV0HP0V",
-                                                  "value": ""
+                                                  "value": patientSexWithHivPositifPersonValue
                                                 },
                                               ]
                                             }
@@ -1679,7 +1675,6 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 callback(null, 'Enrollment dataadded with success');
                                               }
                                             });
-
 
 
                                           });
