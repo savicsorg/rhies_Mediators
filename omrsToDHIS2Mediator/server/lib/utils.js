@@ -709,6 +709,26 @@ exports.getDHIS2CBSClientOutcome = function (uuid) {
 }
 
 
+exports.getDHIS2OverAllTreatmentAdherence = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cdef6c0-26fe-102b-80cb-0017a47871b2':
+        return 'DftFE82Ae65';
+        break;
+      case '3cdef3d2-26fe-102b-80cb-0017a47871b2':
+        return 'MBJmU3rhpPm';
+        break;
+      case '3cdef54e-26fe-102b-80cb-0017a47871b2':
+        return 'nek4WjtVfoT';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
 
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
