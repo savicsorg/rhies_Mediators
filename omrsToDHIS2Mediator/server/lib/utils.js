@@ -682,6 +682,34 @@ exports.getDHIS2DrugToxicityType = function (uuid) {
 }
 
 
+exports.getDHIS2CBSClientOutcome = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '9034caa2-843e-4124-b64d-71b1fffd9ff0':
+        return 'yzNVLmfly35';
+        break;
+      case '3cdc0d7a-26fe-102b-80cb-0017a47871b2':
+        return 'gH0EgH6sS1Z';
+        break;
+      case '3ceb0ed8-26fe-102b-80cb-0017a47871b2':
+        return 'UKKOKMZFOx0';
+        break;
+      case '5269c451-2a5a-4a54-ac8b-bae388e58a82':
+        return 'hwYeeeJWm3T';
+        break;
+      case '08176d5d-3cbe-4c40-8436-26b2e26a1acf':
+        return 'weBH1mytURu';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
