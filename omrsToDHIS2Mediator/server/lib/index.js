@@ -1704,6 +1704,22 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
 
 var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageFollowUpInfo.json 
+
+  //Declaration of all the variables for DHIS2 dropdown and patient data
+  var patientDemographicChangeValue = "";
+  var patientRiskFactorChangeValue = "";
+  var patientFollowUpStableValue = ""; // Patient stable change in Follow UP form
+  var patientChangeInTreatmentValue = "";
+  var patientReasonARTChangedOrStoppedValue = "";
+  var patientDrugToxicityTypeValue = "";
+  var patientCBSClientOutcomeValue = "";
+  var patientOverallTreatmentAdherenceValue = "";
+  var patientClientTPTOutcomeValue = "";
+  var patientAttendedEnhancedCounsellingValue = "";
+  var patientTPTTherapyInProgressValue = "";
+  var patientCompletedEnhancedCounsellingValue = "";
+
+
   var dhis2FollowupStructure =
   {
     "program": "CYyICYiO5zo",

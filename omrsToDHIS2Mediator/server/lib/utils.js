@@ -628,6 +628,37 @@ exports.getDHIS2Boolean = function (uuid) {
 }
 
 
+exports.getDHIS2ReasonARTChangedOrStopped = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cd49432-26fe-102b-80cb-0017a47871b2':
+        return 'MvibOcy7W7e';
+        break;
+      case 'e9f7f336-1b02-4734-99bd-3cb15fa4a2b6':
+        return 'NlC64TrTfJ8';
+        break;
+      case '3cde143a-26fe-102b-80cb-0017a47871b2':
+        return 'lMWlaQJHTru';
+        break;
+      case '3cdd8132-26fe-102b-80cb-0017a47871b2':
+        return 'sxPyoZKD95U';
+        break;
+      case '3cccecdc-26fe-102b-80cb-0017a47871b2':
+        return 'ADFsRPLCDTt';
+        break;
+      case '3cee7fb4-26fe-102b-80cb-0017a47871b2':
+        return 'QIu05NTRtG4';
+        break;  
+      default:
+        return 'QIu05NTRtG4';  // Will be Other for all the unmatched data from OpenMRS
+    }
+  } else {
+    return "";
+  }
+}
+
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
