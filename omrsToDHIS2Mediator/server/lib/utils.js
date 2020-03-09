@@ -748,6 +748,36 @@ exports.getDHIS2ClientOutcome = function (uuid) {
 }
 
 
+exports.getDHIS2TPTTherapyInProgress = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cdbfbc8-26fe-102b-80cb-0017a47871b2':
+        return 'Gcj9CC1xD4e';
+        break;
+      case '3cd96052-26fe-102b-80cb-0017a47871b2':
+        return 'ZZzqnrkube2';
+        break;
+      case '3ccca7cc-26fe-102b-80cb-0017a47871b2':
+        return 'ChxoqpOQnwh';
+        break;
+      case 'ebc286a5-5b09-4960-b1c0-cf76108b70da':
+        return 'ROD5srkOABi';
+        break;
+      case 'cf6b2d18-d38a-11e8-b6e2-0c5b8f279a64':
+        return 'h5HoO3NbRSw';
+        break;
+      case '08176d5d-3cbe-4c40-8436-26b2e26a1acf':
+        return 'wjqRdfo6VRP';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
