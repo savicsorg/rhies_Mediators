@@ -1702,6 +1702,8 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
 //End of the ENROLLEMENT INFORMATION
 
 
+
+//Beginning of the FOLLOW UP
 var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageFollowUpInfo.json 
 
@@ -1719,6 +1721,18 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   var patientTPTTherapyInProgressValue = "";
   var patientCompletedEnhancedCounsellingValue = "";
 
+
+
+  //Begining of UUID retrieving 
+  var omrsDemographicChange = utils.getConceptValue(incomingEncounter.encounter.obs, "e63265dd-9b1c-4dc5-abfe-85863afcf4e3");
+  if (utils.isFineValue(omrsDemographicChange) == true && utils.isFineValue(omrsDemographicChange.name) == true && utils.isFineValue(omrsDemographicChange.name.name) == true) {
+    omrsDemographicChange = omrsDemographicChange.uuid;
+  } else {
+    omrsDemographicChange = "";
+
+    
+
+  
 
   var dhis2FollowupStructure =
   {
@@ -1904,6 +1918,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     }
   })
 };
+//End of the FOLLOW UP
 
 
 var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
