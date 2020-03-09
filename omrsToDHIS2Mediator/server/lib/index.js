@@ -1766,6 +1766,12 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     omrsDrugToxicityType = "";
   
   
+  var omrsCBSClientOutcome = utils.getConceptValue(incomingEncounter.encounter.obs, "f0e8e8a2-11a9-4c58-87f1-daee5c284183");
+  if (utils.isFineValue(omrsDrugToxicityType) == true && utils.isFineValue(omrsCBSClientOutcome.name) == true && utils.isFineValue(omrsCBSClientOutcome.name.name) == true) {
+    omrsCBSClientOutcome = omrsCBSClientOutcome.uuid;
+  } else {
+    omrsCBSClientOutcome = "";
+  
 
   var dhis2FollowupStructure =
   {
