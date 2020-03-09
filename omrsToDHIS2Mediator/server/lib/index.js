@@ -1738,6 +1738,34 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     omrsRiskFactorChange = "";
 
   
+  var omrsFollowUpStable = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
+  if (utils.isFineValue(omrsFollowUpStable) == true && utils.isFineValue(omrsFollowUpStable.name) == true && utils.isFineValue(omrsFollowUpStable.name.name) == true) {
+    omrsFollowUpStable = omrsFollowUpStable.uuid;
+  } else {
+    omrsFollowUpStable = "";
+  
+
+  var omrsChangeInTreatment = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
+  if (utils.isFineValue(omrsChangeInTreatment) == true && utils.isFineValue(omrsChangeInTreatment.name) == true && utils.isFineValue(omrsChangeInTreatment.name.name) == true) {
+    omrsChangeInTreatment = omrsChangeInTreatment.uuid;
+  } else {
+    omrsChangeInTreatment = "";
+
+  
+  var omrsReasonARTChangedOrStopped = utils.getConceptValue(incomingEncounter.encounter.obs, "3cd919c6-26fe-102b-80cb-0017a47871b2");
+  if (utils.isFineValue(omrsReasonARTChangedOrStopped) == true && utils.isFineValue(omrsReasonARTChangedOrStopped.name) == true && utils.isFineValue(omrsReasonARTChangedOrStopped.name.name) == true) {
+    omrsReasonARTChangedOrStopped = omrsReasonARTChangedOrStopped.uuid;
+  } else {
+    omrsReasonARTChangedOrStopped = "";
+  
+  
+  var omrsDrugToxicityType = utils.getConceptValue(incomingEncounter.encounter.obs, "48a60bc9-6b67-47e7-8717-84a32840180a");
+  if (utils.isFineValue(omrsDrugToxicityType) == true && utils.isFineValue(omrsDrugToxicityType.name) == true && utils.isFineValue(omrsDrugToxicityType.name.name) == true) {
+    omrsDrugToxicityType = omrsDrugToxicityType.uuid;
+  } else {
+    omrsDrugToxicityType = "";
+  
+  
 
   var dhis2FollowupStructure =
   {
