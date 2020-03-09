@@ -658,6 +658,29 @@ exports.getDHIS2ReasonARTChangedOrStopped = function (uuid) {
 }
 
 
+exports.getDHIS2DrugToxicityType = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case 'cf6b3ef3-d38a-11e8-b6e2-0c5b8f279a64':
+        return 'IpoRdq5ZtH6';
+        break;
+      case '918b11a8-bbd8-44d5-9ba5-24bfac4b6a3d':
+        return 'PJKFHFjoLcW';
+        break;
+      case '3ce5c888-26fe-102b-80cb-0017a47871b2':
+        return 'fXUEeymr6Sb';
+        break;
+      case '47f1a68d-6b39-4101-95f0-ae0339a8c0ba':
+        return 'EwvsL6PlHfD';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
 
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
