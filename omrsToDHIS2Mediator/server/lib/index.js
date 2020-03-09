@@ -1787,6 +1787,11 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     omrsClientTPTOutcome = "";
 
 
+  var omrsAttendedEnhancedCounselling = utils.getConceptValue(incomingEncounter.encounter.obs, "106e1e0a-40a8-4fcc-9e58-96f69a3693b6");
+  if (utils.isFineValue(omrsAttendedEnhancedCounselling) == true && utils.isFineValue(omrsAttendedEnhancedCounselling.name) == true && utils.isFineValue(omrsAttendedEnhancedCounselling.name.name) == true) {
+    omrsAttendedEnhancedCounselling = omrsAttendedEnhancedCounselling.uuid;
+  } else {
+    omrsAttendedEnhancedCounselling = "";
   
   
 
