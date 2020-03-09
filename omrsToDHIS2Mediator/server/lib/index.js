@@ -1730,7 +1730,11 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   } else {
     omrsDemographicChange = "";
 
-    
+  var omrsRiskFactorChange = utils.getConceptValue(incomingEncounter.encounter.obs, "e63265dd-9b1c-4dc5-abfe-85863afcf4e3");
+  if (utils.isFineValue(omrsRiskFactorChange) == true && utils.isFineValue(omrsRiskFactorChange.name) == true && utils.isFineValue(omrsRiskFactorChange.name.name) == true) {
+    omrsRiskFactorChange = omrsRiskFactorChange.uuid;
+  } else {
+    omrsRiskFactorChange = "";
 
   
 
