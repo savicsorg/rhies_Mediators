@@ -1800,6 +1800,12 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   } else {
     omrsTPTTherapyInProgress = "";
   
+
+  var omrsCompletedEnhancedCounselling = utils.getConceptValue(incomingEncounter.encounter.obs, "106e1e0a-40a8-4fcc-9e58-96f69a3693b6");
+  if (utils.isFineValue(omrsCompletedEnhancedCounselling) == true && utils.isFineValue(omrsCompletedEnhancedCounselling.name) == true && utils.isFineValue(omrsCompletedEnhancedCounselling.name.name) == true) {
+    omrsCompletedEnhancedCounselling = omrsCompletedEnhancedCounselling.uuid;
+  } else {
+    omrsCompletedEnhancedCounselling = "";
   
 
   var dhis2FollowupStructure =
