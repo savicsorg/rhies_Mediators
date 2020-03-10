@@ -1702,7 +1702,6 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
 //End of the ENROLLEMENT INFORMATION
 
 
-
 //Beginning of the FOLLOW UP
 var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //createNewEventStageFollowUpInfo.json 
@@ -1729,6 +1728,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     omrsDemographicChange = omrsDemographicChange.uuid;
   } else {
     omrsDemographicChange = "";
+  }
 
 
   var omrsRiskFactorChange = utils.getConceptValue(incomingEncounter.encounter.obs, "89881216-5a02-4e7f-8a01-a2fa38acd465");
@@ -1736,55 +1736,63 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     omrsRiskFactorChange = omrsRiskFactorChange.uuid;
   } else {
     omrsRiskFactorChange = "";
-
+  }
   
+
   var omrsFollowUpStable = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
   if (utils.isFineValue(omrsFollowUpStable) == true && utils.isFineValue(omrsFollowUpStable.name) == true && utils.isFineValue(omrsFollowUpStable.name.name) == true) {
     omrsFollowUpStable = omrsFollowUpStable.uuid;
   } else {
     omrsFollowUpStable = "";
-  
+  }
+
 
   var omrsChangeInTreatment = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
   if (utils.isFineValue(omrsChangeInTreatment) == true && utils.isFineValue(omrsChangeInTreatment.name) == true && utils.isFineValue(omrsChangeInTreatment.name.name) == true) {
     omrsChangeInTreatment = omrsChangeInTreatment.uuid;
   } else {
     omrsChangeInTreatment = "";
-
+  }
   
+
   var omrsReasonARTChangedOrStopped = utils.getConceptValue(incomingEncounter.encounter.obs, "3cd919c6-26fe-102b-80cb-0017a47871b2");
   if (utils.isFineValue(omrsReasonARTChangedOrStopped) == true && utils.isFineValue(omrsReasonARTChangedOrStopped.name) == true && utils.isFineValue(omrsReasonARTChangedOrStopped.name.name) == true) {
     omrsReasonARTChangedOrStopped = omrsReasonARTChangedOrStopped.uuid;
   } else {
     omrsReasonARTChangedOrStopped = "";
+  }
   
-  
+
   var omrsDrugToxicityType = utils.getConceptValue(incomingEncounter.encounter.obs, "48a60bc9-6b67-47e7-8717-84a32840180a");
   if (utils.isFineValue(omrsDrugToxicityType) == true && utils.isFineValue(omrsDrugToxicityType.name) == true && utils.isFineValue(omrsDrugToxicityType.name.name) == true) {
     omrsDrugToxicityType = omrsDrugToxicityType.uuid;
   } else {
     omrsDrugToxicityType = "";
+  }
   
-  
+
   var omrsCBSClientOutcome = utils.getConceptValue(incomingEncounter.encounter.obs, "f0e8e8a2-11a9-4c58-87f1-daee5c284183");
   if (utils.isFineValue(omrsDrugToxicityType) == true && utils.isFineValue(omrsCBSClientOutcome.name) == true && utils.isFineValue(omrsCBSClientOutcome.name.name) == true) {
     omrsCBSClientOutcome = omrsCBSClientOutcome.uuid;
   } else {
     omrsCBSClientOutcome = "";
-
+  }
   
+
   var omrsOverallTreatmentAdherence = utils.getConceptValue(incomingEncounter.encounter.obs, "3ce2ad10-26fe-102b-80cb-0017a47871b2");
   if (utils.isFineValue(omrsOverallTreatmentAdherence) == true && utils.isFineValue(omrsOverallTreatmentAdherence.name) == true && utils.isFineValue(omrsOverallTreatmentAdherence.name.name) == true) {
     omrsOverallTreatmentAdherence = omrsOverallTreatmentAdherence.uuid;
   } else {
     omrsOverallTreatmentAdherence = "";
-  
+  }
+
 
   var omrsClientTPTOutcome = utils.getConceptValue(incomingEncounter.encounter.obs, "6d024c01-dc13-4074-b493-ba72bdb0739e");
   if (utils.isFineValue(omrsClientTPTOutcome) == true && utils.isFineValue(omrsClientTPTOutcome.name) == true && utils.isFineValue(omrsClientTPTOutcome.name.name) == true) {
     omrsClientTPTOutcome = omrsClientTPTOutcome.uuid;
   } else {
     omrsClientTPTOutcome = "";
+  }
 
 
   var omrsAttendedEnhancedCounselling = utils.getConceptValue(incomingEncounter.encounter.obs, "106e1e0a-40a8-4fcc-9e58-96f69a3693b6");
@@ -1792,6 +1800,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     omrsAttendedEnhancedCounselling = omrsAttendedEnhancedCounselling.uuid;
   } else {
     omrsAttendedEnhancedCounselling = "";
+  }
 
 
   var omrsTPTTherapyInProgress = utils.getConceptValue(incomingEncounter.encounter.obs, "35b9992e-c5e4-464c-b800-969adcfee12c");
@@ -1799,198 +1808,218 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     omrsTPTTherapyInProgress = omrsTPTTherapyInProgress.uuid;
   } else {
     omrsTPTTherapyInProgress = "";
-  
+  }
+
 
   var omrsCompletedEnhancedCounselling = utils.getConceptValue(incomingEncounter.encounter.obs, "106e1e0a-40a8-4fcc-9e58-96f69a3693b6");
   if (utils.isFineValue(omrsCompletedEnhancedCounselling) == true && utils.isFineValue(omrsCompletedEnhancedCounselling.name) == true && utils.isFineValue(omrsCompletedEnhancedCounselling.name.name) == true) {
     omrsCompletedEnhancedCounselling = omrsCompletedEnhancedCounselling.uuid;
   } else {
     omrsCompletedEnhancedCounselling = "";
-  
-
-  var dhis2FollowupStructure =
-  {
-    "program": "CYyICYiO5zo",
-    "orgUnit": organizationUnit,
-    "eventDate": utils.getNewDate(),
-    "status": "COMPLETED",
-    "storedBy": "Savics",
-    "programStage": "Em0sRsnHjoR",
-    "trackedEntityInstance": trackedEntityInstanceId,
-    "enrollment": enrollmentId,
-    "dataValues": [
-      {
-        "dataElement": "pbeBAIly2GT",
-        "value": ""
-      },
-      {
-        "dataElement": "txsxKp2l6y9",
-        "value": ""
-      },
-      {
-        "dataElement": "oLqMrGMI4Uf",
-        "value": ""
-      },
-      {
-        "dataElement": "I809QdRlgCb",
-        "value": ""
-      },
-      {
-        "dataElement": "tnMNaBmQaIy",
-        "value": ""
-      },
-      {
-        "dataElement": "wXcnNSYryUd",
-        "value": ""
-      },
-      {
-        "dataElement": "OCZt4UJitnh",
-        "value": ""
-      },
-      {
-        "dataElement": "yu67Iiw64UQ",
-        "value": ""
-      },
-      {
-        "dataElement": "p5U0vUS0Q3V",
-        "value": ""
-      },
-      {
-        "dataElement": "I79uRgVEyUc",
-        "value": ""
-      },
-      {
-        "dataElement": "UaCDJMTQRLz",
-        "value": ""
-      },
-      {
-        "dataElement": "kPkjR4qEhhn",
-        "value": ""
-      },
-      {
-        "dataElement": "OTAM6B4xZwf",
-        "value": ""
-      },
-      {
-        "dataElement": "Cgt39EInKQV",
-        "value": ""
-      },
-      {
-        "dataElement": "KrYJW9kvJS2",
-        "value": ""
-      },
-      {
-        "dataElement": "Nld1zMZwPxK",
-        "value": ""
-      },
-      {
-        "dataElement": "jYMNto3ELj5",
-        "value": ""
-      },
-      {
-        "dataElement": "jmwJSKQthb7",
-        "value": ""
-      },
-      {
-        "dataElement": "xMLGFpVb0Kh",
-        "value": ""
-      },
-      {
-        "dataElement": "KRTWX8CatfN",
-        "value": ""
-      },
-      {
-        "dataElement": "Nxu3IZxrngL",
-        "value": ""
-      },
-      {
-        "dataElement": "gZLYfulH1cx",
-        "value": ""
-      },
-      {
-        "dataElement": "dlbRyDDWVdz",
-        "value": ""
-      },
-      {
-        "dataElement": "MWnDK640C17",
-        "value": ""
-      },
-      {
-        "dataElement": "MG6I5RT8YsE",
-        "value": ""
-      },
-      {
-        "dataElement": "Tgt3yKYd2oD",
-        "value": ""
-      },
-      {
-        "dataElement": "LovSZ5zd8YL",
-        "value": ""
-      },
-      {
-        "dataElement": "ePONK5dlCAl",
-        "value": ""
-      },
-      {
-        "dataElement": "G3dUs7PuDqx",
-        "value": ""
-      },
-      {
-        "dataElement": "OKemd50jbHG",
-        "value": ""
-      },
-      {
-        "dataElement": "lrM4jhiDogd",
-        "value": ""
-      },
-      {
-        "dataElement": "kmA8X0Qwjor",
-        "value": ""
-      },
-      {
-        "dataElement": "L9lcjEkxHBv",
-        "value": ""
-      },
-      {
-        "dataElement": "eCbwnVkQ8Rt",
-        "value": ""
-      },
-      {
-        "dataElement": "OO8wNkgpAwK",
-        "value": ""
-      },
-      {
-        "dataElement": "BMf4geBAMFU",
-        "value": ""
-      },
-      {
-        "dataElement": "LpDBQwhUZ4U",
-        "value": ""
-      },
-      {
-        "dataElement": "yH3otrjN0qZ",
-        "value": ""
-      },
-      {
-        "dataElement": "EBAuC7pMu4O",
-        "value": ""
-      },
-      {
-        "dataElement": "nQGHwHA3ayC",
-        "value": ""
-      }
-
-    ]
   }
-  formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
-    if (error) {
-      winston.error('An error occured when trying to add a follow up information', error);
-      callback('An error occured when trying to add a follow up information');
-    } else {
-      winston.info('Follow up information added with success', result);
-      callback(null, 'Follow up information added with success');
-    }
-  })
+  // End of UUID retrieving
+
+  //Retrieving all the dropdown value from DHIS2
+  patientDemographicChangeValue = utilis.getDHIS2Boolean(omrsDemographicChange);
+  patientRiskFactorChangeValue = utilis.getDHIS2Boolean(omrsRiskFactorChange);
+  patientFollowUpStableValue = utils.getDHIS2Boolean(omrsFollowUpStable);
+  patientChangeInTreatmentValue =  utilis.getDHIS2Boolean(omrsChangeInTreatment);
+  patientAttendedEnhancedCounsellingValue = utilis.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
+  patientCompletedEnhancedCounsellingValue = utilis.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
+  utilis.getDhis2DropdownValue(utilis.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
+    patientReasonARTChangedOrStoppedValue = result;
+    utilis.getDhis2DropdownValue(utilis.getDHIS2DrugToxicityType(omrsDrugToxicityType), function(result){
+      patientDrugToxicityTypeValue = result;
+
+
+      var dhis2FollowupStructure =
+        {
+          "program": "CYyICYiO5zo",
+          "orgUnit": organizationUnit,
+          "eventDate": utils.getNewDate(),
+          "status": "COMPLETED",
+          "storedBy": "Savics",
+          "programStage": "Em0sRsnHjoR",
+          "trackedEntityInstance": trackedEntityInstanceId,
+          "enrollment": enrollmentId,
+          "dataValues": [
+            {
+              "dataElement": "pbeBAIly2GT",
+              "value": ""
+            },
+            {
+              "dataElement": "txsxKp2l6y9",
+              "value": ""
+            },
+            {
+              "dataElement": "oLqMrGMI4Uf",
+              "value": ""
+            },
+            {
+              "dataElement": "I809QdRlgCb",
+              "value": ""
+            },
+            {
+              "dataElement": "tnMNaBmQaIy",
+              "value": ""
+            },
+            {
+              "dataElement": "wXcnNSYryUd",
+              "value": ""
+            },
+            {
+              "dataElement": "OCZt4UJitnh",
+              "value": ""
+            },
+            {
+              "dataElement": "yu67Iiw64UQ",
+              "value": ""
+            },
+            {
+              "dataElement": "p5U0vUS0Q3V",
+              "value": ""
+            },
+            {
+              "dataElement": "I79uRgVEyUc",
+              "value": ""
+            },
+            {
+              "dataElement": "UaCDJMTQRLz",
+              "value": ""
+            },
+            {
+              "dataElement": "kPkjR4qEhhn",
+              "value": ""
+            },
+            {
+              "dataElement": "OTAM6B4xZwf",
+              "value": ""
+            },
+            {
+              "dataElement": "Cgt39EInKQV",
+              "value": ""
+            },
+            {
+              "dataElement": "KrYJW9kvJS2",
+              "value": ""
+            },
+            {
+              "dataElement": "Nld1zMZwPxK",
+              "value": ""
+            },
+            {
+              "dataElement": "jYMNto3ELj5",
+              "value": ""
+            },
+            {
+              "dataElement": "jmwJSKQthb7",
+              "value": ""
+            },
+            {
+              "dataElement": "xMLGFpVb0Kh",
+              "value": ""
+            },
+            {
+              "dataElement": "KRTWX8CatfN",
+              "value": ""
+            },
+            {
+              "dataElement": "Nxu3IZxrngL",
+              "value": ""
+            },
+            {
+              "dataElement": "gZLYfulH1cx",
+              "value": ""
+            },
+            {
+              "dataElement": "dlbRyDDWVdz",
+              "value": ""
+            },
+            {
+              "dataElement": "MWnDK640C17",
+              "value": ""
+            },
+            {
+              "dataElement": "MG6I5RT8YsE",
+              "value": ""
+            },
+            {
+              "dataElement": "Tgt3yKYd2oD",
+              "value": ""
+            },
+            {
+              "dataElement": "LovSZ5zd8YL",
+              "value": ""
+            },
+            {
+              "dataElement": "ePONK5dlCAl",
+              "value": ""
+            },
+            {
+              "dataElement": "G3dUs7PuDqx",
+              "value": ""
+            },
+            {
+              "dataElement": "OKemd50jbHG",
+              "value": ""
+            },
+            {
+              "dataElement": "lrM4jhiDogd",
+              "value": ""
+            },
+            {
+              "dataElement": "kmA8X0Qwjor",
+              "value": ""
+            },
+            {
+              "dataElement": "L9lcjEkxHBv",
+              "value": ""
+            },
+            {
+              "dataElement": "eCbwnVkQ8Rt",
+              "value": ""
+            },
+            {
+              "dataElement": "OO8wNkgpAwK",
+              "value": ""
+            },
+            {
+              "dataElement": "BMf4geBAMFU",
+              "value": ""
+            },
+            {
+              "dataElement": "LpDBQwhUZ4U",
+              "value": ""
+            },
+            {
+              "dataElement": "yH3otrjN0qZ",
+              "value": ""
+            },
+            {
+              "dataElement": "EBAuC7pMu4O",
+              "value": ""
+            },
+            {
+              "dataElement": "nQGHwHA3ayC",
+              "value": ""
+            }
+
+          ]
+      }
+      formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
+        if (error) {
+          winston.error('An error occured when trying to add a follow up information', error);
+          callback('An error occured when trying to add a follow up information');
+        } else {
+          winston.info('Follow up information added with success', result);
+          callback(null, 'Follow up information added with success');
+        }
+      });
+
+
+
+    });
+  }); 
 };
 //End of the FOLLOW UP
 
