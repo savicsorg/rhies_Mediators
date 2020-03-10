@@ -1820,12 +1820,15 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   // End of UUID retrieving
 
   //Retrieving all the dropdown value from DHIS2
+  //Boolean retrieving
   patientDemographicChangeValue = utilis.getDHIS2Boolean(omrsDemographicChange);
   patientRiskFactorChangeValue = utilis.getDHIS2Boolean(omrsRiskFactorChange);
   patientFollowUpStableValue = utils.getDHIS2Boolean(omrsFollowUpStable);
   patientChangeInTreatmentValue =  utilis.getDHIS2Boolean(omrsChangeInTreatment);
   patientAttendedEnhancedCounsellingValue = utilis.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
   patientCompletedEnhancedCounsellingValue = utilis.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
+  //End of boolean retrieving
+
   utilis.getDhis2DropdownValue(utilis.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
     patientReasonARTChangedOrStoppedValue = result;
     utilis.getDhis2DropdownValue(utilis.getDHIS2DrugToxicityType(omrsDrugToxicityType), function(result){
@@ -1836,194 +1839,194 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
           patientOverallTreatmentAdherenceValue = result;
           utils.getDhis2DropdownValue(utils.getDHIS2ClientTPTOutcome(omrsClientTPTOutcome), function(result){
             patientClientTPTOutcomeValue = result;
+            utilis.getDhis2DropdownValue(utils.getDHIS2TPTTherapyInProgress(omrsTPTTherapyInProgress), function(result){
+              patientTPTTherapyInProgressValue = result;
 
+              var dhis2FollowupStructure =
+                {
+                  "program": "CYyICYiO5zo",
+                  "orgUnit": organizationUnit,
+                  "eventDate": utils.getNewDate(),
+                  "status": "COMPLETED",
+                  "storedBy": "Savics",
+                  "programStage": "Em0sRsnHjoR",
+                  "trackedEntityInstance": trackedEntityInstanceId,
+                  "enrollment": enrollmentId,
+                  "dataValues": [
+                    {
+                      "dataElement": "pbeBAIly2GT",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "txsxKp2l6y9",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "oLqMrGMI4Uf",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "I809QdRlgCb",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "tnMNaBmQaIy",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "wXcnNSYryUd",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "OCZt4UJitnh",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "yu67Iiw64UQ",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "p5U0vUS0Q3V",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "I79uRgVEyUc",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "UaCDJMTQRLz",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "kPkjR4qEhhn",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "OTAM6B4xZwf",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "Cgt39EInKQV",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "KrYJW9kvJS2",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "Nld1zMZwPxK",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "jYMNto3ELj5",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "jmwJSKQthb7",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "xMLGFpVb0Kh",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "KRTWX8CatfN",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "Nxu3IZxrngL",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "gZLYfulH1cx",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "dlbRyDDWVdz",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "MWnDK640C17",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "MG6I5RT8YsE",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "Tgt3yKYd2oD",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "LovSZ5zd8YL",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "ePONK5dlCAl",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "G3dUs7PuDqx",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "OKemd50jbHG",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "lrM4jhiDogd",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "kmA8X0Qwjor",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "L9lcjEkxHBv",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "eCbwnVkQ8Rt",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "OO8wNkgpAwK",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "BMf4geBAMFU",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "LpDBQwhUZ4U",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "yH3otrjN0qZ",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "EBAuC7pMu4O",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "nQGHwHA3ayC",
+                      "value": ""
+                    }
 
-            var dhis2FollowupStructure =
-              {
-                "program": "CYyICYiO5zo",
-                "orgUnit": organizationUnit,
-                "eventDate": utils.getNewDate(),
-                "status": "COMPLETED",
-                "storedBy": "Savics",
-                "programStage": "Em0sRsnHjoR",
-                "trackedEntityInstance": trackedEntityInstanceId,
-                "enrollment": enrollmentId,
-                "dataValues": [
-                  {
-                    "dataElement": "pbeBAIly2GT",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "txsxKp2l6y9",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "oLqMrGMI4Uf",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "I809QdRlgCb",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "tnMNaBmQaIy",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "wXcnNSYryUd",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "OCZt4UJitnh",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "yu67Iiw64UQ",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "p5U0vUS0Q3V",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "I79uRgVEyUc",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "UaCDJMTQRLz",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "kPkjR4qEhhn",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "OTAM6B4xZwf",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "Cgt39EInKQV",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "KrYJW9kvJS2",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "Nld1zMZwPxK",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "jYMNto3ELj5",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "jmwJSKQthb7",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "xMLGFpVb0Kh",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "KRTWX8CatfN",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "Nxu3IZxrngL",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "gZLYfulH1cx",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "dlbRyDDWVdz",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "MWnDK640C17",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "MG6I5RT8YsE",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "Tgt3yKYd2oD",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "LovSZ5zd8YL",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "ePONK5dlCAl",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "G3dUs7PuDqx",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "OKemd50jbHG",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "lrM4jhiDogd",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "kmA8X0Qwjor",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "L9lcjEkxHBv",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "eCbwnVkQ8Rt",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "OO8wNkgpAwK",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "BMf4geBAMFU",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "LpDBQwhUZ4U",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "yH3otrjN0qZ",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "EBAuC7pMu4O",
-                    "value": ""
-                  },
-                  {
-                    "dataElement": "nQGHwHA3ayC",
-                    "value": ""
-                  }
-
-                ]
-            }
-            formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
-              if (error) {
-                winston.error('An error occured when trying to add a follow up information', error);
-                callback('An error occured when trying to add a follow up information');
-              } else {
-                winston.info('Follow up information added with success', result);
-                callback(null, 'Follow up information added with success');
+                  ]
               }
+              formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
+                if (error) {
+                  winston.error('An error occured when trying to add a follow up information', error);
+                  callback('An error occured when trying to add a follow up information');
+                } else {
+                  winston.info('Follow up information added with success', result);
+                  callback(null, 'Follow up information added with success');
+                }
+              });
+
             });
-
-            
-
           });
         });
       });
