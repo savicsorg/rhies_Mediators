@@ -157,7 +157,6 @@ function setupApp() {
 
 
 
-
 var upsertEntity = function (fields, organizationUnit, callback) {
 
   if (utils.isFineValue(fields) == true && utils.isFineValue(fields.patient) == true) {
@@ -758,6 +757,8 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
 }
 
 
+
+
 // Beginning of the CASE BASE SURVEILLANCE
 var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //Declaration of all the variables for DHIS2 dropdown
@@ -909,8 +910,10 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                             patientContactHivResultValue = result;
                             utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
                               patientUntestedContactGivenTestKitValue = result;
-
+  //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
+                              
                               //1- sending createNewEventStageInfoRecencyContact
+                              //DHIS2 Json payload updating before pushing
                               var dhsi2RecencyStructure = {
                                 "program": "CYyICYiO5zo",
                                 "orgUnit": organizationUnit,
@@ -958,6 +961,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
 
 
                               //2- sending createNewEventStageInfoContacts
+                              //DHIS2 Json payload updating before pushing
                               var dhsi2ContactStructure =
                               {
                                 "program": "CYyICYiO5zo",
@@ -1002,6 +1006,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
 
 
                               //3- sending createNewEventStageResultContactNotif
+                              //DHIS2 Json payload updating before pushing
                               var dhsi2NotifStructure =
                               {
                                 "program": "CYyICYiO5zo",
@@ -1082,6 +1087,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
 
 
                               winston.info('Adding recency contact information ...');
+                              
                               //Beginning of Data pushing
                               formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyStructure, 1, formMapping.form1MappingBooleanTable, function (error, result) {
                                 if (error) {
@@ -1130,7 +1136,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
       });
     });
   });
-  //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
+  
 
 };
 // End of the CASE BASE SURVEILLANCE
@@ -1351,7 +1357,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
         omrsOccupationValue = "";
       }
 
-      //Retrieving all the dropdown value from DHIS2
+      //Beginning of the retrieving of all the dropdown value from DHIS2
       utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
         patientOccupation = result;
         utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
@@ -1395,7 +1401,9 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                           patientStableValue = utils.getDHIS2Boolean(omrsStable);
                                           utils.getDhis2DropdownValue(utils.getDHIS2ReasonNotInitiatedOnTPT(omrsReasonNotInitOnTPT), function (result) {
                                             patientReasonNotInitOnTPTValue = result;
+    //End of the retrieving of all the dropdown value from DHIS2
 
+                                            //DHIS2 Json payload updating before pushing
                                             var dhis2EnrollementStructure =
                                             {
                                               "program": "CYyICYiO5zo",
@@ -1666,6 +1674,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                               ]
                                             }
 
+                                            //Beginning of data pushing
                                             formMapping.pushFormToDhis2(formMapping.form2MappingTable, incomingEncounter, dhis2EnrollementStructure, 4, formMapping.form2MappingBooleanTable, function (error, result) {
                                               if (error) {
                                                 winston.error('An error occured when trying to add an enrollment information', error);
@@ -1675,7 +1684,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 callback(null, 'Enrollment dataadded with success');
                                               }
                                             });
-
+                                            //End of data pushing
 
                                           });
                                         });
@@ -1820,14 +1829,14 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   // End of UUID retrieving
 
   //Retrieving all the dropdown value from DHIS2
-  //Boolean retrieving
+    //Boolean retrieving
   patientDemographicChangeValue = utilis.getDHIS2Boolean(omrsDemographicChange);
   patientRiskFactorChangeValue = utilis.getDHIS2Boolean(omrsRiskFactorChange);
   patientFollowUpStableValue = utils.getDHIS2Boolean(omrsFollowUpStable);
   patientChangeInTreatmentValue =  utilis.getDHIS2Boolean(omrsChangeInTreatment);
   patientAttendedEnhancedCounsellingValue = utilis.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
   patientCompletedEnhancedCounsellingValue = utilis.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
-  //End of boolean retrieving
+    //End of boolean retrieving
 
   utilis.getDhis2DropdownValue(utilis.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
     patientReasonARTChangedOrStoppedValue = result;
@@ -1841,7 +1850,9 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
             patientClientTPTOutcomeValue = result;
             utilis.getDhis2DropdownValue(utils.getDHIS2TPTTherapyInProgress(omrsTPTTherapyInProgress), function(result){
               patientTPTTherapyInProgressValue = result;
+  //End of retrieving all the dropdown value from DHIS2
 
+              //DHIS2 json payload update before pushing
               var dhis2FollowupStructure =
                 {
                   "program": "CYyICYiO5zo",
@@ -2016,6 +2027,8 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
 
                   ]
               }
+              
+              //Beginnig data Pushing form 3 : FOLLOW UP
               formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
                 if (error) {
                   winston.error('An error occured when trying to add a follow up information', error);
@@ -2025,6 +2038,8 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                   callback(null, 'Follow up information added with success');
                 }
               });
+              //End data Pushing form 3 : FOLLOW UP
+
 
             });
           });
@@ -2036,6 +2051,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
 //End of the FOLLOW UP
 
 
+//Beginning of the form 4: RECENCY VIRAL LOAD
 var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   var dhis2FollowupStructure =
   {
@@ -2212,6 +2228,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
     ]
   }
 
+
+  //Beginning data pushing form 4
   formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2FollowupStructure, 6, null, function (error, result) {
     if (error) {
       winston.error('An error occured when trying to add a recency VL information', error);
@@ -2221,8 +2239,11 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
       callback(null, 'Recency VL information added with success');
     }
   })
-};
+  //End data pushing form 4
 
+
+};
+//End of the form 4: RECENCY VIRAL LOAD
 
 
 
