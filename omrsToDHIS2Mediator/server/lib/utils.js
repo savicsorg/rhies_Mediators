@@ -730,7 +730,7 @@ exports.getDHIS2OverAllTreatmentAdherence = function (uuid) {
 }
 
 
-exports.getDHIS2ClientOutcome = function (uuid) {
+exports.getDHIS2ClientTPTOutcome = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
       case '1e20e234-51d0-47a9-89b2-b359d8520481':

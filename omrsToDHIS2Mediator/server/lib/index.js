@@ -1834,7 +1834,8 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
         patientCBSClientOutcomeValue = result;
         utilis.getDhis2DropdownValue(utils.getDHIS2OverAllTreatmentAdherence(omrsOverallTreatmentAdherence), function(result){
           patientOverallTreatmentAdherenceValue = result;
-
+          utils.getDhis2DropdownValue(utils.getDHIS2ClientTPTOutcome(omrsClientTPTOutcome), function(result){
+            patientClientTPTOutcomeValue = result;
 
 
             var dhis2FollowupStructure =
@@ -2023,6 +2024,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
 
             
 
+          });
         });
       });
     });
