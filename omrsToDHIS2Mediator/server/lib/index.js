@@ -1879,7 +1879,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "OCZt4UJitnh",
-                      "value": ""
+                      "value": patientDemographicChangeValue
                     },
                     {
                       "dataElement": "yu67Iiw64UQ",
@@ -1911,7 +1911,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "KrYJW9kvJS2",
-                      "value": ""
+                      "value": patientRiskFactorChangeValue
                     },
                     {
                       "dataElement": "Nld1zMZwPxK",
@@ -1919,7 +1919,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "jYMNto3ELj5",
-                      "value": ""
+                      "value": patientFollowUpStableValue
                     },
                     {
                       "dataElement": "jmwJSKQthb7",
@@ -1927,7 +1927,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "xMLGFpVb0Kh",
-                      "value": ""
+                      "value": patientChangeInTreatmentValue
                     },
                     {
                       "dataElement": "KRTWX8CatfN",
@@ -1935,7 +1935,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "Nxu3IZxrngL",
-                      "value": ""
+                      "value": patientReasonARTChangedOrStoppedValue
                     },
                     {
                       "dataElement": "gZLYfulH1cx",
@@ -1943,7 +1943,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "dlbRyDDWVdz",
-                      "value": ""
+                      "value": patientDrugToxicityTypeValue
                     },
                     {
                       "dataElement": "MWnDK640C17",
@@ -1975,7 +1975,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "lrM4jhiDogd",
-                      "value": ""
+                      "value": patientCBSClientOutcomeValue
                     },
                     {
                       "dataElement": "kmA8X0Qwjor",
@@ -1991,19 +1991,19 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "OO8wNkgpAwK",
-                      "value": ""
+                      "value": patientOverallTreatmentAdherenceValue
                     },
                     {
                       "dataElement": "BMf4geBAMFU",
-                      "value": ""
+                      "value": patientAttendedEnhancedCounsellingValue
                     },
                     {
                       "dataElement": "LpDBQwhUZ4U",
-                      "value": ""
+                      "value": patientCompletedEnhancedCounsellingValue
                     },
                     {
                       "dataElement": "yH3otrjN0qZ",
-                      "value": ""
+                      "value": patientClientTPTOutcomeValue
                     },
                     {
                       "dataElement": "EBAuC7pMu4O",
@@ -2011,7 +2011,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "nQGHwHA3ayC",
-                      "value": ""
+                      "value": patientTPTTherapyInProgressValue
                     }
 
                   ]
