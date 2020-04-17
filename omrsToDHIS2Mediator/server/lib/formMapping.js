@@ -399,11 +399,13 @@ exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTabl
             if (utils.isDate(obs.value) == true) {
               callback(utils.convertToDate(obs.value));
             } else {
-              if (utils.isNumeric(concept.value) == true) {
-                callback(utils.convertToNumber(concept.value));
+              if (utils.isNumeric(obs.value) == true) {
+                callback(utils.convertToNumber(obs.value));
               } else {
-                if (utils.isObject(concept.value) == true) {
-                  if (utils.isFineValue(concept.value.name) == true && utils.isFineValue(concept.value.name.uuid) == true) {
+                if (utils.isAnArray(obs.groupMembers) == true) {
+
+                  /*
+                  if (utils.isFineValue(obs.value.name) == true && utils.isFineValue(obs.value.name.uuid) == true) {
                     var mapSubItem = _.find(mappingTable, function (item) {
                       return Object.keys(item) == concept.value.uuid;
                     });
@@ -417,11 +419,12 @@ exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTabl
                   } else {
                     callback("");
                   }
+                  */
                 } else {
-                  if (utils.isString(concept.value) == true) {
-                    callback(concept.value);
+                  if (utils.isString(obs.value) == true) {
+                    callback(obs.value);
                   } else {
-                    console.log("-> ", concept.value, " is a wierd");
+                    console.log("-> ", obs.value, " is a wierd");
                     callback("");
                   }
                 }
