@@ -379,13 +379,14 @@ exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTabl
 
   if (utils.isFineValue(mapItem) == true) {
 
-    var concept = _.find(incomingEncounter.encounter.obs, function (item) {
+    var obs = _.find(incomingEncounter.encounter.obs, function (item) {
       return item.concept.uuid == Object.keys(mapItem);
     });
 
-    if (utils.isFineValue(concept) == true && utils.isFineValue(concept.display) == true) {
-      if (concept.display.includes(":")) { //ensure value not null
-        if (utils.isFineValue(concept.value) == true) {
+    if (utils.isFineValue(obs) == true && utils.isFineValue(obs.display) == true) {
+      if (obs.display.includes(":")) { //ensure value not null ("display": "RECENCY SAMPLE COLLECTION DATE: 2019-12-30")
+        //Check the existence of the obs's value for the concept
+        if (utils.isFineValue(obs.value) == true) {
 
           // check if the value is on the boolean mapping
           var booleanConcept = _.find(booleanMappingTable, function (item) {
@@ -393,10 +394,10 @@ exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTabl
           });
         
           if (utils.isFineValue(booleanConcept) == true) {
-            callback(utils.convertToBoolean(concept.value.name.name));
+            callback(utils.convertToBoolean(obs.value.name.name));
           } else {
-            if (utils.isDate(concept.value) == true) {
-              callback(utils.convertToDate(concept.value));
+            if (utils.isDate(obs.value) == true) {
+              callback(utils.convertToDate(obs.value));
             } else {
               if (utils.isNumeric(concept.value) == true) {
                 callback(utils.convertToNumber(concept.value));

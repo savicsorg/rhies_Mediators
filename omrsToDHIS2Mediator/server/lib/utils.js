@@ -821,6 +821,11 @@ exports.isObject = function (value) {
 }
 
 
+exports.isAnArray = function (value) {
+  return Array.isArray(value);
+}
+
+
 exports.getNewDate = function () {
   return moment(new Date()).format('YYYY-MM-DD');
 }
