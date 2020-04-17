@@ -217,7 +217,6 @@ exports.form3MappingTable = [
 
 ]
 
-
 exports.form4MappingTable = [
   { "aae8d7fe-8bbc-4d2e-926c-0e28b4d0e046": "Tgt3yKYd2oD" },
   { "a2053e28-9ce9-4647-8a96-6f1b7c62f429": "qBYsHDuUBIv" },
@@ -232,7 +231,6 @@ exports.form4MappingTable = [
   { "f4e3f60a-2f62-47bc-b968-156b3df91067": "ptZMCKSxvU8" }
   
 ]
-
 
 exports.form1MappingBooleanTable = [
   { "5d90078d-43d5-4ea1-9bf6-cda5398d1d67": "mfAyPSJA74t" }
@@ -281,7 +279,6 @@ exports.provinces = [
   { "Northern Province/Amajyaruguru": "tuaLIYpCQzv" },
   { "Eastern Province/Uburasirazuba": "jUMVwrUlNqG" }
 ]
-
 
 exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, index, booleanMappingTable, callback) {
 
@@ -372,9 +369,6 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
     myLoopA(0);
   }
 }
-
-
-
 
 exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTable, dhis2Id, callback) {
 

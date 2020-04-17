@@ -103,6 +103,8 @@ exports.getConceptValue = function (obs, uuid) {
     for (i = 0; i < obs.length; i++) {
       if (obs[i].concept.uuid == uuid) {
         return obs[i].value;
+        //Stop looping when the value is found
+        break;
       }
     }
     return "";

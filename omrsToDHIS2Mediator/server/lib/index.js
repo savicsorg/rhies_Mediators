@@ -156,7 +156,6 @@ function setupApp() {
 
 
 
-
 var upsertEntity = function (fields, organizationUnit, callback) {
 
   if (utils.isFineValue(fields) == true && utils.isFineValue(fields.patient) == true) {
