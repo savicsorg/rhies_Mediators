@@ -488,7 +488,7 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                   //And save the result in the datItems table
                   if(utils.isFineValue(mappingItem) === true){
                     dhis2NewId = Object.values(mappingItem);
-                    exports.getValue (mappingTable, obs.groupMembers, booleanMappingTable, dhsi2Json, dhis2NewId, function (resultat) {
+                    getValue (mappingTable, obs.groupMembers, booleanMappingTable, dhsi2Json, dhis2NewId, function (resultat) {
                       datItems.push({ "dataElement": dhis2NewId, "value": resultat });
                     });
                   }
