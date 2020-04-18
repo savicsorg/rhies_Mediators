@@ -424,21 +424,22 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                var e = 0;
                var datItems = [];
                var dhis2NewId = "";
+
                for (e = 0; e < obs.groupMembers.length; e++){
                   var mappingItem = _.find(mappingTable, function (item) {
                     return Object.keys(item) == obs.groupMembers[e].concept.uuid;
                   });
+
                   if(utils.isFineValue(mappingItem) === true){
                     dhis2NewId = Object.values(mappingItem);
-                    
-
-
-
-
+                    exports.getValue (mappingTable, obs.groupMembers, booleanMappingTable, dhsi2Json, dhis2NewId, function (resultat) {
+                      datItems.push({ "dataElement": dhis2NewId, "value": resultat });
+                    });
                   }
-
-
                }
+
+               callback(datItems);
+               
              } else {
                 callback("");
              }
