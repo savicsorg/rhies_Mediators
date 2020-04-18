@@ -412,6 +412,7 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                   if (utils.isString(obs.value) == true) {
                     callback(obs.value);
                   } else {
+                    //dropdown value processing place
                     if(utils.isObject(obs.value)){
 
                     } else {
