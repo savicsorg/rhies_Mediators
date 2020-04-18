@@ -80,8 +80,8 @@ exports.form1MappingTable = [
   { "3cd28732-26fe-102b-80cb-0017a47871b2": "YEOVngsByWK" },
   { "0fbbc915-2550-4de8-93a0-1661ad7b45b8": "r1PVDg5nIGZ" },
   { "7bfac55f-4ae4-4f4a-a597-5584e8be6020": "iTx0txf0FVj" },
-  { "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c": "jJxPUCWKW1K" }
-
+  { "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c": "jJxPUCWKW1K" },
+  { "c1063a9d-515b-440a-af6a-89375cb44ca0": "y0Z5EVxKowc" }
 
   
 ];
@@ -291,8 +291,15 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
           dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": dhsi2Json.dataValues[i].value })
           myLoopA(i + 1);
         } else {
-          exports.getValue(mappingTable, incomingEncounter, booleanMappingTable, dhsi2Json.dataValues[i].dataElement, function (result) {
-            dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": result })
+          exports.getValue(mappingTable, incomingEncounter, booleanMappingTable, dhsi2Json, dhsi2Json.dataValues[i].dataElement, function (result) {
+            if (!utils.isAnArray(result)) {
+              dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": result });
+            } else {
+                var y = 0;
+                for(y=0; y < result.length; y++){
+                  dataValues.push(result[y]);
+                }
+            }
             myLoopA(i + 1);
           });
         }
@@ -370,12 +377,11 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
   }
 }
 
-exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTable, dhis2Id, callback) {
+exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTable, dhsi2Json, dhis2Id, callback) {
 
   var mapItem = _.find(mappingTable, function (item) {
     return Object.values(item) == dhis2Id;
   });
-
 
   if (utils.isFineValue(mapItem) == true) {
 
@@ -399,46 +405,38 @@ exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTabl
             if (utils.isDate(obs.value) == true) {
               callback(utils.convertToDate(obs.value));
             } else {
-              if (utils.isNumeric(obs.value) == true) {
-                callback(utils.convertToNumber(obs.value));
-              } else {
-                if (utils.isAnArray(obs.groupMembers) == true) {
-
-                  /*
-                  if (utils.isFineValue(obs.value.name) == true && utils.isFineValue(obs.value.name.uuid) == true) {
-                    var mapSubItem = _.find(mappingTable, function (item) {
-                      return Object.keys(item) == concept.value.uuid;
-                    });
-                    if (utils.isFineValue(mapSubItem) == true) {
-                      utils.getDhis2DropdownValue(Object.values(mapSubItem), function (result) {
-                        callback(result);
-                      })
-                    } else {
-                      callback("");
-                    }
-                  } else {
-                    callback("");
-                  }
-                  */
+                if (utils.isNumeric(obs.value) == true) {
+                  callback(utils.convertToNumber(obs.value));
                 } else {
                   if (utils.isString(obs.value) == true) {
                     callback(obs.value);
                   } else {
-                    console.log("-> ", obs.value, " is a wierd");
-                    callback("");
+                      console.log("-> ", obs.value, " is a wierd");
+                      callback("");
                   }
                 }
               }
             }
-          }
-        } else {
-          callback("");
+          } else {
+             if (utils.isAnArray(obs.groupMembers) === true) {
+               // 
+               var e = 0;
+               var datItems = [];
+               for (e = 0; e < obs.groupMembers.length; e++){
+                var mappingItem = _.find(mappingTable, function (item) {
+                  return Object.keys(item) == obs.groupMembers[e].concept.uuid;
+                });
+
+               }
+             } else {
+                callback("");
+             }
         }
       } else {
-        callback("");
+          callback("");
       }
     } else {
-      callback("");
+        callback("");
     }
   } else {
     callback("");
