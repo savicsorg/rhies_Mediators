@@ -81,7 +81,8 @@ exports.form1MappingTable = [
   { "0fbbc915-2550-4de8-93a0-1661ad7b45b8": "r1PVDg5nIGZ" },
   { "7bfac55f-4ae4-4f4a-a597-5584e8be6020": "iTx0txf0FVj" },
   { "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c": "jJxPUCWKW1K" },
-  { "c1063a9d-515b-440a-af6a-89375cb44ca0": "y0Z5EVxKowc" }
+  { "c1063a9d-515b-440a-af6a-89375cb44ca0": "y0Z5EVxKowc" },
+  { "3ce84c8e-26fe-102b-80cb-0017a47871b2": "dP9kDCGW6C1" }
 
   
 ];
@@ -427,7 +428,6 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                           callback(resultat);
                         });
                       }
-
                     } else {
                       console.log("-> ", obs.value, " is a wierd");
                       callback("");
