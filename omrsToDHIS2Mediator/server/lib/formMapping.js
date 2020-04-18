@@ -291,7 +291,8 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
           dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": dhsi2Json.dataValues[i].value })
           myLoopA(i + 1);
         } else {
-          exports.getValue(mappingTable, incomingEncounter, booleanMappingTable, dhsi2Json, dhsi2Json.dataValues[i].dataElement, function (result) {
+          var obsList = incomingEncounter.encounter.obs;
+          exports.getValue(mappingTable, obsList, booleanMappingTable, dhsi2Json, dhsi2Json.dataValues[i].dataElement, function (result) {
             if (!utils.isAnArray(result)) {
               dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": result });
             } else {
@@ -377,7 +378,7 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
   }
 }
 
-exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTable, dhsi2Json, dhis2Id, callback) {
+exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Json, dhis2Id, callback) {
 
   var mapItem = _.find(mappingTable, function (item) {
     return Object.values(item) == dhis2Id;
@@ -385,7 +386,7 @@ exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTabl
 
   if (utils.isFineValue(mapItem) == true) {
 
-    var obs = _.find(incomingEncounter.encounter.obs, function (item) {
+    var obs = _.find(obsList, function (item) {
       return item.concept.uuid == Object.keys(mapItem);
     });
 
@@ -422,10 +423,20 @@ exports.getValue = function (mappingTable, incomingEncounter, booleanMappingTabl
                // 
                var e = 0;
                var datItems = [];
+               var dhis2NewId = "";
                for (e = 0; e < obs.groupMembers.length; e++){
-                var mappingItem = _.find(mappingTable, function (item) {
-                  return Object.keys(item) == obs.groupMembers[e].concept.uuid;
-                });
+                  var mappingItem = _.find(mappingTable, function (item) {
+                    return Object.keys(item) == obs.groupMembers[e].concept.uuid;
+                  });
+                  if(utils.isFineValue(mappingItem) === true){
+                    dhis2NewId = Object.values(mappingItem);
+                    
+
+
+
+
+                  }
+
 
                }
              } else {
