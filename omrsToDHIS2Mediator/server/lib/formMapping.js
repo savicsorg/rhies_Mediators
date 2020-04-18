@@ -506,7 +506,5 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
     } else {
         callback("");
     }
-  } else {
-    callback("");
   }
 }
