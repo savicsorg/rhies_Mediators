@@ -432,6 +432,8 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                     return Object.keys(item) == obs.groupMembers[e].concept.uuid;
                   });
 
+                  //With the good matching on mappingItem call recursivelly getValue obs.groupMembers and dhis2NewId
+                  //And save the result in the datItems table
                   if(utils.isFineValue(mappingItem) === true){
                     dhis2NewId = Object.values(mappingItem);
                     exports.getValue (mappingTable, obs.groupMembers, booleanMappingTable, dhsi2Json, dhis2NewId, function (resultat) {
@@ -439,7 +441,7 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                     });
                   }
                }
-
+               //Return the result as a datItems table
                callback(datItems);
 
              } else {
