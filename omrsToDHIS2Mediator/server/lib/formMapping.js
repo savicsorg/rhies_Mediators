@@ -419,12 +419,14 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
               }
             }
           } else {
+            //In the case of ConvSet
              if (utils.isAnArray(obs.groupMembers) === true) {
-               // 
+               // Initialize variables
                var e = 0;
                var datItems = [];
                var dhis2NewId = "";
 
+               //Loop obs.groupMembers Table to find the right dhis2 Id and obs value
                for (e = 0; e < obs.groupMembers.length; e++){
                   var mappingItem = _.find(mappingTable, function (item) {
                     return Object.keys(item) == obs.groupMembers[e].concept.uuid;
@@ -439,7 +441,7 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                }
 
                callback(datItems);
-               
+
              } else {
                 callback("");
              }
