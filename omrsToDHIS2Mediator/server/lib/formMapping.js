@@ -413,7 +413,20 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                     callback(obs.value);
                   } else {
                     //dropdown value processing place
-                    if(utils.isObject(obs.value)){
+                    if(utils.isObject(obs.value) === true){
+                      var idDhis2 = "";
+                      //Find the right DHIS2 id and concept uuid
+                      var mappingItem = _.find(mappingTable, function (item) {
+                        return Object.keys(item) == obs.value.uuid;
+                      });
+                      //Retrieve DHIS2 dropdown value
+                      if(utils.isFineValue(mappingItem) === true){
+                        idDhis2 = Object.values(mappingItem);
+                        //Return the dropdown value : dhis2 option code
+                        utils.getDhis2DropdownValue(idDhis2, function(resultat){
+                          callback(resultat);
+                        });
+                      }
 
                     } else {
                       console.log("-> ", obs.value, " is a wierd");
