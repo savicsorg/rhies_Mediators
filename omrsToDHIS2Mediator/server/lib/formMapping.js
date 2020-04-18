@@ -412,8 +412,12 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhsi2Js
                   if (utils.isString(obs.value) == true) {
                     callback(obs.value);
                   } else {
+                    if(utils.isObject(obs.value)){
+
+                    } else {
                       console.log("-> ", obs.value, " is a wierd");
                       callback("");
+                    }
                   }
                 }
               }
