@@ -781,6 +781,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   //Retrive non dropdown concept for CBS CONTACT GROUP ConvSet
   var patientCodeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "41c410a4-18a4-4221-98ad-1daf1b22de4d"));
   var patientAgeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "2ecf52c4-f732-46a8-9f10-45a04ca70f49"));
+  var patientContactHivPositifTrackedNumber = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8"));
   
   //Retrieve the UUID for each dropdown concept from OpenMRS
   //Begining of UUID retrieving 
@@ -1086,7 +1087,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "r1PVDg5nIGZ",
-                                    "value": ""
+                                    "value": patientContactHivPositifTrackedNumber
                                   },
                                   {
                                     "dataElement": "OsZRlnXq7Qk",
