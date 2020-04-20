@@ -474,5 +474,7 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhis2Id
     } else {
         callback("");
     }
+  } else {
+      callback("");
   }
 }
