@@ -220,6 +220,24 @@ exports.getDHIS2RelationOfContact = function (uuid) {
 }
 
 
+exports.getDHIS2ContactGender = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3ce84c8e-26fe-102b-80cb-0017a47871b2':
+        return 'dP9kDCGW6C1';
+        break;
+      case '3ce84b1c-26fe-102b-80cb-0017a47871b2':
+        return 'SdIpSKZhA6a';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return '';
+  }
+}
+
+
 exports.getDHIS2ContactHivStatus = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
