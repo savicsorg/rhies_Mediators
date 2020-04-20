@@ -781,8 +781,9 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   //Retrive non dropdown concept for CBS CONTACT GROUP ConvSet
   var patientCodeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "41c410a4-18a4-4221-98ad-1daf1b22de4d"));
   var patientAgeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "2ecf52c4-f732-46a8-9f10-45a04ca70f49"));
-  var patientContactHivPositifTrackedNumber = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8"));
-  
+  var patientContactHivPositifTrackedNumberValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8");
+  var patientContactObservationsValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c");
+
   //Retrieve the UUID for each dropdown concept from OpenMRS
   //Begining of UUID retrieving 
   var omrsRecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "b4b0e241-e41a-4d46-89dd-e531cf6d8202");
@@ -1055,7 +1056,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "jJxPUCWKW1K",
-                                    "value": ""
+                                    "value": patientContactObservationsValue
                                   },
                                   {
                                     "dataElement": "i5f4SA6TGRt",
@@ -1087,7 +1088,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "r1PVDg5nIGZ",
-                                    "value": patientContactHivPositifTrackedNumber
+                                    "value": patientContactHivPositifTrackedNumberValue
                                   },
                                   {
                                     "dataElement": "OsZRlnXq7Qk",
