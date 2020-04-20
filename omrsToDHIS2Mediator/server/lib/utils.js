@@ -120,15 +120,21 @@ exports.getContactGroupConceptValue = function (obs, uuid) {
   if (exports.isFineValue(obs) == true) {
     var i;
     var myIndex;
+    var yesFound = false;
     for (i = 0; i < obs.length; i++) {
-      if (obs[i].concept.uuid == "c8fe9d38-97db-4b70-a4bb-3611df0912b7") {
+      if (obs[i].concept.uuid == "95b7a6fc-57b1-45b9-a595-467f6118b51e") {
         myIndex = i;
+        yesFound = true;
         //Stop looping when the value is found
         break;
       }
     }
-    if(isAnArray(obs[myIndex].groupMembers) === true){
-      return getConceptValue(obs[myIndex].groupMembers,uuid);
+    if (yesFound) {
+      if(isAnArray(obs[myIndex].groupMembers)){
+        return getConceptValue(obs[myIndex].groupMembers,uuid);
+      } else {
+        return "";
+      }
     } else {
       return "";
     }
