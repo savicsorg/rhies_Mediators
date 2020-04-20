@@ -922,7 +922,8 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                             patientContactHivResultValue = result;
                             utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
                               patientUntestedContactGivenTestKitValue = result;
-
+                              utils.getDhis2DropdownValue(utils.getDHIS2ContactGender(omrsContactGender), function (result) {
+                                patientContactGenderValue = result;
   //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
                               
                               //1- sending createNewEventStageInfoRecencyContact
@@ -1135,6 +1136,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                               });
                               //End of data pushing
 
+                              });
                             });
                           });
                         });
