@@ -775,6 +775,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   var patientReasonContactNotTestedValue = ""; //This one must be modified in OpenMRS to dropdown, because it's free text
   var patientContactHivResultValue = "";
   var patientUntestedContactGivenTestKitValue = "";
+  var patientContactGenderValue = "";
 
 
   //Retrive non dropdown concept for CBS CONTACT GROUP ConvSet
@@ -880,6 +881,14 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   } else {
     omrsUntestedContactGivenTestKit = "";
   }
+
+  var omrsContactGender = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "d1ecd154-13b1-433a-8480-3213e178aff7");
+  if (utils.isFineValue(omrsContactGender) == true && utils.isFineValue(omrsContactGender.name) == true && utils.isFineValue(omrsContactGender.name.name) == true) {
+    omrsContactGender = omrsContactGender.uuid;
+  } else {
+    omrsContactGender = "";
+  }
+
   //End of UUID retrieving
   
   
@@ -913,6 +922,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                             patientContactHivResultValue = result;
                             utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
                               patientUntestedContactGivenTestKitValue = result;
+
   //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
                               
                               //1- sending createNewEventStageInfoRecencyContact
@@ -982,7 +992,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "m3pQUNk6AeL",
-                                    "value": ""
+                                    "value": patientContactGenderValue
                                   },
                                   {
                                     "dataElement": "Zxkghqkbn7p",
