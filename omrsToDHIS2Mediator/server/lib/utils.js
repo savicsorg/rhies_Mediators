@@ -134,7 +134,7 @@ exports.getContactGroupConceptValue = function (obs, uuid) {
       if(exports.isAnArray(obs[myIndex].groupMembers)){
         return (exports.getConceptValue(obs[myIndex].groupMembers,uuid));
       } else {
-        return "";
+        return ("");
       }
     } else {
       return "";

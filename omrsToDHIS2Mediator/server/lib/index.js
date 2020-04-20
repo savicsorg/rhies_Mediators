@@ -777,6 +777,10 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   var patientUntestedContactGivenTestKitValue = "";
 
 
+  //Retrive non dropdown concept for CBS CONTACT GROUP ConvSet
+  var patientCodeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "41c410a4-18a4-4221-98ad-1daf1b22de4d"));
+  var patientAgeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "2ecf52c4-f732-46a8-9f10-45a04ca70f49"));
+  
   //Retrieve the UUID for each dropdown concept from OpenMRS
   //Begining of UUID retrieving 
   var omrsRecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "b4b0e241-e41a-4d46-89dd-e531cf6d8202");
@@ -786,91 +790,91 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
     omrsRecencyAssayResult = "";
   }
 
-  var omrsRelationOfContact = utils.getConceptValue(incomingEncounter.encounter.obs, "d4a45c62-5d82-43a2-856d-6c75db9fe842");
+  var omrsRelationOfContact = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "d4a45c62-5d82-43a2-856d-6c75db9fe842");
   if (utils.isFineValue(omrsRelationOfContact) == true && utils.isFineValue(omrsRelationOfContact.name) == true && utils.isFineValue(omrsRelationOfContact.name.name) == true) {
     omrsRelationOfContact = omrsRelationOfContact.uuid;
   } else {
     omrsRelationOfContact = "";
   }
 
-  var omrsContactHivStatus = utils.getConceptValue(incomingEncounter.encounter.obs, "438e1ee2-5642-4868-867d-960eca6e6451");
+  var omrsContactHivStatus = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "438e1ee2-5642-4868-867d-960eca6e6451");
   if (utils.isFineValue(omrsContactHivStatus) == true && utils.isFineValue(omrsContactHivStatus.name) == true && utils.isFineValue(omrsContactHivStatus.name.name) == true) {
     omrsContactHivStatus = omrsContactHivStatus.uuid;
   } else {
     omrsContactHivStatus = "";
   }
 
-  var omrsRiskOfViolence = utils.getConceptValue(incomingEncounter.encounter.obs, "5d90078d-43d5-4ea1-9bf6-cda5398d1d67");
+  var omrsRiskOfViolence = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "5d90078d-43d5-4ea1-9bf6-cda5398d1d67");
   if (utils.isFineValue(omrsRiskOfViolence) == true && utils.isFineValue(omrsRiskOfViolence.name) == true && utils.isFineValue(omrsRiskOfViolence.name.name) == true) {
     omrsRiskOfViolence = omrsRiskOfViolence.uuid;
   } else {
     omrsRiskOfViolence = "";
   }
 
-  var omrsPlannedReferenceType = utils.getConceptValue(incomingEncounter.encounter.obs, "d300cfbb-c771-44db-8272-7065efc88242");
+  var omrsPlannedReferenceType = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "d300cfbb-c771-44db-8272-7065efc88242");
   if (utils.isFineValue(omrsPlannedReferenceType) == true && utils.isFineValue(omrsPlannedReferenceType.name) == true && utils.isFineValue(omrsPlannedReferenceType.name.name) == true) {
     omrsPlannedReferenceType = omrsPlannedReferenceType.uuid;
   } else {
     omrsPlannedReferenceType = "";
   }
 
-  var omrsContactInvited = utils.getConceptValue(incomingEncounter.encounter.obs, "0b888b3c-df20-467c-9be9-0e68b779a97d");
+  var omrsContactInvited = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0b888b3c-df20-467c-9be9-0e68b779a97d");
   if (utils.isFineValue(omrsContactInvited) == true && utils.isFineValue(omrsContactInvited.name) == true && utils.isFineValue(omrsContactInvited.name.name) == true) {
     omrsContactInvited = omrsContactInvited.uuid;
   } else {
     omrsContactInvited = "";
   }
 
-  var omrsContactReceived = utils.getConceptValue(incomingEncounter.encounter.obs, "cceda879-286d-4dca-8ea8-1168f217fd1c");
+  var omrsContactReceived = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "cceda879-286d-4dca-8ea8-1168f217fd1c");
   if (utils.isFineValue(omrsContactReceived) == true && utils.isFineValue(omrsContactReceived.name) == true && utils.isFineValue(omrsContactReceived.name.name) == true) {
     omrsContactReceived = omrsContactReceived.uuid;
   } else {
     omrsContactReceived = "";
   }
 
-  var omrsReasonContactNotReceived = utils.getConceptValue(incomingEncounter.encounter.obs, "0d52c378-adeb-4c89-a977-1f6cc4a7e9e4");
+  var omrsReasonContactNotReceived = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0d52c378-adeb-4c89-a977-1f6cc4a7e9e4");
   if (utils.isFineValue(omrsReasonContactNotReceived) == true && utils.isFineValue(omrsReasonContactNotReceived.name) == true && utils.isFineValue(omrsReasonContactNotReceived.name.name) == true) {
     omrsReasonContactNotReceived = omrsReasonContactNotReceived.uuid;
   } else {
     omrsReasonContactNotReceived = "";
   }
 
-  var omrsContactNotifier = utils.getConceptValue(incomingEncounter.encounter.obs, "e7664ff5-a8ab-47a2-bc29-4470636a5634");
+  var omrsContactNotifier = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "e7664ff5-a8ab-47a2-bc29-4470636a5634");
   if (utils.isFineValue(omrsContactNotifier) == true && utils.isFineValue(omrsContactNotifier.name) == true && utils.isFineValue(omrsContactNotifier.name.name) == true) {
     omrsContactNotifier = omrsContactNotifier.uuid;
   } else {
     omrsContactNotifier = "";
   }
 
-  var omrsNotificationApproach = utils.getConceptValue(incomingEncounter.encounter.obs, "80530ec0-b820-4fe8-9d12-9d1f6476b0bf");
+  var omrsNotificationApproach = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "80530ec0-b820-4fe8-9d12-9d1f6476b0bf");
   if (utils.isFineValue(omrsNotificationApproach) == true && utils.isFineValue(omrsNotificationApproach.name) == true && utils.isFineValue(omrsNotificationApproach.name.name) == true) {
     omrsNotificationApproach = omrsNotificationApproach.uuid;
   } else {
     omrsNotificationApproach = "";
   }
 
-  var omrsContactTested = utils.getConceptValue(incomingEncounter.encounter.obs, "5ba1d72e-8a77-4ad3-824e-19006bbf05e7");
+  var omrsContactTested = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "5ba1d72e-8a77-4ad3-824e-19006bbf05e7");
   if (utils.isFineValue(omrsContactTested) == true && utils.isFineValue(omrsContactTested.name) == true && utils.isFineValue(omrsContactTested.name.name) == true) {
     omrsContactTested = omrsContactTested.uuid;
   } else {
     omrsContactTested = "";
   }
 
-  var omrsReasonContactNotTested = utils.getConceptValue(incomingEncounter.encounter.obs, "bd3649bd-8c55-4671-a9d1-d1515ca2877f");
+  var omrsReasonContactNotTested = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "bd3649bd-8c55-4671-a9d1-d1515ca2877f");
   if (utils.isFineValue(omrsReasonContactNotTested) == true && utils.isFineValue(omrsReasonContactNotTested.name) == true && utils.isFineValue(omrsReasonContactNotTested.name.name) == true) {
     omrsReasonContactNotTested = omrsReasonContactNotTested.uuid;
   } else {
     omrsReasonContactNotTested = "";
   }
 
-  var omrsContactHivResult = utils.getConceptValue(incomingEncounter.encounter.obs, "c86a2bcc-638b-4696-a2ac-1a74a1781745");
+  var omrsContactHivResult = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "c86a2bcc-638b-4696-a2ac-1a74a1781745");
   if (utils.isFineValue(omrsContactHivResult) == true && utils.isFineValue(omrsContactHivResult.name) == true && utils.isFineValue(omrsContactHivResult.name.name) == true) {
     omrsContactHivResult = omrsContactHivResult.uuid;
   } else {
     omrsContactHivResult = "";
   }
 
-  var omrsUntestedContactGivenTestKit = utils.getConceptValue(incomingEncounter.encounter.obs, "7bfac55f-4ae4-4f4a-a597-5584e8be6020");
+  var omrsUntestedContactGivenTestKit = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "7bfac55f-4ae4-4f4a-a597-5584e8be6020");
   if (utils.isFineValue(omrsUntestedContactGivenTestKit) == true && utils.isFineValue(omrsUntestedContactGivenTestKit.name) == true && utils.isFineValue(omrsUntestedContactGivenTestKit.name.name) == true) {
     omrsUntestedContactGivenTestKit = omrsUntestedContactGivenTestKit.uuid;
   } else {
@@ -974,7 +978,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                 "dataValues": [
                                   {
                                     "dataElement": "CIh22FjXvOR",
-                                    "value": ""
+                                    "value": patientCodeOfContactValue
                                   },
                                   {
                                     "dataElement": "m3pQUNk6AeL",
@@ -998,7 +1002,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "MgkDDuHQHeN",
-                                    "value": ""
+                                    "value": patientAgeOfContactValue
                                   }
                                 ]
                               }
