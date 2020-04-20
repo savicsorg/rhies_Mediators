@@ -100,14 +100,38 @@ exports.getPatientMaritalStatusDhis2Id = function (patient) {
 exports.getConceptValue = function (obs, uuid) {
   if (exports.isFineValue(obs) == true) {
     var i;
+    var yesFound = false;
     for (i = 0; i < obs.length; i++) {
       if (obs[i].concept.uuid == uuid) {
+        yesFound = true;
         return obs[i].value;
+      }
+    }
+    if (yesFound === false){
+      return "";
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getContactGroupConceptValue = function (obs, uuid) {
+  if (exports.isFineValue(obs) == true) {
+    var i;
+    var myIndex;
+    for (i = 0; i < obs.length; i++) {
+      if (obs[i].concept.uuid == "c8fe9d38-97db-4b70-a4bb-3611df0912b7") {
+        myIndex = i;
         //Stop looping when the value is found
         break;
       }
     }
-    return "";
+    if(isAnArray(obs[myIndex].groupMembers) === true){
+      return getConceptValue(obs[myIndex].groupMembers,uuid);
+    } else {
+      return "";
+    }
   } else {
     return "";
   }
