@@ -1043,7 +1043,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "i5f4SA6TGRt",
-                                    "value": ""
+                                    "value": patientReasonContactNotReceivedValue
                                   },
                                   {
                                     "dataElement": "Y7RU4f1g49C",
