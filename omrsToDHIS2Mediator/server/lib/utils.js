@@ -105,6 +105,7 @@ exports.getConceptValue = function (obs, uuid) {
       if (obs[i].concept.uuid == uuid) {
         yesFound = true;
         return obs[i].value;
+        
       }
     }
     if (yesFound === false){
@@ -130,8 +131,8 @@ exports.getContactGroupConceptValue = function (obs, uuid) {
       }
     }
     if (yesFound) {
-      if(isAnArray(obs[myIndex].groupMembers)){
-        return getConceptValue(obs[myIndex].groupMembers,uuid);
+      if(exports.isAnArray(obs[myIndex].groupMembers)){
+        return (exports.getConceptValue(obs[myIndex].groupMembers,uuid));
       } else {
         return "";
       }
