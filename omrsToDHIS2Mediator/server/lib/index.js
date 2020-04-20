@@ -1059,7 +1059,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   },
                                   {
                                     "dataElement": "UXx7mkioReb",
-                                    "value": patientNotificationApproachValue
+                                    "value": ""
                                   },
                                   {
                                     "dataElement": "kVoTnMfXnyt",
