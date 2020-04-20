@@ -330,12 +330,7 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
           exports.getValue(mappingTable, obsList, booleanMappingTable, dhsi2Json.dataValues[i].dataElement, function (result) {
             if (!utils.isAnArray(result)) {
               dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": result });
-            } else {
-                var y = 0;
-                for(y=0; y < result.length; y++){
-                  dataValues.push(result[y]);
-                }
-            }
+            } 
             myLoopA(i + 1);
           });
         }
