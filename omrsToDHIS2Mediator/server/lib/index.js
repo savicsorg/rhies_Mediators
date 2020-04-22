@@ -1442,7 +1442,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                 },
                                                 {
                                                   "dataElement": "txsxKp2l6y9",
-                                                  "value": ""
+                                                  "value": utils.getNewDate()
                                                 },
                                                 {
                                                   "dataElement": "oLqMrGMI4Uf",
