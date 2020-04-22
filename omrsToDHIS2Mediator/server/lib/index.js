@@ -1170,6 +1170,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientAddressObject = "";
   var patientProvince = "";
   var patientDistrict = "";
+  var patientVisitDate = "";
 
   var patientIndexCaseTypeValue = "";
   var patientARTStartLocationValue = "";
@@ -1355,6 +1356,10 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
 
   if (utils.isFineValue(incomingEncounter.patient.person.birthdate) == true) {
     patientBirhDate = utils.convertToDate(incomingEncounter.patient.person.birthdate);
+  }
+
+  if(utils.isFineValue(incomingEncounter.encounter.encounterDatetime) == true) {
+    patientVisitDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
   }
 
   patientAddressObject = utils.getdhis2ProvinceDistrictIds(incomingEncounter.patient);
