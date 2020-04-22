@@ -1434,7 +1434,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                               "dataValues": [
                                                 {
                                                   "dataElement": "pbeBAIly2GT",
-                                                  "value": ""
+                                                  "value": organizationUnit
                                                 },
                                                 {
                                                   "dataElement": "qycXEyMMFMb",
