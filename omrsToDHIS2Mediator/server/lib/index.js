@@ -1380,6 +1380,12 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
       }
 
       //Beginning of the retrieving of all the dropdown value from DHIS2
+      patientConselledOnLinkageValue = utils.getDHIS2Boolean(omrsConselledOnLinkage);
+      patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
+      patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
+      patientInitiatedOnTPTValue = utils.getDHIS2Boolean(omrsInitiatedOnTPT);
+      patientStableValue = utils.getDHIS2Boolean(omrsStable);
+
       utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
         patientOccupation = result;
         utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
@@ -1416,11 +1422,6 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                         patientFinalRitaRecencyResultValue = result;
                                         utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsFinalRitaInconclusive), function (result) {
                                           patientFinalRitaInconclusiveValue = result;
-                                          patientConselledOnLinkageValue = utils.getDHIS2Boolean(omrsConselledOnLinkage);
-                                          patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
-                                          patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
-                                          patientInitiatedOnTPTValue = utils.getDHIS2Boolean(omrsInitiatedOnTPT);
-                                          patientStableValue = utils.getDHIS2Boolean(omrsStable);
                                           utils.getDhis2DropdownValue(utils.getDHIS2ReasonNotInitiatedOnTPT(omrsReasonNotInitOnTPT), function (result) {
                                             patientReasonNotInitOnTPTValue = result;
     //End of the retrieving of all the dropdown value from DHIS2
