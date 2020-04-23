@@ -415,7 +415,6 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhis2Id
   });
 
   if (utils.isFineValue(mapItem) == true) {
-
     var obs = _.find(obsList, function (item) {
       return item.concept.uuid == Object.keys(mapItem);
     });

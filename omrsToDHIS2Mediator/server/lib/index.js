@@ -1554,6 +1554,10 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   "value": patientForm2RecencyAssayResultValue
                                                 },
                                                 {
+                                                  "dataElement": "i7AuzJQFo8O",
+                                                  "value": ""
+                                                },
+                                                {
                                                   "dataElement": "ccYYcYf78sz",
                                                   "value": ""
                                                 },
