@@ -949,7 +949,7 @@ exports.getDhis2District = function (value, callback) {
     } else {
       var resp = JSON.parse(body);
       if (exports.isFineValue(resp) == true && exports.isFineValue(resp.organisationUnits) == true) {
-        callback(resp.organisationUnits[0].displayName);
+        callback(resp.organisationUnits[0].id);
       } else {
         callback("");
       }
