@@ -671,10 +671,10 @@ exports.getDHIS2Boolean = function (uuid) {
         return false;
         break;  
       default:
-        return '';
+        return null;
     }
   } else {
-    return "";
+    return null;
   }
 }
 
