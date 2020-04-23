@@ -914,12 +914,16 @@ exports.getdhis2ProvinceDistrictIds = function (patient) {
 
     return {
       "dhis2ProvinceId": FoundProvince,
-      "dhis2DistrictId": FoundDistrict
+      "dhis2DistrictId": FoundDistrict,
+      "village" : patient.person.addresses[0].cityVillage,
+      "cellue" : patient.person.addresses[0].address1
     };
   } else {
     return {
       "dhis2ProvinceId": "",
-      "dhis2ProvinceId": ""
+      "dhis2ProvinceId": "",
+      "village" : "",
+      "cellue" : ""
     };
   }
 
