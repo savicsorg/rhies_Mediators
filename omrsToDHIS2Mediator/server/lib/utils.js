@@ -890,7 +890,7 @@ exports.convertToNumber = function (value) {
 }
 
 
-exports.getdhis2ProvinceDistrictIds = function (patient, ) {
+exports.getdhis2ProvinceDistrictIds = function (patient) {
   if (exports.isFineValue(patient) == true && exports.isFineValue(patient.person) == true && exports.isFineValue(patient.person.addresses) == true) {
 
     var province = _.find(formMapping.provinces, function (item) {
