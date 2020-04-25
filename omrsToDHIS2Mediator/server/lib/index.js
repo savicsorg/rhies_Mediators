@@ -1709,7 +1709,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   {
                                                     "dataElement": "fHHFiV0HP0V",
                                                     "value": patientSexWithHivPositifPersonValue
-                                                  },
+                                                  }
                                                 ]
                                               }
 
