@@ -691,10 +691,10 @@ exports.getDHIS2Boolean = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
       case '3cd6f600-26fe-102b-80cb-0017a47871b2':
-        return true;
+        return "true";
         break;
       case '3cd6f86c-26fe-102b-80cb-0017a47871b2':
-        return false;
+        return "false";
         break;  
       default:
         return '';

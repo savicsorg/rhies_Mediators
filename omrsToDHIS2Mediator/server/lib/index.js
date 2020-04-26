@@ -1348,7 +1348,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
     omrsReasonNotInitOnTPT = "";
   }
 
-  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
+  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "fab9afe9-8c11-4e31-9898-399b083fd9d6");
   if (utils.isFineValue(omrsStable) == true && utils.isFineValue(omrsStable.name) == true && utils.isFineValue(omrsStable.name.name) == true) {
     omrsStable = omrsStable.uuid;
   } else {
