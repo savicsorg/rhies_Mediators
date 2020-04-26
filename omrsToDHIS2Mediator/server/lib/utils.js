@@ -917,39 +917,39 @@ exports.convertToNumber = function (value) {
 
 
 exports.getdhis2ProvinceDistrictIds = function (patient) {
-  if (exports.isFineValue(patient) == true && exports.isFineValue(patient.person) == true && exports.isFineValue(patient.person.addresses) == true) {
+  if (exports.isFineValue(patient) == true && exports.isFineValue(patient.person) == true && exports.isFineValue(patient.person.preferredAddress) == true) {
 
-    var province = _.find(formMapping.provinces, function (item) {
-      return Object.keys(item) == patient.person.addresses[0].stateProvince;
-    });
-
-    var district = _.find(formMapping.districts, function (item) {
-      return Object.keys(item) == patient.person.addresses[0].countyDistrict;
-    });
     var FoundProvince = "";
     var FoundDistrict = "";
 
+    var province = _.find(formMapping.provinces, function (item) {
+      return Object.keys(item) == patient.person.preferredAddress.stateProvince;
+    });
+
+    var district = _.find(formMapping.districts, function (item) {
+      return Object.keys(item) == patient.person.preferredAddress.countyDistrict;
+    });
     
     if (exports.isFineValue(province) == true) {
-      FoundProvince = Object.values(province)
+      FoundProvince = Object.values(province);
     }
 
     if (exports.isFineValue(district) == true) {
-      FoundDistrict = Object.values(district)
+      FoundDistrict = Object.values(district);
     }
 
     return {
       "dhis2ProvinceId": FoundProvince,
       "dhis2DistrictId": FoundDistrict,
-      "village" : patient.person.addresses[0].cityVillage,
-      "cellue" : patient.person.addresses[0].address1
+      "village" : patient.person.preferredAddress.cityVillage,
+      "cellule" : patient.person.preferredAddress.address1
     };
   } else {
     return {
       "dhis2ProvinceId": "",
       "dhis2ProvinceId": "",
       "village" : "",
-      "cellue" : ""
+      "cellule" : ""
     };
   }
 

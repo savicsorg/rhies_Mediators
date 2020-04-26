@@ -1368,8 +1368,8 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   patientAddressObject = utils.getdhis2ProvinceDistrictIds(incomingEncounter.patient);
 
   //getting patient Cellule and Village
-  patientCellule = patientAddressObject.address1;
-  patientVillage = patientAddressObject.address3;
+  patientCellule = patientAddressObject.cellule;
+  patientVillage = patientAddressObject.village;
   
   //getting province from DHIS2
   utils.getDhis2District(patientAddressObject.dhis2ProvinceId, function (result) {
@@ -1378,7 +1378,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
 
     //getting distict from DHIS2
     utils.getDhis2District(patientAddressObject.dhis2DistrictId, function (result) {
-      patientDistrict=result;
+      patientDistrict = result;
       console.log("district to push to dhis2==============>>>", result)
 
       //getting gender from DHIS2
@@ -1500,7 +1500,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   },
                                                   {
                                                     "dataElement": "p5U0vUS0Q3V",
-                                                    "value": ""
+                                                    "value": patientVillage
                                                   },
                                                   {
                                                     "dataElement": "I79uRgVEyUc",
