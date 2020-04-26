@@ -79,19 +79,45 @@ exports.getPatientGenderDhis2Id = function (patient) {
 exports.getPatientMaritalStatusDhis2Id = function (patient) {
   if (exports.isFineValue(patient.person.attributes) == true) {
     var i;
+    var y;
+    var itemFound = false;
+
     for (i = 0; i < patient.person.attributes.length; i++) {
-      if (patient.person.attributes[i].value.uuid == "3cee0aca-26fe-102b-80cb-0017a47871b2") {
-        return "fBMDDNWcRmw";
-      } else if (patient.person.attributes[i].uui == "df488243-d1d5-4b50-ae04-40b4ffdcf934") {
-        return "jREI0QafwGi"
-      } else if (patient.person.attributes[i].uui == "3cd6e6f6-26fe-102b-80cb-0017a47871b2") {
-        return "hnIhYohBRIY"
-      } else if (patient.person.attributes[i].uui == "3cd6e96c-26fe-102b-80cb-0017a47871b2") {
-        return "cifrFF43poD"
-      } else if (patient.person.attributes[i].uui == "3cd6e246-26fe-102b-80cb-0017a47871b2") {
-        return "GglecqlxEWq"
+      if (patient.person.attributes[i].attributeType.display == "Civil Status") {
+        y = i;
+        itemFound = true;
+        break;
       }
     }
+
+    if (itemFound){
+      var uuidStatus = patient.person.attributes[y].value.uuid;
+      switch(uuidStatus){
+        case '60eca8ce-777b-4556-8ea3-f7fa5a439ab2' :
+          return "jREI0QafwGi";
+          break;
+        case '3cee0aca-26fe-102b-80cb-0017a47871b2' :
+          return "fBMDDNWcRmw";
+          break;
+        case '3cd6e96c-26fe-102b-80cb-0017a47871b2' :
+          return "cifrFF43poD";
+          break;
+        case '3cd6e6f6-26fe-102b-80cb-0017a47871b2' :
+          return "hnIhYohBRIY";
+          break;
+        case '3cd6e55c-26fe-102b-80cb-0017a47871b2' :
+          return "GglecqlxEWq";
+          break;
+        case '3cd6e246-26fe-102b-80cb-0017a47871b2' :
+          return "GglecqlxEWq";
+          break;
+        default :
+          return "";
+      }
+    } else {
+      return "";
+    }
+    
   }
   return "";
 }

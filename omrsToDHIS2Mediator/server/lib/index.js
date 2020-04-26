@@ -2297,13 +2297,9 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
  */
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
-<<<<<<< HEAD
 
-  if (false) {
   //if (apiConf.register) {
-=======
-  if (apiConf.register) {
->>>>>>> 3559c8abf338a82494e89d6cd373138d52ec759a
+  if (false) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
