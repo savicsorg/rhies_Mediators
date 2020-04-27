@@ -1870,25 +1870,25 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
 
   //Retrieving all the dropdown value from DHIS2
     //Boolean retrieving
-  patientDemographicChangeValue = utilis.getDHIS2Boolean(omrsDemographicChange);
-  patientRiskFactorChangeValue = utilis.getDHIS2Boolean(omrsRiskFactorChange);
+  patientDemographicChangeValue = utils.getDHIS2Boolean(omrsDemographicChange);
+  patientRiskFactorChangeValue = utils.getDHIS2Boolean(omrsRiskFactorChange);
   patientFollowUpStableValue = utils.getDHIS2Boolean(omrsFollowUpStable);
-  patientChangeInTreatmentValue =  utilis.getDHIS2Boolean(omrsChangeInTreatment);
-  patientAttendedEnhancedCounsellingValue = utilis.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
-  patientCompletedEnhancedCounsellingValue = utilis.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
+  patientChangeInTreatmentValue =  utils.getDHIS2Boolean(omrsChangeInTreatment);
+  patientAttendedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
+  patientCompletedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
     //End of boolean retrieving
 
-  utilis.getDhis2DropdownValue(utilis.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
+  utils.getDhis2DropdownValue(utils.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
     patientReasonARTChangedOrStoppedValue = result;
-    utilis.getDhis2DropdownValue(utilis.getDHIS2DrugToxicityType(omrsDrugToxicityType), function(result){
+    utils.getDhis2DropdownValue(utils.getDHIS2DrugToxicityType(omrsDrugToxicityType), function(result){
       patientDrugToxicityTypeValue = result;
       utils.getDhis2DropdownValue(utils.getDHIS2CBSClientOutcome(omrsCBSClientOutcome), function(result){
         patientCBSClientOutcomeValue = result;
-        utilis.getDhis2DropdownValue(utils.getDHIS2OverAllTreatmentAdherence(omrsOverallTreatmentAdherence), function(result){
+        utils.getDhis2DropdownValue(utils.getDHIS2OverAllTreatmentAdherence(omrsOverallTreatmentAdherence), function(result){
           patientOverallTreatmentAdherenceValue = result;
           utils.getDhis2DropdownValue(utils.getDHIS2ClientTPTOutcome(omrsClientTPTOutcome), function(result){
             patientClientTPTOutcomeValue = result;
-            utilis.getDhis2DropdownValue(utils.getDHIS2TPTTherapyInProgress(omrsTPTTherapyInProgress), function(result){
+            utils.getDhis2DropdownValue(utils.getDHIS2TPTTherapyInProgress(omrsTPTTherapyInProgress), function(result){
               patientTPTTherapyInProgressValue = result;
   //End of retrieving all the dropdown value from DHIS2
 
@@ -1906,7 +1906,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                   "dataValues": [
                     {
                       "dataElement": "pbeBAIly2GT",
-                      "value": ""
+                      "value": organizationUnit
                     },
                     {
                       "dataElement": "txsxKp2l6y9",
@@ -1938,7 +1938,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "p5U0vUS0Q3V",
-                      "value": patientVillage
+                      "value": ""
                     },
                     {
                       "dataElement": "I79uRgVEyUc",
@@ -2106,7 +2106,7 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
     "dataValues": [
       {
         "dataElement": "pbeBAIly2GT",
-        "value": ""
+        "value": organizationUnit
       },
       {
         "dataElement": "txsxKp2l6y9",
