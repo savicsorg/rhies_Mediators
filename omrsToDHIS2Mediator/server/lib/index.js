@@ -1711,7 +1711,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                     "value": patientSexWithHivPositifPersonValue
                                                   }
                                                 ]
-                                              }
+                                              };
 
                                               //Beginning of data pushing
                                               formMapping.pushFormToDhis2(formMapping.form2MappingTable, incomingEncounter, dhis2EnrollementStructure, 4, formMapping.form2MappingBooleanTable, function (error, result) {
@@ -1788,7 +1788,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   }
   
 
-  var omrsFollowUpStable = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
+  var omrsFollowUpStable = utils.getConceptValue(incomingEncounter.encounter.obs, "fab9afe9-8c11-4e31-9898-399b083fd9d6");
   if (utils.isFineValue(omrsFollowUpStable) == true && utils.isFineValue(omrsFollowUpStable.name) == true && utils.isFineValue(omrsFollowUpStable.name.name) == true) {
     omrsFollowUpStable = omrsFollowUpStable.uuid;
   } else {
@@ -2066,7 +2066,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     }
 
                   ]
-              }
+              };
               
               //Beginnig data Pushing form 3 : FOLLOW UP
               formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
@@ -2077,7 +2077,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                   winston.info('Follow up information added with success', result);
                   callback(null, 'Follow up information added with success');
                 }
-              });
+              })
               //End data Pushing form 3 : FOLLOW UP
 
 
@@ -2278,7 +2278,7 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
       winston.info('Recency VL information added with success', result);
       callback(null, 'Recency VL information added with success');
     }
-  })
+  });
   //End data pushing form 4
 
 

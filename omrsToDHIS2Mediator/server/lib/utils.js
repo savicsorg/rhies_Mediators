@@ -698,6 +698,7 @@ exports.getDHIS2Boolean = function (uuid) {
         break;  
       default:
         return '';
+        break;
     }
   } else {
     return '';

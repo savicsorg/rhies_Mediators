@@ -319,20 +319,17 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
 
   if (utils.isFineValue(dhsi2Json) == true && utils.isFineValue(dhsi2Json) == true) {
     var dataValues = [];
-
+    var obsList = incomingEncounter.encounter.obs;
     function myLoopA(i) {
       if (i < dhsi2Json.dataValues.length) {
         if (utils.isFineValue(dhsi2Json.dataValues[i].value) == true) {
           dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": dhsi2Json.dataValues[i].value })
           myLoopA(i + 1);
         } else {
-          var obsList = incomingEncounter.encounter.obs;
-          exports.getValue(mappingTable, obsList, booleanMappingTable, dhsi2Json.dataValues[i].dataElement, function (result) {
-            if (!utils.isAnArray(result)) {
-              dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": result });
-            } 
+          //exports.getValue(mappingTable, obsList, booleanMappingTable, dhsi2Json.dataValues[i].dataElement, function (result) {
+            dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": "" });
             myLoopA(i + 1);
-          });
+         // });
         }
       } else {
 
@@ -345,7 +342,6 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
           },
           body: JSON.stringify(dhsi2Json),
         };
-
         if (apiConf.verbose == true) {
           if (index == 1) {
             console.log("--> HIV CASE-BASED SURVEILLANCE,Index testing: ", options.body);
@@ -450,11 +446,12 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhis2Id
                       });
                       //Retrieve DHIS2 dropdown value
                       if(utils.isFineValue(mappingItem) === true){
-                        idDhis2 = Object.values(mappingItem);
+                        /*idDhis2 = Object.values(mappingItem);
                         //Return the dropdown value : dhis2 option code
-                        utils.getDhis2DropdownValue(idDhis2, function(resultat){
-                          callback(resultat);
-                        });
+                        utils.getDhis2DropdownValue(idDhis2, function(result){
+                          callback(result);
+                        }); */
+                        callback("");
                       }
                     } else {
                       console.log("-> ", obs.value, " is a wierd");
