@@ -253,14 +253,8 @@ exports.form3MappingTable = [
 ]
 
 exports.form4MappingTable = [
-  { "aae8d7fe-8bbc-4d2e-926c-0e28b4d0e046": "Tgt3yKYd2oD" },
   { "a2053e28-9ce9-4647-8a96-6f1b7c62f429": "qBYsHDuUBIv" },
-  { "fb3b2a61-4f4b-46b2-9187-9ec769349a44": "zauCXHkR38N" },
-  { "819f5ebe-0b3e-44ba-b435-8f3d1b7bb130": "znjxam2pcAs" },
-  { "9340dede-5124-49cf-9b3c-5153cc0e537f": "XIr1rKSNWmR" },
   { "ba4b8a83-54ab-44f3-a7c5-4495ddf055bc": "nMJKcTFHGj0" },
-  { "3cd6f600-26fe-102b-80cb-0017a47871b2": "I7B4r9m1iIZ" },
-  { "3cd6f86c-26fe-102b-80cb-0017a47871b2": "g9WSz3pDHf1" },
   { "fa87bb43-ebcc-4919-96f8-c5013ce1bbca": "Ba8VCAO9Nqi" },
   { "aae8d7fe-8bbc-4d2e-926c-0e28b4d0e046": "yu2bxd3xVIg" },
   { "f4e3f60a-2f62-47bc-b968-156b3df91067": "ptZMCKSxvU8" }
@@ -319,17 +313,17 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
 
   if (utils.isFineValue(dhsi2Json) == true && utils.isFineValue(dhsi2Json) == true) {
     var dataValues = [];
-    var obsList = incomingEncounter.encounter.obs;
     function myLoopA(i) {
       if (i < dhsi2Json.dataValues.length) {
         if (utils.isFineValue(dhsi2Json.dataValues[i].value) == true) {
           dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": dhsi2Json.dataValues[i].value })
           myLoopA(i + 1);
         } else {
-          //exports.getValue(mappingTable, obsList, booleanMappingTable, dhsi2Json.dataValues[i].dataElement, function (result) {
-            dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": "" });
+          exports.getValue(mappingTable, incomingEncounter.encounter.obs, booleanMappingTable, dhsi2Json.dataValues[i].dataElement, function (result) {
+            console.log("The result = " + result);
+            dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": result });
             myLoopA(i + 1);
-         // });
+         });
         }
       } else {
 
@@ -404,16 +398,23 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
   }
 }
 
-exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhis2Id, callback) {
+exports.getValue = function (mappingTable, obsListing, booleanMappingTable, dhis2Id, callback) {
 
   var mapItem = _.find(mappingTable, function (item) {
     return Object.values(item) == dhis2Id;
   });
 
+  console.log("mapItem  : " + mapItem);
+
   if (utils.isFineValue(mapItem) == true) {
-    var obs = _.find(obsList, function (item) {
-      return item.concept.uuid == Object.keys(mapItem);
+    var mapItemKey = Object.keys(mapItem);
+    console.log("mapItemKey[0]  : " + mapItemKey[0])
+
+    var obs = _.find(obsListing, function (ob) {
+      return ob.concept.uuid == mapItemKey[0];
     });
+
+    console.log("obs   : " + obs);
 
     if (utils.isFineValue(obs) == true && utils.isFineValue(obs.display) == true) {
       if (obs.display.includes(":")) { //ensure value not null ("display": "RECENCY SAMPLE COLLECTION DATE: 2019-12-30")
@@ -453,6 +454,7 @@ exports.getValue = function (mappingTable, obsList, booleanMappingTable, dhis2Id
                         }); */
                         callback("");
                       }
+                      callback("");
                     } else {
                       console.log("-> ", obs.value, " is a wierd");
                       callback("");

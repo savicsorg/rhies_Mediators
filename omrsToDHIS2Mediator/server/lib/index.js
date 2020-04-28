@@ -2093,14 +2093,17 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
 
 //Beginning of the form 4: RECENCY VIRAL LOAD
 var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
-  var dhis2FollowupStructure =
-  {
+  //
+  //Declaration of all the variables for DHIS2 dropdown and patient data
+  
+
+  var dhis2EnrollementStructureVL =  {
     "program": "CYyICYiO5zo",
     "orgUnit": organizationUnit,
     "eventDate": utils.getNewDate(),
     "status": "COMPLETED",
     "storedBy": "Savics",
-    "programStage": "Em0sRsnHjoR",
+    "programStage": "pBAeqPjnhdF",
     "trackedEntityInstance": trackedEntityInstanceId,
     "enrollment": enrollmentId,
     "dataValues": [
@@ -2205,10 +2208,6 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
         "value": ""
       },
       {
-        "dataElement": "Tgt3yKYd2oD",
-        "value": ""
-      },
-      {
         "dataElement": "LovSZ5zd8YL",
         "value": ""
       },
@@ -2263,6 +2262,30 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
       {
         "dataElement": "nQGHwHA3ayC",
         "value": ""
+      },
+      {
+        "dataElement": "qBYsHDuUBIv",
+        "value": ""
+      },
+      {
+        "dataElement": "Tgt3yKYd2oD",
+        "value": ""
+      },
+      {
+        "dataElement": "nMJKcTFHGj0",
+        "value": ""
+      },
+      {
+        "dataElement": "Ba8VCAO9Nqi",
+        "value": ""
+      },
+      {
+        "dataElement": "yu2bxd3xVIg",
+        "value": ""
+      },
+      {
+        "dataElement": "ptZMCKSxvU8",
+        "value": ""
       }
 
     ]
@@ -2270,7 +2293,7 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
 
 
   //Beginning data pushing form 4
-  formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2FollowupStructure, 6, null, function (error, result) {
+  formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2EnrollementStructureVL, 6, null, function (error, result) {
     if (error) {
       winston.error('An error occured when trying to add a recency VL information', error);
       callback('An error occured when trying to add a recency VL information');
