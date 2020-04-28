@@ -2309,6 +2309,10 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
           {
             "dataElement": "ptZMCKSxvU8",
             "value": ""
+          },
+          {
+            "dataElement": "U8zMohYMqHi",
+            "value": utils.convertToDate(incomingEncounter.encounter.encounterDatetime)
           }
 
         ]
