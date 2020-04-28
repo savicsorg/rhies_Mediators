@@ -2119,6 +2119,7 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
     patientVLFinalRitaInconclusiveValue = result;
     utils.getDhis2DropdownValue(utils.getDHIS2FinalRitaRecencyResult(omrsVLFinalRitaRecencyResult), function (result) {
       patientVLFinalRitaRecencyResultValue = result;
+      var patientTestDone = (utils.isFineValue(patientVLFinalRitaRecencyResultValue))? "yes":"";
 
       var dhis2EnrollementStructureVL =  {
         "program": "CYyICYiO5zo",
@@ -2313,6 +2314,10 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
           {
             "dataElement": "U8zMohYMqHi",
             "value": utils.convertToDate(incomingEncounter.encounter.encounterDatetime)
+          },
+          {
+            "dataElement": "ccYYcYf78sz",
+            "value": patientTestDone
           }
 
         ]
