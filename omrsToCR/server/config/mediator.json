@@ -1,0 +1,51 @@
+{
+  "urn": "urn:uuid:c21716b0-a230-11e9-89b5-f705ca19e0e8",
+  "version": "0.0.2",
+  "name": "openMRS to Client Registry mediator",
+  "description": "A mediator to post OpenMRS patient to Client Registry",
+  "defaultChannelConfig": [
+    {
+      "name": "openMRS to Client Registry chanel",
+      "urlPattern": "/patient/",
+      "alerts": [],
+      "txRerunAcl": [],
+      "txViewFullAcl": [],
+      "txViewAcl": [],
+      "properties": [],
+      "matchContentTypes": [],
+      "routes": [
+        {
+          "name": "OpenMrs to Client Registry Route",
+          "host": "omrsToCRMediator",
+          "port": "4004",
+          "primary": true,
+          "type": "http"
+        }
+      ],
+      "allow": ["openmrs"],
+      "type": "http"
+    }
+  ],
+  "endpoints": [
+    {
+      "name": "OpenMrs to Client Registry endpoint",
+      "host": "omrsTOCRMediator",
+      "path": "/patient/",
+      "port": "4004",
+      "primary": true,
+      "type": "http"
+    }
+  ],
+  "configDefs": [
+    {
+      "param": "upstreamUrl",
+      "displayName": "Upstream URL",
+      "description": "The URL of the service upstream of the mediator",
+      "type": "string",
+      "template": []
+    }
+  ],
+  "config": {
+    "upstreamUrl": "http://localhost:4004"
+  }
+}

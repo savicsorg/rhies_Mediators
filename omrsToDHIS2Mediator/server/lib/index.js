@@ -7,7 +7,7 @@ const express = require('express');
 const medUtils = require('openhim-mediator-utils');
 const winston = require('winston');
 const _ = require('underscore');
-
+const conceptGroupId = "95b7a6fc-57b1-45b9-a595-467f6118b51e";
 
 
 var request = require('request');
@@ -34,9 +34,10 @@ var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].
 function setupApp() {
   const app = express();
 
+  var currenteLocation="";
   function reportEndOfProcess(req, res, error, statusCode, message) {
     res.set('Content-Type', 'application/json+openhim')
-    var responseBody = message;
+    var responseBody = "[" + currenteLocation + "] " +  message;
     var stateLabel = "";
     let orchestrations = [];
 
@@ -67,7 +68,7 @@ function setupApp() {
 
         if (apiConf.verbose == true) {
           if (utils.isFineValue(fields) == true && utils.isFineValue(fields.encounter) == true && utils.isFineValue(fields.encounter.obs) == true) {
-            console.log("--> Received encounter obs: ", JSON.stringify(fields.encounter.obs));
+            //console.log("--> Received encounter obs: ", JSON.stringify(fields.encounter.obs));
           } else {
             if (utils.isFineValue(fields) == true && utils.isFineValue(fields.encounter) == true) {
               console.log("--> Received encounter: ", JSON.stringify(fields.encounter));
@@ -78,10 +79,11 @@ function setupApp() {
         }
 
         if (apiConf.verbose == true) {
-          console.log("--> Patient: ", JSON.stringify(fields.patient));
+          //console.log("--> Patient: ", JSON.stringify(fields.patient));
         }
 
         //get DHIS2 Lab id with FOSA code
+        currenteLocation=fields.location.description;
         getOrganizationUnit(fields, function (error, organizationUnit) {
           if (error) {
             reportEndOfProcess(req, res, error, 500, 'error while retrieving for organization unit ...');
@@ -981,8 +983,9 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
 
   //getting distict from DHIS2
   utils.getDhis2District(patientAddressObject.dhis2DistrictId, function (result) {
-    patientDistrict=result;
-    console.log("district to push to dhis2==============>>>", result)
+    //patientDistrict = result;
+    patientDistrict = patientAddressObject.dhis2DistrictId;
+    //console.log("district to push to dhis2==============>>>", result)
 
     //getting gender from DHIS2
     utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
@@ -1464,13 +1467,320 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
 
     ]
   }
+
+  var innerContacts = [];
+
+  var i = incomingEncounter.encounter.obs.length;
+  while (i--) {
+    if (incomingEncounter.encounter.obs[i].concept.uuid == conceptGroupId) {
+      incomingEncounter.encounter.obs[i].concept.uuid = "-"; //override uuid to avoid circular use
+      innerContacts.push(incomingEncounter.encounter.obs[i]);
+      incomingEncounter.encounter.obs.splice(i, 1);
+    }
+  }
+
+
+  var globalResult = "";
+  i = 0;
+  function myLoopA(i) {
+    if (i < innerContacts.length) {
+      var contactGender = "";
+      var dhis2EnrollementStructure =
+      {
+        "program": "CYyICYiO5zo",
+        "orgUnit": organizationUnit,
+        "eventDate": utils.getNewDate(),
+        "status": "COMPLETED",
+        "storedBy": "Savics",
+        "programStage": "pBAeqPjnhdF",
+        "trackedEntityInstance": trackedEntityInstanceId,
+        "enrollment": enrollmentId,
+        "dataValues": [
+          {
+            "dataElement": "pbeBAIly2GT",
+            "value": ""
+          },
+          {
+            "dataElement": "qycXEyMMFMb",
+            "value": ""
+          },
+          {
+            "dataElement": "txsxKp2l6y9",
+            "value": ""
+          },
+          {
+            "dataElement": "oLqMrGMI4Uf",
+            "value": ""
+          },
+          {
+            "dataElement": "I809QdRlgCb",
+            "value": ""
+          },
+          {
+            "dataElement": "tnMNaBmQaIy",
+            "value": ""
+          },
+          {
+            "dataElement": "wXcnNSYryUd",
+            "value": ""
+          },
+          {
+            "dataElement": "aYhoeOchJYM",
+            "value": ""
+          },
+          {
+            "dataElement": "GwCiJLY0of4",
+            "value": ""
+          },
+          {
+            "dataElement": "c4KsTiEImGx",
+            "value": contactGender
+          },
+          {
+            "dataElement": "qsCPZIJLpYo",
+            "value": ""
+          },
+          {
+            "dataElement": "ZvH6DY75uR1",
+            "value": ""
+          },
+          {
+            "dataElement": "p5U0vUS0Q3V",
+            "value": ""
+          },
+          {
+            "dataElement": "I79uRgVEyUc",
+            "value": ""
+          },
+          {
+            "dataElement": "UaCDJMTQRLz",
+            "value": ""
+          },
+          {
+            "dataElement": "kPkjR4qEhhn",
+            "value": ""
+          },
+          {
+            "dataElement": "PZo2sP0TOb6",
+            "value": ""
+          },
+          {
+            "dataElement": "NrWXvZg3WtW",
+            "value": ""
+          },
+          {
+            "dataElement": "Cgt39EInKQV",
+            "value": ""
+          },
+          {
+            "dataElement": "SzvTcCTNlGo",
+            "value": ""
+          },
+          {
+            "dataElement": "G0Jq8kyaJCD",
+            "value": ""
+          },
+          {
+            "dataElement": "xHo7COhyMKM",
+            "value": ""
+          },
+          {
+            "dataElement": "MyMV3TTWYmW",
+            "value": ""
+          },
+          {
+            "dataElement": "SNAaIVKCh78",
+            "value": ""
+          },
+          {
+            "dataElement": "eUVdYRa8qUo",
+            "value": ""
+          },
+          {
+            "dataElement": "KY4a5xCSKgT",
+            "value": ""
+          },
+          {
+            "dataElement": "VQPCeakHIpV",
+            "value": ""
+          },
+          {
+            "dataElement": "NFOu3OCGMKl",
+            "value": ""
+          },
+          {
+            "dataElement": "NZe43UAOGmt",
+            "value": ""
+          },
+          {
+            "dataElement": "ccYYcYf78sz",
+            "value": ""
+          },
+          {
+            "dataElement": "Ba8VCAO9Nqi",
+            "value": ""
+          },
+          {
+            "dataElement": "yu2bxd3xVIg",
+            "value": ""
+          },
+          {
+            "dataElement": "ptZMCKSxvU8",
+            "value": ""
+          },
+          {
+            "dataElement": "qBYsHDuUBIv",
+            "value": ""
+          },
+          {
+            "dataElement": "nMJKcTFHGj0",
+            "value": ""
+          },
+          {
+            "dataElement": "qBYsHDuUBIv",
+            "value": ""
+          },
+          {
+            "dataElement": "DDHl9CtiqaC",
+            "value": ""
+          },
+          {
+            "dataElement": "RDQB5Zx8hMH",
+            "value": ""
+          },
+          {
+            "dataElement": "ocgzZ6BdT8W",
+            "value": ""
+          },
+          {
+            "dataElement": "ZodoxM8PakE",
+            "value": ""
+          },
+          {
+            "dataElement": "ERqqYuUtigv",
+            "value": ""
+          },
+          {
+            "dataElement": "kJIuYQpa9Lc",
+            "value": ""
+          },
+          {
+            "dataElement": "ivqLch0DMXv",
+            "value": ""
+          },
+          {
+            "dataElement": "gNjou1Bq6dz",
+            "value": ""
+          },
+          {
+            "dataElement": "jYMNto3ELj5",
+            "value": ""
+          },
+          {
+            "dataElement": "mKVpD68KeIO",
+            "value": ""
+          },
+          {
+            "dataElement": "jmwJSKQthb7",
+            "value": ""
+          },
+          {
+            "dataElement": "UYuVIHot43a",
+            "value": ""
+          },
+          {
+            "dataElement": "cE0JLRDspz9",
+            "value": ""
+          },
+          {
+            "dataElement": "MWnDK640C17",
+            "value": ""
+          },
+          {
+            "dataElement": "MG6I5RT8YsE",
+            "value": ""
+          },
+          {
+            "dataElement": "Qx0v2TzHlS0",
+            "value": ""
+          },
+          {
+            "dataElement": "qywtB6np899",
+            "value": ""
+          },
+          {
+            "dataElement": "nkRWZpUQ55g",
+            "value": ""
+          },
+          {
+            "dataElement": "Tgt3yKYd2oD",
+            "value": ""
+          },
+          {
+            "dataElement": "LovSZ5zd8YL",
+            "value": ""
+          },
+          {
+            "dataElement": "ePONK5dlCAl",
+            "value": ""
+          },
+          {
+            "dataElement": "G3dUs7PuDqx",
+            "value": ""
+          },
+          {
+            "dataElement": "OKemd50jbHG",
+            "value": ""
+          },
+          {
+            "dataElement": "gJ58M7ClaMm",
+            "value": ""
+          },
+          {
+            "dataElement": "yGhEu1ntCaf",
+            "value": ""
+          },
+          {
+            "dataElement": "eQFf5SRscrT",
+            "value": ""
+          },
+          {
+            "dataElement": "fB1hxxwcdye",
+            "value": ""
+          },
+          {
+            "dataElement": "ZfoeEa3kNYe",
+            "value": ""
+          },
+          {
+            "dataElement": "fHHFiV0HP0V",
+            "value": ""
+          },
+        ]
+      }
+
+     /*  formMapping.pushFormToDhis2(formMapping.form2MappingTable, innerContacts[i], dhis2EnrollementStructure, 2, null, function (error, result) {
+        if (error) {
+          winston.error('An error occured when trying to add an enrollment data for embedded contact ', error);
+        } else {
+          winston.info('Enrollment data for embedded contact added with success', result);
+        }
+      }) */
+      myLoopA(i + 1);
+    } else {
+      winston.info('Follow up information added with success', globalResult);
+      callback(null, 'Follow up information added with success');
+    }
+  }
+
+
   formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
     if (error) {
       winston.error('An error occured when trying to add a follow up information', error);
       callback('An error occured when trying to add a follow up information');
     } else {
-      winston.info('Follow up information added with success', result);
-      callback(null, 'Follow up information added with success');
+      globalResult = result;
+      myLoopA(0);
     }
   })
 };
