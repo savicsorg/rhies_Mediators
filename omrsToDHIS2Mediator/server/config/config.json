@@ -2,14 +2,14 @@
   "api": {
     "username": "root@openhim.org",
     "password": "0000",
-    "apiURL": "https://localhost:8080",
+    "apiURL": "https://openhim-core:8080",
     "trustSelfSigned": "true",
     "urlPattern": "/report/",
     "dhis2": {
-      "url": "http://130.104.12.92:8082",
+      "url": "http://192.168.1.162:8082",
       "user": {
         "name": "amza",
-        "pwd": "District@123"
+        "pwd": "Abidjan@00225"
       }
     }
   },

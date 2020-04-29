@@ -16,7 +16,7 @@
       "routes": [
         {
           "name": "OpenMrs to DHIS2 Route",
-          "host": "omrsToDHIS2Mediator",
+          "host": "savics-omrstodhis2",
           "port": "4002",
           "primary": true,
           "type": "http"
@@ -29,7 +29,7 @@
   "endpoints": [
     {
       "name": "OpenMrs to DHIS2 endpoint",
-      "host": "omrsTODHIS2Mediator",
+      "host": "savics-omrstodhis2",
       "path": "/report/",
       "port": "4002",
       "primary": true,
@@ -46,6 +46,6 @@
     }
   ],
   "config": {
-    "upstreamUrl": "http://localhost:4002"
+    "upstreamUrl": "http://savics-omrstodhis2:4002"
   }
 }
