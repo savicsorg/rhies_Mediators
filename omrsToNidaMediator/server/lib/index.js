@@ -11,6 +11,10 @@ var request = require('request');
 
 const utils = require('./utils')
 
+const fs = require('fs');
+const https = require('https');
+const http = require('http');
+
 // Logging setup
 winston.remove(winston.transports.Console)
 winston.add(winston.transports.Console, { level: 'info', timestamp: true, colorize: true })
@@ -124,6 +128,9 @@ function setupApp() {
       });
     }
 
+    if (req.protocol === 'http'){
+      res.redirect(301, `https://${req.headers.post}${req.url}`);
+    }
 
   })
   return app
@@ -206,6 +213,7 @@ exports.getNewNidaToken = function (callback) {
  */
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
+  // if (false) {
   if (apiConf.register) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
@@ -225,7 +233,15 @@ function start(callback) {
         } else {
           winston.info('Successfully registered mediator!')
           let app = setupApp()
-          const server = app.listen(port, () => {
+
+          // Create and start HTTPS server
+          var httpsServer = https.createServer({
+            key: fs.readFileSync('./config/certificates/privkey.pem'),
+            cert: fs.readFileSync('./config/certificates/cert.pem'),
+            ca: fs.readFileSync('./config/certificates/chain.pem')
+        }, app);
+
+          const server = httpsServer.listen(port, () => {
             if (apiConf.heartbeat) {
               let configEmitter = medUtils.activateHeartbeat(apiConf.api)
               configEmitter.on('config', (newConfig) => {
@@ -247,7 +263,16 @@ function start(callback) {
     // default to config from mediator registration
     config = mediatorConfig.config
     let app = setupApp()
-    const server = app.listen(port, () => callback(server))
+
+
+    // Create and start HTTPS server
+    var httpsServer = https.createServer({
+      key: fs.readFileSync('./config/certificates/privkey.pem'),
+      cert: fs.readFileSync('./config/certificates/cert.pem'),
+      ca: fs.readFileSync('./config/certificates/chain.pem')
+    }, app);
+
+    const server = httpsServer.listen(port, () => callback(server))
     
     exports.getNewNidaToken(function (error, tokenInfo) {
       console.log('Initialize the NIDA token...');

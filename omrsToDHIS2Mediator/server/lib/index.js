@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 'use strict'
-
-
 const formidable = require('formidable');
 const express = require('express');
 const medUtils = require('openhim-mediator-utils');
 const winston = require('winston');
 const _ = require('underscore');
 
-
-
 var request = require('request');
 
 const utils = require('./utils');
 const formMapping = require('./formMapping');
+
+const fs = require('fs');
+const https = require('https');
+const http = require('http');
 
 // Logging setup
 winston.remove(winston.transports.Console)
@@ -149,6 +149,9 @@ function setupApp() {
           }
         });
       })
+    }
+    if (req.protocol === 'http'){
+      res.redirect(301, `https://${req.headers.post}${req.url}`);
     }
   });
   return app
@@ -2298,8 +2301,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
-  //if (apiConf.register) {
-  if (false) {
+  if (apiConf.register) {
+  // if (false) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
@@ -2318,6 +2321,12 @@ function start(callback) {
         } else {
           winston.info('Successfully registered mediator!')
           let app = setupApp()
+          // Create and start HTTPS server
+          // var httpsServer = https.createServer({
+          //     key: fs.readFileSync('./config/certificates/privkey.pem'),
+          //     cert: fs.readFileSync('./config/certificates/cert.pem'),
+          //     ca: fs.readFileSync('./config/certificates/chain.pem')
+          // }, app);
           const server = app.listen(port, () => {
             if (apiConf.heartbeat) {
               let configEmitter = medUtils.activateHeartbeat(apiConf.api)
@@ -2340,7 +2349,16 @@ function start(callback) {
     // default to config from mediator registration
     config = mediatorConfig.config
     let app = setupApp()
-    const server = app.listen(port, () => callback(server))
+    // Create and start HTTPS server
+      // var httpsServer = https.createServer({
+      //     key: fs.readFileSync('./config/certificates/privkey.pem'),
+      //     cert: fs.readFileSync('./config/certificates/cert.pem'),
+      //     ca: fs.readFileSync('./config/certificates/chain.pem')
+      // }, app);
+
+      const server = app.listen(port, () => callback(server))
+
+      // log.info('Labware OpenMRS mediator started on port ' + port);
 
   }
 }

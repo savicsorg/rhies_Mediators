@@ -13,6 +13,9 @@ nconf.file('../config/config.json');
 var log = require('./log');
 
 const utils = require('./utils')
+const fs = require('fs');
+const https = require('https');
+const http = require('http');
 
 // Logging setup
 winston.remove(winston.transports.Console)
@@ -776,6 +779,10 @@ function setupApp() {
             });
 
         }
+
+        if (req.protocol === 'http'){
+            res.redirect(301, `https://${req.headers.post}${req.url}`);
+        }
     })
     return app
 }
@@ -814,7 +821,15 @@ function start(callback) {
                     winston.info('Successfully registered mediator!')
                     console.log('Successfully registered mediator!');
                     let app = setupApp()
-                    const server = app.listen(port, () => {
+
+                    // Create and start HTTPS server
+                    var httpsServer = https.createServer({
+                        key: fs.readFileSync('./config/certificates/privkey.pem'),
+                        cert: fs.readFileSync('./config/certificates/cert.pem'),
+                        ca: fs.readFileSync('./config/certificates/chain.pem')
+                    }, app);
+
+                    const server = httpsServer.listen(port, () => {
                         if (apiConf.heartbeat) {
                             let configEmitter = medUtils.activateHeartbeat(apiConf.api)
                             configEmitter.on('config', (newConfig) => {
@@ -836,7 +851,16 @@ function start(callback) {
         // default to config from mediator registration
         config = mediatorConfig.config
         let app = setupApp()
-        const server = app.listen(port, () => callback(server))
+
+        // Create and start HTTPS server
+        var httpsServer = https.createServer({
+            key: fs.readFileSync('./config/certificates/privkey.pem'),
+            cert: fs.readFileSync('./config/certificates/cert.pem'),
+            ca: fs.readFileSync('./config/certificates/chain.pem')
+        }, app);
+
+        const server = httpsServer.listen(port, () => callback(server))
+
         log.info('Labware OpenMRS mediator started on port ' + port);
     }
 }

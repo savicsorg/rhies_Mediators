@@ -21,25 +21,26 @@
     "Savics"
   ],
   "dependencies": {
+    "archiver": "~2.1.1",
+    "bristol": "0.4.0",
     "express": "^4.13.4",
+    "formidable": "1.2.1",
+    "https": "^1.0.0",
+    "moment": "2.22.2",
+    "nconf": "0.10.0",
     "needle": "^2.4.0",
     "openhim-mediator-utils": "^0.2.2",
     "request": "^2.71.0",
     "urijs": "^1.17.1",
     "xmldom": "^0.1.22",
-    "xpath": "0.0.23",
-    "formidable": "1.2.1",
-    "moment": "2.22.2",
-    "bristol": "0.4.0",
-    "archiver": "~2.1.1",
-    "nconf": "0.10.0"
+    "xpath": "0.0.23"
   },
   "devDependencies": {
     "onchange": "^2.3.0",
-    "winston": "^2.2.0",
     "rewire": "^2.5.1",
     "snazzy": "^3.0.1",
     "standard": "^6.0.8",
-    "tap": "^5.7.1"
+    "tap": "^5.7.1",
+    "winston": "^2.2.0"
   }
 }
