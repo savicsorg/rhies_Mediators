@@ -6,10 +6,10 @@
     "trustSelfSigned": "true",
     "urlPattern": "/report/",
     "dhis2": {
-      "url": "http://192.168.1.162:8082",
+      "url": "http://IP-address:8082",
       "user": {
         "name": "amza",
-        "pwd": "Abidjan@00225"
+        "pwd": "password"
       }
     }
   },
