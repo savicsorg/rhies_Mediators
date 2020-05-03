@@ -7,7 +7,7 @@ const express = require('express');
 const medUtils = require('openhim-mediator-utils');
 const winston = require('winston');
 const _ = require('underscore');
-
+const conceptGroupId = "95b7a6fc-57b1-45b9-a595-467f6118b51e";
 
 
 var request = require('request');
@@ -34,10 +34,14 @@ var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].
 function setupApp() {
   const app = express();
 
+<<<<<<< HEAD
 
+=======
+  var currenteLocation="";
+>>>>>>> 7921f1a169adceb05d1014ebfa928ae82e14f6b5
   function reportEndOfProcess(req, res, error, statusCode, message) {
     res.set('Content-Type', 'application/json+openhim')
-    var responseBody = message;
+    var responseBody = "[" + currenteLocation + "] " +  message;
     var stateLabel = "";
     let orchestrations = [];
 
@@ -65,7 +69,7 @@ function setupApp() {
 
         if (apiConf.verbose == true) {
           if (utils.isFineValue(fields) == true && utils.isFineValue(fields.encounter) == true && utils.isFineValue(fields.encounter.obs) == true) {
-            console.log("--> Received encounter obs: ", JSON.stringify(fields.encounter.obs));
+            //console.log("--> Received encounter obs: ", JSON.stringify(fields.encounter.obs));
           } else {
             if (utils.isFineValue(fields) == true && utils.isFineValue(fields.encounter) == true) {
               console.log("--> Received encounter: ", JSON.stringify(fields.encounter));
@@ -76,10 +80,11 @@ function setupApp() {
         }
 
         if (apiConf.verbose == true) {
-          console.log("--> Patient: ", JSON.stringify(fields.patient));
+          //console.log("--> Patient: ", JSON.stringify(fields.patient));
         }
 
         //get DHIS2 Lab id with FOSA code
+        currenteLocation=fields.location.description;
         getOrganizationUnit(fields, function (error, organizationUnit) {
           if (error) {
             reportEndOfProcess(req, res, error, 500, 'error while retrieving for organization unit ...');

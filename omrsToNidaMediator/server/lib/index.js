@@ -61,30 +61,35 @@ function setupApp() {
 
   app.all('*', (req, res) => {
     winston.info(`Processing ${req.method} request on ${req.url}`)
-    var responseBody = 'Return Route Reached'
-    var headers = { 'content-type': 'application/json' }
+   
+    
+    function reportEndOfProcess(req, res, error, statusCode, message) {
+      res.set('Content-Type', 'application/json+openhim')
+      var responseBody = "[-] " + message;
+      var stateLabel = "";
+      let orchestrations = [];
 
-    // add logic to alter the request here
+      var headers = { 'content-type': 'application/json' }
+      if (error) {
+          stateLabel = "Failed";
+          winston.error(message, error);
+      } else {
+          stateLabel = "Successful";
+          winston.info(message);
+      }
 
-    // capture orchestration data
-    var orchestrationResponse = { statusCode: 200, headers: headers }
-    let orchestrations = []
-
-    // set content type header so that OpenHIM knows how to handle the response
-    res.set('Content-Type', 'application/json+openhim')
+      var orchestrationResponse = { statusCode: statusCode, headers: headers }
+      orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
+      res.send(utils.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
+  }
 
 
-    // construct return object
-    var properties = { property: 'Return to openHim Route' }
 
     if (req.method == 'GET' && req.url.includes(apiConf.api.urlPattern) == true) {
 
       getNidaToken(function (err, token) {
         if (err) {
-          orchestrationResponse = err;
-          responseBody = err;
-          orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-          res.send(utils.buildReturnObject(mediatorConfig.urn, 'Failed', 500, headers, err, orchestrations, properties))
+          reportEndOfProcess(req, res, err, 500, err);
         } else {
           nconf.load();
           var options = {
@@ -108,15 +113,9 @@ function setupApp() {
               res.send(utils.buildReturnObject(mediatorConfig.urn, 'Internal Server Error', 500, headers, responseBody, orchestrations, properties))
             } else {
               if (body != null && body != undefined && body != '') {
-                responseBody = body
-                orchestrationResponse = body;
-                orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-                res.send(utils.buildReturnObject(mediatorConfig.urn, 'OK', 200, headers, responseBody, orchestrations, properties))
+                reportEndOfProcess(req, res, null, 200, body);
               } else {
-                responseBody = 'Server sent an empty response.';
-                orchestrationResponse = responseBody;
-                orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-                res.send(utils.buildReturnObject(mediatorConfig.urn, responseBody, 200, headers, responseBody, orchestrations, properties))
+                reportEndOfProcess(req, res, null, 200, 'Server sent an empty response.');
               }
             }
           });
