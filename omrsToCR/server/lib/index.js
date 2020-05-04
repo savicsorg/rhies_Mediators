@@ -79,7 +79,7 @@ function setupApp() {
               reportEndOfProcess(req, res, error, 500, "An error occured when trying to retrieve data from the client registry");
             } else {
               var resp = JSON.parse(body);
-              reportEndOfProcess(req, res, error, 200, resp);
+              reportEndOfProcess(req, res, null, 200, resp);
             }
 
           });
@@ -264,7 +264,7 @@ function setupApp() {
           break;
         case 'DELETE':
           var options = {
-            url: apiConf.api.clientRegistry.url,
+            url: apiConf.api.clientRegistry.url + "/" + req.query.nida,
             headers: {
               'Connection': 'keep-alive',
               'Content-Type': 'application/json',
@@ -278,8 +278,7 @@ function setupApp() {
             if (error) {
               reportEndOfProcess(req, res, error, 500, "An error occured when trying to delete data from the client registry");
             } else {
-              var resp = JSON.parse(body);
-              reportEndOfProcess(req, res, error, 200, resp);
+              reportEndOfProcess(req, res, null, 200, "Data deleted with sucess");
             }
           });
 
