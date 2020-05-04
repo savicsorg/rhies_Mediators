@@ -320,11 +320,10 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
     function myLoopA(i) {
       if (i < dhsi2Json.dataValues.length) {
         if (utils.isFineValue(dhsi2Json.dataValues[i].value) == true) {
-          dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": dhsi2Json.dataValues[i].value })
+          dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": dhsi2Json.dataValues[i].value });
           myLoopA(i + 1);
         } else {
           exports.getValue(mappingTable, incomingEncounter.encounter.obs, booleanMappingTable, dhsi2Json.dataValues[i].dataElement, function (result) {
-            console.log("The result = " + result);
             dataValues.push({ "dataElement": dhsi2Json.dataValues[i].dataElement, "value": result });
             myLoopA(i + 1);
          });
@@ -408,17 +407,12 @@ exports.getValue = function (mappingTable, obsListing, booleanMappingTable, dhis
     return Object.values(item) == dhis2Id;
   });
 
-  console.log("mapItem  : " + mapItem);
-
   if (utils.isFineValue(mapItem) == true) {
     var mapItemKey = Object.keys(mapItem);
-    console.log("mapItemKey[0]  : " + mapItemKey[0])
 
     var obs = _.find(obsListing, function (ob) {
       return ob.concept.uuid == mapItemKey[0];
     });
-
-    console.log("obs   : " + obs);
 
     if (utils.isFineValue(obs) == true && utils.isFineValue(obs.display) == true) {
       if (obs.display.includes(":")) { //ensure value not null ("display": "RECENCY SAMPLE COLLECTION DATE: 2019-12-30")
@@ -444,20 +438,6 @@ exports.getValue = function (mappingTable, obsListing, booleanMappingTable, dhis
                   } else {
                     //dropdown value processing place
                     if(utils.isObject(obs.value) === true){
-                      var idDhis2 = "";
-                      //Find the right DHIS2 id and concept uuid
-                      var mappingItem = _.find(mappingTable, function (item) {
-                        return Object.keys(item) == obs.value.uuid;
-                      });
-                      //Retrieve DHIS2 dropdown value
-                      if(utils.isFineValue(mappingItem) === true){
-                        /*idDhis2 = Object.values(mappingItem);
-                        //Return the dropdown value : dhis2 option code
-                        utils.getDhis2DropdownValue(idDhis2, function(result){
-                          callback(result);
-                        }); */
-                        callback("");
-                      }
                       callback("");
                     } else {
                       console.log("-> ", obs.value, " is a wierd");

@@ -34,7 +34,11 @@ var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].
 function setupApp() {
   const app = express();
 
+<<<<<<< HEAD
+
+=======
   var currenteLocation="";
+>>>>>>> 7921f1a169adceb05d1014ebfa928ae82e14f6b5
   function reportEndOfProcess(req, res, error, statusCode, message) {
     res.set('Content-Type', 'application/json+openhim')
     var responseBody = "[" + currenteLocation + "] " +  message;
@@ -53,9 +57,6 @@ function setupApp() {
     orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
     res.send(utils.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
   }
-
-
-
 
   app.all('*', (req, res) => {
     winston.info(`Processing ${req.method} request on ${req.url}`)
