@@ -90,176 +90,191 @@ function setupApp() {
           form.parse(req, function (err, fields, files) {
             var data = fields;
 
-            winston.info('data received ...')
+            if (apiConf.verbose == true) { winston.info('data received ...'); }
 
-            if (apiConf.verbose == true) {
+            var nida = null;
+            var PCID = null;
+            var FOSAID = null;
 
-              var nida = null;
-              var PCID = null;
+            var birthDate = null;
+            var gender = null;
+            var active = true;
 
-              var birthDate = null;
-              var gender = null;
-              var active = true;
+            var familyName = null;
+            var givenName1 = null;
+            var givenName2 = null;
 
-              var familyName = null;
-              var givenName1 = null;
-              var givenName2 = null;
+            var city = null;
+            var district = null;
+            var state = null;
+            var country = null;
+            var cell = null;
+            var sector = null;
+            var umudugudu = null;
 
-              var city = null;
-              var district = null;
-              var state = null;
-              var country = null;
-              var cell = null;
-              var sector = null;
-              var umudugudu = null;
+            var telecom = null;
+            var fatherName = null;
+            var motherName = null;
+            var civilStatus = null;
+            var educationLevel = null;
+            var mainActivity = null;
 
-              var telecom = null;
-              var fatherName = null;
-              var motherName = null;
-              var civilStatus = null;
-              var educationLevel = null;
-              var mainActivity = null;
+            if (utils.isFineValue(data) == true && utils.isFineValue(data.patient) && utils.isFineValue(data.patient.person)) {
 
-              if (utils.isFineValue(data) == true && utils.isFineValue(data.patient) && utils.isFineValue(data.patient.person)) {
-
-                if (utils.isFineValue(data.patient.identifiers) == true) {
-                  nida = utils.getValueFromArray(data.patient.identifiers, "identifierType", "NIDA", "identifier")
-                  PCID = utils.getValueFromArray(data.patient.identifiers, "identifierType", "PCID", "identifier")
-                }
-
-
-                birthDate = utils.getDateValue(data.patient.person.birthdate);
-                gender = utils.getGender(data.patient.person.gender);
-
-
-
-                if (utils.isFineValue(data.patient.person.preferredName) == true) {
-                  familyName = utils.getValue(data.patient.person.preferredName.familyName);
-                  givenName1 = utils.getValue(data.patient.person.preferredName.givenName);
-                  givenName2 = utils.getValue(data.patient.person.preferredName.middleName);
-                }
-
-                if (utils.isFineValue(data.patient.person.preferredAddress) == true) {
-                  country = utils.getValue(data.patient.person.preferredAddress.country);
-                  state = utils.getValue(data.patient.person.preferredAddress.stateProvince);
-                  district = utils.getValue(data.patient.person.preferredAddress.countyDistrict);
-                  cell = utils.getValue(data.patient.person.preferredAddress.address3);
-                  sector = utils.getValue(data.patient.person.preferredAddress.cityVillage);
-                  umudugudu = utils.getValue(data.patient.person.preferredAddress.address1);
-                }
-
-                if (utils.isFineValue(data.patient.person.attributes) == true) {
-                  telecom = utils.getValueFromArray(data.patient.person.attributes, "attributeType", "PhoneNumber", "value");
-                  fatherName = utils.getValueFromArray(data.patient.person.attributes, "attributeType", "fatherName", "value");
-                  motherName = utils.getValueFromArray(data.patient.person.attributes, "attributeType", "motherName", "value");
-                  civilStatus = utils.getValueFromArrayList(data.patient.person.attributes, "attributeType", "civilStatus", "value");
-                  educationLevel = utils.getValueFromArrayList(data.patient.person.attributes, "attributeType", "educationLevel", "value");
-                  mainActivity = utils.getValueFromArrayList(data.patient.person.attributes, "attributeType", "mainActivity", "value");
+              if (utils.isFineValue(data.location) == true) {
+                //FOSAID: 7 TYPE: CS
+                if (data.location.includes(":")) {
+                  var fosaTab = data.location.split(":");
+                  if (fosaTab[1].trim().includes(" ")) {
+                    var fosaTab2 = fosaTab[1].trim().split(" ");
+                    FOSAID = fosaTab2[0]
+                  }
                 }
               }
 
 
-              var patientObject = {
-                resourceType: "Patient",
-                "id": nida,
-                "active": active,
-                "extension": [
-                  {
-                    "url": "sector",
-                    "valueString": sector
-                  },
-                  {
-                    "url": "cell",
-                    "valueString": cell
-                  },
-                  {
-                    "url": "umudugudu",
-                    "valueString": umudugudu
-                  },
-                  {
-                    "url": "fatherName",
-                    "valueString": fatherName
-                  },
-                  {
-                    "url": "motherName",
-                    "valueString": motherName
-                  },
-                  {
-                    "url": "civilStatus",
-                    "valueString": civilStatus
-                  },
-                  {
-                    "url": "educationLevel",
-                    "valueString": educationLevel
-                  },
-                  {
-                    "url": "mainActivity",
-                    "valueString": mainActivity
-                  }
-                ],
-                "identifier": [
-                  {
-                    "system": "PCID",
-                    "value": PCID
-                  }
-                ],
-                "name": [
-                  {
-                    "family": familyName,
-                    "given": [
-                      givenName1,
-                      givenName2
-                    ]
-                  }
-                ],
-                "gender": gender,
-                "birthDate": birthDate,
-                "address": [
-                  {
-                    "district": district,
-                    "state": state,
-                    "country": country
-                  }
-                ],
-                "contact": [
-                  {
-                    "telecom": [
-                      {
-                        "value": telecom
-                      }
-                    ]
-                  }
-                ]
+              if (utils.isFineValue(data.patient.identifiers) == true) {
+                nida = utils.getValueFromArray(data.patient.identifiers, "identifierType", "NIDA", "identifier")
+                PCID = utils.getValueFromArray(data.patient.identifiers, "identifierType", "PCID", "identifier")
               }
 
 
+              birthDate = utils.getDateValue(data.patient.person.birthdate);
+              gender = utils.getGender(data.patient.person.gender);
 
-              var options = {
-                url: apiConf.api.clientRegistry.url,
-                headers: {
-                  'Connection': 'keep-alive',
-                  'Content-Type': 'application/json',
-                  'Authorization': 'Basic ' + new Buffer(apiConf.api.clientRegistry.user.name + ":" + apiConf.api.clientRegistry.user.pwd).toString('base64')
-                },
-                body: JSON.stringify(patientObject)
-              };
 
-              winston.info('Pushing resource to client registry ...')
-              request.post(options, function (error, response, body) {
-                if (error) {
-                  reportEndOfProcess(req, res, error, 500, "An error occured when trying to push data to the client registry");
-                } else {
-                  var responseBody = body;
-                  var wholeResponse = response;
-                  if (wholeResponse.statusCode == 200 || wholeResponse.statusCode == 201) {
-                    reportEndOfProcess(req, res, null, wholeResponse.statusCode, 'Data pushed with success');
-                  } else {
-                    reportEndOfProcess(req, res, error, wholeResponse.statusCode, "An error occured when trying to push data to the client registry, " + utils.getLastError(responseBody));
-                  }
-                }
-              });
 
+              if (utils.isFineValue(data.patient.person.preferredName) == true) {
+                familyName = utils.getValue(data.patient.person.preferredName.familyName);
+                givenName1 = utils.getValue(data.patient.person.preferredName.givenName);
+                givenName2 = utils.getValue(data.patient.person.preferredName.middleName);
+              }
+
+              if (utils.isFineValue(data.patient.person.preferredAddress) == true) {
+                country = utils.getValue(data.patient.person.preferredAddress.country);
+                state = utils.getValue(data.patient.person.preferredAddress.stateProvince);
+                district = utils.getValue(data.patient.person.preferredAddress.countyDistrict);
+                cell = utils.getValue(data.patient.person.preferredAddress.address3);
+                sector = utils.getValue(data.patient.person.preferredAddress.cityVillage);
+                umudugudu = utils.getValue(data.patient.person.preferredAddress.address1);
+              }
+
+              if (utils.isFineValue(data.patient.person.attributes) == true) {
+                telecom = utils.getValueFromArray(data.patient.person.attributes, "attributeType", "PhoneNumber", "value");
+                fatherName = utils.getValueFromArray(data.patient.person.attributes, "attributeType", "fatherName", "value");
+                motherName = utils.getValueFromArray(data.patient.person.attributes, "attributeType", "motherName", "value");
+                civilStatus = utils.getValueFromArrayList(data.patient.person.attributes, "attributeType", "civilStatus", "value");
+                educationLevel = utils.getValueFromArrayList(data.patient.person.attributes, "attributeType", "educationLevel", "value");
+                mainActivity = utils.getValueFromArrayList(data.patient.person.attributes, "attributeType", "mainActivity", "value");
+              }
             }
+
+
+            var patientObject = {
+              resourceType: "Patient",
+              "id": nida,
+              "active": active,
+              "extension": [
+                {
+                  "url": "fosaId",
+                  "valueString": FOSAID
+                },
+                {
+                  "url": "sector",
+                  "valueString": sector
+                },
+                {
+                  "url": "cell",
+                  "valueString": cell
+                },
+                {
+                  "url": "umudugudu",
+                  "valueString": umudugudu
+                },
+                {
+                  "url": "fatherName",
+                  "valueString": fatherName
+                },
+                {
+                  "url": "motherName",
+                  "valueString": motherName
+                },
+                {
+                  "url": "civilStatus",
+                  "valueString": civilStatus
+                },
+                {
+                  "url": "educationLevel",
+                  "valueString": educationLevel
+                },
+                {
+                  "url": "mainActivity",
+                  "valueString": mainActivity
+                }
+              ],
+              "identifier": [
+                {
+                  "system": "PCID",
+                  "value": PCID
+                }
+              ],
+              "name": [
+                {
+                  "family": familyName,
+                  "given": [
+                    givenName1,
+                    givenName2
+                  ]
+                }
+              ],
+              "gender": gender,
+              "birthDate": birthDate,
+              "address": [
+                {
+                  "district": district,
+                  "state": state,
+                  "country": country
+                }
+              ],
+              "contact": [
+                {
+                  "telecom": [
+                    {
+                      "value": telecom
+                    }
+                  ]
+                }
+              ]
+            }
+
+            console.log('--------_>>>', JSON.stringify(patientObject))
+
+            var options = {
+              url: apiConf.api.clientRegistry.url,
+              headers: {
+                'Connection': 'keep-alive',
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + new Buffer(apiConf.api.clientRegistry.user.name + ":" + apiConf.api.clientRegistry.user.pwd).toString('base64')
+              },
+              body: JSON.stringify(patientObject)
+            };
+
+            winston.info('Pushing resource to client registry ...')
+            request.post(options, function (error, response, body) {
+              if (error) {
+                reportEndOfProcess(req, res, error, 500, "An error occured when trying to push data to the client registry");
+              } else {
+                var responseBody = body;
+                var wholeResponse = response;
+                if (wholeResponse.statusCode == 200 || wholeResponse.statusCode == 201) {
+                  reportEndOfProcess(req, res, null, wholeResponse.statusCode, 'Data pushed with success');
+                } else {
+                  reportEndOfProcess(req, res, error, wholeResponse.statusCode, "An error occured when trying to push data to the client registry, " + utils.getLastError(responseBody));
+                }
+              }
+            });
+
+
           })
           break;
         case 'DELETE':
