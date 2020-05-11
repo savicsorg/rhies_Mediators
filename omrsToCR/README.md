@@ -1,4 +1,4 @@
-## mediator ##
+## OpenMRStoClientMediator ##
 
 ### Prerequisites ###
 * Netbeans or VS code or any editor you prefere
