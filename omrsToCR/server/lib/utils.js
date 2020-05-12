@@ -5,7 +5,7 @@ const moment = require('moment');
 var request = require('request');
 var OpenMRSPatientConcepts = require('../lib/OpenMRSPatientConcepts');
 const apiConf = process.env.NODE_ENV === 'test' ? require('../config/test') : require('../config/config')
-
+var newLine = "\r\n";
 
 
 exports.buildOrchestration = (name, beforeTimestamp, method, url, requestHeaders, requestContent, res, body) => {
@@ -104,12 +104,30 @@ exports.getValueFromArray = function (table, targetObject, valueToSearch, valueT
   if (table == null || table == undefined) {
     return "";
   } else {
-
-   
     var i;
     for (i = 0; i < table.length; i++) {
       if (table[i][targetObject]["uuid"] == OpenMRSPatientConcepts.value[valueToSearch].uuid) {
         return table[i][valueToReturn];
+      }
+    }
+  }
+  return "";
+}
+
+exports.getValueFromArrayList = function (table, targetObject, valueToSearch, valueToReturn) {
+  if (table == null || table == undefined) {
+    return "";
+  } else {
+    var i;
+    for (i = 0; i < table.length; i++) {
+      if (table[i][targetObject]["uuid"] == OpenMRSPatientConcepts.value[valueToSearch].uuid) {
+        var valueList = OpenMRSPatientConcepts.value[valueToSearch].list
+        var j;
+        for (j = 0; j < table.length; j++) {
+          if (table[i]["value"]["uuid"] == valueList[j]["uuid"]) {
+            return valueList[j]["value"];
+          }
+        }
       }
     }
   }
@@ -133,9 +151,45 @@ exports.getValue = function (data) {
   }
 }
 
+exports.getGender = function (data) {
+  if (data == null || data == undefined) {
+    return "";
+  } else {
+    if (data.toUpperCase().startsWith("F")) {
+      return "female";
+    }
+    if (data.toUpperCase().startsWith("M")) {
+      return "male";
+    }
+    return "";
+  }
+}
+
 
 exports.getNewDate = function () {
   return moment(new Date()).format('YYYY-MM-DD');
+}
+
+exports.getLastError = function (ResponseBody) {
+  var body = null;
+  if (exports.isObject(ResponseBody)) {
+    body = ResponseBody;
+  } else {
+    body = JSON.parse(ResponseBody);
+  }
+
+  if (exports.isFineValue(body) == false) {
+    return ""
+  } else {
+    var error = "";
+    if (exports.isFineValue(body.issue)) {
+      var i = 0;
+      for (i = 0; i < body.issue.length; i++) {
+        error = error + body.issue[i].details.text + newLine;
+      }
+    }
+    return error;
+  }
 }
 
 exports.convertToDate = function (value) {
