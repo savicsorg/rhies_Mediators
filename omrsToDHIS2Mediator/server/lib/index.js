@@ -34,11 +34,9 @@ var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].
 function setupApp() {
   const app = express();
 
-<<<<<<< HEAD
 
-=======
   var currenteLocation="";
->>>>>>> 7921f1a169adceb05d1014ebfa928ae82e14f6b5
+
   function reportEndOfProcess(req, res, error, statusCode, message) {
     res.set('Content-Type', 'application/json+openhim')
     var responseBody = "[" + currenteLocation + "] " +  message;
@@ -781,6 +779,9 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   var patientContactGenderValue = "";
 
 
+  //Reporting date in DHIS2 must be the encounterDate
+  var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
+  
   //Retrive non dropdown concept for CBS CONTACT GROUP ConvSet
   var patientCodeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "41c410a4-18a4-4221-98ad-1daf1b22de4d"));
   var patientAgeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "2ecf52c4-f732-46a8-9f10-45a04ca70f49"));
@@ -936,7 +937,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                               var dhsi2RecencyStructure = {
                                 "program": "CYyICYiO5zo",
                                 "orgUnit": organizationUnit,
-                                "eventDate": utils.getNewDate(),
+                                "eventDate": eventDate,
                                 "status": "COMPLETED",
                                 "storedBy": "Savics",
                                 "programStage": "r45yv7rwDEO",
@@ -985,7 +986,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                               {
                                 "program": "CYyICYiO5zo",
                                 "orgUnit": organizationUnit,
-                                "eventDate": utils.getNewDate(),
+                                "eventDate": eventDate,
                                 "status": "COMPLETED",
                                 "storedBy": "amza",
                                 "programStage": "RtQV53iuq7z",
@@ -1030,7 +1031,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                               {
                                 "program": "CYyICYiO5zo",
                                 "orgUnit": organizationUnit,
-                                "eventDate": utils.getNewDate(),
+                                "eventDate": eventDate,
                                 "status": "COMPLETED",
                                 "storedBy": "Savics",
                                 "programStage": "b9rxVAiJaxA",
@@ -1201,6 +1202,9 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientReasonNotInitOnTPTValue = "";
   var patientStableValue = "";
 
+
+  //Reporting date in DHIS2 must be the encounterDate
+  var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
 
   //Retrieve the UUID for each dropdown concept from OpenMRS
   //Begining of UUID retrieving 
@@ -1446,7 +1450,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                               {
                                                 "program": "CYyICYiO5zo",
                                                 "orgUnit": organizationUnit,
-                                                "eventDate": utils.getNewDate(),
+                                                "eventDate": eventDate,
                                                 "status": "COMPLETED",
                                                 "storedBy": "Savics",
                                                 "programStage": "pBAeqPjnhdF",
@@ -1463,7 +1467,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   },
                                                   {
                                                     "dataElement": "txsxKp2l6y9",
-                                                    "value": utils.getNewDate()
+                                                    "value": eventDate
                                                   },
                                                   {
                                                     "dataElement": "oLqMrGMI4Uf",
@@ -1773,6 +1777,8 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   var patientCompletedEnhancedCounsellingValue = "";
 
 
+  //Reporting date in DHIS2 must be the encounterDate
+  var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
 
   //Begining of UUID retrieving 
   var omrsDemographicChange = utils.getConceptValue(incomingEncounter.encounter.obs, "e63265dd-9b1c-4dc5-abfe-85863afcf4e3");
@@ -1900,7 +1906,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                 {
                   "program": "CYyICYiO5zo",
                   "orgUnit": organizationUnit,
-                  "eventDate": utils.getNewDate(),
+                  "eventDate": eventDate,
                   "status": "COMPLETED",
                   "storedBy": "Savics",
                   "programStage": "Em0sRsnHjoR",
@@ -2096,11 +2102,15 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
 
 //Beginning of the form 4: RECENCY VIRAL LOAD
 var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
-  //
+  
+
   //Declaration of all the variables for DHIS2 dropdown and patient data
   var patientVLFinalRitaInconclusiveValue = "";
   var patientVLFinalRitaRecencyResultValue = "";
 
+
+  //Reporting date in DHIS2 must be the encounterDate
+  var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
 
   //Retrieving data
   var omrsVLFinalRitaInconclusive = utils.getConceptValue(incomingEncounter.encounter.obs, "ba4b8a83-54ab-44f3-a7c5-4495ddf055bc");
@@ -2127,7 +2137,7 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
       var dhis2EnrollementStructureVL =  {
         "program": "CYyICYiO5zo",
         "orgUnit": organizationUnit,
-        "eventDate": utils.getNewDate(),
+        "eventDate": eventDate,
         "status": "COMPLETED",
         "storedBy": "Savics",
         "programStage": "pBAeqPjnhdF",
@@ -2316,7 +2326,7 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
           },
           {
             "dataElement": "U8zMohYMqHi",
-            "value": utils.convertToDate(incomingEncounter.encounter.encounterDatetime)
+            "value": eventDate
           },
           {
             "dataElement": "ccYYcYf78sz",
