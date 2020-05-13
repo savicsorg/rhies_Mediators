@@ -313,7 +313,7 @@ function setupApp() {
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
-  // if (false) {
+   //if (false) {
   if (apiConf.register) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {

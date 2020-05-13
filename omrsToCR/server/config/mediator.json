@@ -5,7 +5,7 @@
   "description": "A mediator to post OpenMRS patient to Client Registry",
   "defaultChannelConfig": [
     {
-      "name": "openMRS to Client Registry chanel",
+      "name": "OpenMRS to Client Registry chanel",
       "urlPattern": "/patient/",
       "alerts": [],
       "txRerunAcl": [],
