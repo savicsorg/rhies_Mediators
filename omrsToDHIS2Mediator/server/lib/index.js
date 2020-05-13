@@ -1463,7 +1463,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   },
                                                   {
                                                     "dataElement": "qycXEyMMFMb",
-                                                    "value": patientARTStartLocationValue
+                                                    "value": patientIndexCaseTypeValue
                                                   },
                                                   {
                                                     "dataElement": "txsxKp2l6y9",
@@ -1487,7 +1487,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   },
                                                   {
                                                     "dataElement": "aYhoeOchJYM",
-                                                    "value": ""
+                                                    "value": patientARTStartLocationValue
                                                   },
                                                   {
                                                     "dataElement": "GwCiJLY0of4",
