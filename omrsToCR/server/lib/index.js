@@ -34,6 +34,8 @@ function setupApp() {
 
   var currenteLocation = "";
   function reportEndOfProcess(req, res, error, statusCode, message) {
+
+
     res.set('Content-Type', 'application/json+openhim')
     var responseBody = "[" + currenteLocation + "] " + message;
     var stateLabel = "";
@@ -118,6 +120,8 @@ function setupApp() {
             var civilStatus = null;
             var educationLevel = null;
             var mainActivity = null;
+            var religion = null;
+
 
             if (utils.isFineValue(data) == true && utils.isFineValue(data.patient) && utils.isFineValue(data.patient.person)) {
 
@@ -172,7 +176,7 @@ function setupApp() {
 
             var patientObject = {
               resourceType: "Patient",
-              "id": nida,
+              "id": PCID,
               "active": active,
               "extension": [
                 {
@@ -210,9 +214,17 @@ function setupApp() {
                 {
                   "url": "mainActivity",
                   "valueString": mainActivity
+                },
+                {
+                  "url": "religion",
+                  "valueString": religion
                 }
               ],
               "identifier": [
+                {
+                  "system": "NIDA",
+                  "value": nida
+                },
                 {
                   "system": "PCID",
                   "value": PCID
@@ -266,7 +278,8 @@ function setupApp() {
                 if (wholeResponse.statusCode == 200 || wholeResponse.statusCode == 201) {
                   reportEndOfProcess(req, res, null, wholeResponse.statusCode, 'Data pushed with success');
                 } else {
-                  reportEndOfProcess(req, res, error, wholeResponse.statusCode, "An error occured when trying to push data to the client registry, " + utils.getLastError(responseBody));
+                  var errorReturned=utils.getLastError(responseBody);
+                  reportEndOfProcess(req, res, errorReturned, wholeResponse.statusCode, "An error occured when trying to push data to the client registry. " + errorReturned);
                 }
               }
             });
@@ -313,8 +326,8 @@ function setupApp() {
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
-   //if (false) {
-  if (apiConf.register) {
+  if (false) {
+  //if (apiConf.register) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
