@@ -1410,6 +1410,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
         }
 
         //Beginning of the retrieving of all the dropdown value from DHIS2
+        patientIsPregnantValue = utils.getDHIS2Boolean(omrsIsPregnant);
         patientConselledOnLinkageValue = utils.getDHIS2Boolean(omrsConselledOnLinkage);
         patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
         patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
@@ -1510,7 +1511,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   },
                                                   {
                                                     "dataElement": "qsCPZIJLpYo",
-                                                    "value": ""
+                                                    "value": patientIsPregnantValue
                                                   },
                                                   {
                                                     "dataElement": "ZvH6DY75uR1",
