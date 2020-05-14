@@ -1201,6 +1201,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientInitiatedOnTPTValue = "";
   var patientReasonNotInitOnTPTValue = "";
   var patientStableValue = "";
+  var patientIsPregnantValue = "";
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -1235,6 +1236,16 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   } else {
     omrsOccupationType = "";
   }
+
+
+  var omrsIsPregnant = utils.getConceptValue(incomingEncounter.encounter.obs, "be075303-3a46-4b89-8b8c-912acb2a75e7");
+  if (utils.isFineValue(omrsIsPregnant) == true && utils.isFineValue(omrsIsPregnant.name) == true && utils.isFineValue(omrsIsPregnant.name.name) == true) {
+    omrsIsPregnant = omrsIsPregnant.uuid;
+  } else {
+    omrsIsPregnant = "";
+  }
+
+
 
   var omrsVASWCLast12m = utils.getConceptValue(incomingEncounter.encounter.obs, "788e9f4c-5ba4-4a42-9974-83ea7128f0f8");
   if (utils.isFineValue(omrsVASWCLast12m) == true && utils.isFineValue(omrsVASWCLast12m.name) == true && utils.isFineValue(omrsVASWCLast12m.name.name) == true) {
