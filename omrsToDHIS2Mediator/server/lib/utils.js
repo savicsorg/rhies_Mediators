@@ -942,8 +942,8 @@ exports.getdhis2ProvinceDistrictIds = function (patient) {
     return {
       "dhis2ProvinceId": FoundProvince,
       "dhis2DistrictId": FoundDistrict,
-      "village" : patient.person.preferredAddress.cityVillage,
-      "cellule" : patient.person.preferredAddress.address1
+      "village" : patient.person.preferredAddress.address1,
+      "cellule" : patient.person.preferredAddress.address3
     };
   } else {
     return {
