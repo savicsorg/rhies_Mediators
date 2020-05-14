@@ -1486,6 +1486,10 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                     "value": patientVisitDate
                                                   },
                                                   {
+                                                    "dataElement": "GIC3Oq7ruS0",
+                                                    "value": ""
+                                                  },
+                                                  {
                                                     "dataElement": "I809QdRlgCb",
                                                     "value": ""
                                                   },
