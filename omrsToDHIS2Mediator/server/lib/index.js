@@ -2184,11 +2184,11 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
           },
           {
             "dataElement": "txsxKp2l6y9",
-            "value": ""
+            "value": eventDate
           },
           {
             "dataElement": "oLqMrGMI4Uf",
-            "value": ""
+            "value": eventDate
           },
           {
             "dataElement": "I809QdRlgCb",
