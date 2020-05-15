@@ -3,6 +3,7 @@ const URI = require('urijs');
 const _ = require('underscore');
 const moment = require('moment');
 var request = require('request');
+var deasync = require('deasync');
 var formMapping = require("../lib/formMapping");
 const apiConf = process.env.NODE_ENV === 'test' ? require('../config/test') : require('../config/config')
 
@@ -570,6 +571,24 @@ exports.getDHIS2YesNoRefuseUnknown = function (uuid) {
 }
 
 
+exports.getDHIS2YesNoUnknown = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cd6f600-26fe-102b-80cb-0017a47871b2':
+        return 'Yes';
+        break;
+      case '3cd6f86c-26fe-102b-80cb-0017a47871b2':
+        return 'No';
+        break;                
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
 exports.getDHIS2HivTestingClinic = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
@@ -962,13 +981,12 @@ exports.getdhis2ProvinceDistrictIds = function (patient) {
 
 exports.getDhis2District = function (value, callback) {
   var options = {
-    url: apiConf.api.dhis2.url + "/api/organisationUnits.json?filter=id:eq:" + value ,
+    url: apiConf.api.dhis2.url + '/api/organisationUnits.json?filter=id:eq:' + value ,
     headers: {
       'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
       'Content-Type': 'application/json'
     }
   };
-
 
   request.get(options, function (error, response, body) {
     if (error) {
@@ -985,34 +1003,39 @@ exports.getDhis2District = function (value, callback) {
 }
 
 
-exports.getDHIS2PatientAddress = function(cityVillage, callback){
-  var options = {
-    url: apiConf.api.dhis2.url + "api/organisationUnits.json?filter=displayName:like:" + cityVillage + "&filter=level:eq:5&fields=id,path,displayName",
-    headers: {
-      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
-      'Content-Type': 'application/json'
-    }
-  };
-
-
-  request.get(options, function (error, response, body) {
-    if (error) {
-      callback("");
-    } else {
-      var resp = JSON.parse(body);
-      if (exports.isFineValue(resp) == true && exports.isFineValue(resp.organisationUnits) == true) {
-        var tab =  resp.organisationUnits[0].path.split('/');
-        var patientAddress = {"district":"","secteur":""};
-        patientAddress.district = tab[3];
-        patientAddress.secteur = resp.organisationUnits[0].id
-        callback(patientAddress);
-      } else {
-        callback("");
+exports.getDHIS2PatientAddress = function(value, callback){
+  
+  if (exports.isFineValue(value) == true) {
+    var toReturn = null;
+    var options = {
+      url: apiConf.api.dhis2.url + 'api/organisationUnits.json?filter=displayName:eq:' +  value + '&fields=path',
+      headers: {
+        'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+        'Content-Type': 'application/json'
       }
-    }
-  });
-}
+    };
 
+    request.get(options, function (error, response, body) {
+      if (error) {
+        console.log("Error : " + error);
+        callback("")
+      } else {
+        var resp = JSON.parse(body);
+        if (exports.isFineValue(resp) == true && exports.isFineValue(resp.organisationUnits) == true) {
+          
+          callback(resp.organisationUnits[0].path);
+          
+        } else {
+          callback("");
+        }
+      }
+    });
+
+  } else {
+    callback("");
+  }
+  
+}
 
 
 exports.getDhis2DropdownValue = function (value, callback) {

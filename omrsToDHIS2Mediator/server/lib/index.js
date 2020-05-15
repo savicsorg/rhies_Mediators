@@ -1390,9 +1390,12 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   patientVillage = patientAddressObject.village;
   
   //getting patient secteur and district from DHIS2
-  utils.getDHIS2PatientAddress(incomingEncounter.patient.person.preferredAddress.cityVillage, function (result) {
-      patientSecteur = result.secteur;
-      patientDistrict = result.district;
+    var patientDetails = incomingEncounter.patient.person.preferredAddress.cityVillage;
+    console.log("SECETEUR NAME: " + patientDetails);
+    utils.getDHIS2PatientAddress(patientDetails,function(result){
+      console.log("VALUE RESULT : " + result);
+      patientSecteur = result.split('/')[5];
+      patientDistrict = result.split('/')[3];
 
       //getting gender from DHIS2
       utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
@@ -1405,7 +1408,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
         }
 
         //Beginning of the retrieving of all the dropdown value from DHIS2
-        patientIsPregnantValue = utils.getDHIS2Boolean(omrsIsPregnant);
+        patientIsPregnantValue = utils.getDHIS2YesNoUnknown(omrsIsPregnant);
         patientConselledOnLinkageValue = utils.getDHIS2Boolean(omrsConselledOnLinkage);
         patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
         patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
@@ -1763,7 +1766,8 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
           });
         });
       });
-  });
+    });
+
 };
 //End of the ENROLLEMENT INFORMATION
 
@@ -1785,6 +1789,11 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   var patientAttendedEnhancedCounsellingValue = "";
   var patientTPTTherapyInProgressValue = "";
   var patientCompletedEnhancedCounsellingValue = "";
+  var patientAddressObject = "";
+  var patientSecteur = "";
+  var patientDistrict = "";
+  var patientVillage = "";
+  var patientCellule = "";
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -1887,6 +1896,13 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   }
   // End of UUID retrieving
 
+
+  patientAddressObject = utils.getdhis2ProvinceDistrictIds(incomingEncounter.patient);
+
+  //getting patient Cellule and Village
+  patientCellule = patientAddressObject.cellule;
+  patientVillage = patientAddressObject.village;
+
   //Retrieving all the dropdown value from DHIS2
     //Boolean retrieving
   patientDemographicChangeValue = utils.getDHIS2Boolean(omrsDemographicChange);
@@ -1929,11 +1945,19 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "txsxKp2l6y9",
-                      "value": ""
+                      "value": eventDate
                     },
                     {
                       "dataElement": "oLqMrGMI4Uf",
-                      "value": ""
+                      "value": eventDate
+                    },
+                    {
+                      "dataElement":"Vrm4tEU28YG",
+                      "value": patientVillage
+                    },
+                    {
+                      "dataElement": "fEX1sjE7mEm",
+                      "value": patientCellule
                     },
                     {
                       "dataElement": "I809QdRlgCb",
