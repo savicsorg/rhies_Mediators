@@ -985,7 +985,6 @@ exports.getDhis2District = function (value, callback) {
 }
 
 
-
 exports.getDHIS2PatientAddress = function(cityVillage, callback){
   var options = {
     url: apiConf.api.dhis2.url + "api/organisationUnits.json?filter=displayName:like:" + cityVillage + "&filter=level:eq:5&fields=id,path,displayName",
@@ -1003,7 +1002,10 @@ exports.getDHIS2PatientAddress = function(cityVillage, callback){
       var resp = JSON.parse(body);
       if (exports.isFineValue(resp) == true && exports.isFineValue(resp.organisationUnits) == true) {
         var tab =  resp.organisationUnits[0].path.split('/');
-        callback(tab[3] + "_" + resp.organisationUnits[0].id);
+        var patientAddress = {"district":"","secteur":""};
+        patientAddress.district = tab[3];
+        patientAddress.secteur = resp.organisationUnits[0].id
+        callback(patientAddress);
       } else {
         callback("");
       }
