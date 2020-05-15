@@ -2141,6 +2141,11 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   //Declaration of all the variables for DHIS2 dropdown and patient data
   var patientVLFinalRitaInconclusiveValue = "";
   var patientVLFinalRitaRecencyResultValue = "";
+  var patientBirhDate = "";
+  var patientGender = "";
+  var patientMaritalStatus = "";
+  var patientOccupation = ""; // Employment status
+  var patientAddressObject = "";
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -2160,6 +2165,29 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   } else {
     omrsVLFinalRitaRecencyResult = "";
   }
+
+
+  var omrsOccupationValue = utils.getConceptValue(incomingEncounter.encounter.obs, "4587542b-f1aa-47ad-8bed-75a705433950");
+  if (utils.isFineValue(omrsOccupationValue) == true && utils.isFineValue(omrsOccupationValue.name) == true && utils.isFineValue(omrsOccupationValue.name.name) == true) {
+    omrsOccupationValue = omrsOccupationValue.uuid;
+  } else {
+    omrsOccupationValue = "";
+  }
+
+
+  if (utils.isFineValue(incomingEncounter.patient.person.birthdate) == true) {
+    patientBirhDate = utils.convertToDate(incomingEncounter.patient.person.birthdate);
+  }
+
+  if(utils.isFineValue(incomingEncounter.encounter.encounterDatetime) == true) {
+    patientVisitDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
+  }
+
+  patientAddressObject = utils.getdhis2ProvinceDistrictIds(incomingEncounter.patient);
+
+  //getting patient Cellule and Village
+  patientCellule = patientAddressObject.cellule;
+  patientVillage = patientAddressObject.village;
   
 
   utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsVLFinalRitaInconclusive), function (result) {
@@ -2191,6 +2219,10 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
             "value": eventDate
           },
           {
+            "dataElement": "GwCiJLY0of4",
+            "value": patientBirhDate
+          },
+          {
             "dataElement": "I809QdRlgCb",
             "value": ""
           },
@@ -2212,11 +2244,11 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
           },
           {
             "dataElement": "p5U0vUS0Q3V",
-            "value": ""
+            "value": patientVillage
           },
           {
             "dataElement": "I79uRgVEyUc",
-            "value": ""
+            "value": patientCellule
           },
           {
             "dataElement": "UaCDJMTQRLz",
