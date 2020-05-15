@@ -962,7 +962,7 @@ exports.getdhis2ProvinceDistrictIds = function (patient) {
 
 exports.getDhis2District = function (value, callback) {
   var options = {
-    url: apiConf.api.dhis2.url + "/api/organisationUnits.json?filter=id:eq:" + value,
+    url: apiConf.api.dhis2.url + "/api/organisationUnits.json?filter=id:eq:" + value ,
     headers: {
       'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
       'Content-Type': 'application/json'
@@ -983,6 +983,34 @@ exports.getDhis2District = function (value, callback) {
     }
   });
 }
+
+
+
+exports.getDHIS2PatientAddress = function(cityVillage, callback){
+  var options = {
+    url: apiConf.api.dhis2.url + "api/organisationUnits.json?filter=displayName:like:" + cityVillage + "&filter=level:eq:5&fields=id,path,displayName",
+    headers: {
+      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+      'Content-Type': 'application/json'
+    }
+  };
+
+
+  request.get(options, function (error, response, body) {
+    if (error) {
+      callback("");
+    } else {
+      var resp = JSON.parse(body);
+      if (exports.isFineValue(resp) == true && exports.isFineValue(resp.organisationUnits) == true) {
+        var tab =  resp.organisationUnits[0].path.split('/');
+        callback(tab[3] + "_" + resp.organisationUnits[0].id);
+      } else {
+        callback("");
+      }
+    }
+  });
+}
+
 
 
 exports.getDhis2DropdownValue = function (value, callback) {
