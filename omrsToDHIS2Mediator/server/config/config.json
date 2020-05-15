@@ -17,6 +17,7 @@
   "enrollmentForm": "Confidential HIV CRF - SECTION 1: Enrollment Information",
   "followupForm": "Confidential HIV CRF - SECTION II: Follow up Information",
   "recencyVLForm": "CBS Recency VL",
+  "cbsContactForm": "CBS Contact informations",
   "register": true,
   "verbose" :true,
   "heartbeat": true
