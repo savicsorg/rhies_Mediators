@@ -1172,7 +1172,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientMaritalStatus = "";
   var patientOccupation = ""; // Employment status
   var patientAddressObject = "";
-  var patientProvince = "";
+  var patientSecteur = "";
   var patientDistrict = "";
   var patientVillage = "";
   var patientCellule = "";
@@ -1389,15 +1389,10 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   patientCellule = patientAddressObject.cellule;
   patientVillage = patientAddressObject.village;
   
-  //getting province from DHIS2
-  utils.getDhis2District(patientAddressObject.dhis2ProvinceId, function (result) {
-    patientProvince = result;
-    console.log("province to push to dhis2==============>>>", result)
-
-    //getting distict from DHIS2
-    utils.getDhis2District(patientAddressObject.dhis2DistrictId, function (result) {
-      patientDistrict = result;
-      console.log("district to push to dhis2==============>>>", result)
+  //getting patient secteur and district from DHIS2
+  utils.getDHIS2PatientAddress(incomingEncounter.patient.person.preferredAddress.cityVillage, function (result) {
+      patientSecteur = result.secteur;
+      patientDistrict = result.district;
 
       //getting gender from DHIS2
       utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
@@ -1531,7 +1526,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   },
                                                   {
                                                     "dataElement": "UaCDJMTQRLz",
-                                                    "value": ""
+                                                    "value": patientSecteur
                                                   },
                                                   {
                                                     "dataElement": "kPkjR4qEhhn",
@@ -1768,7 +1763,6 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
           });
         });
       });
-    });
   });
 };
 //End of the ENROLLEMENT INFORMATION
