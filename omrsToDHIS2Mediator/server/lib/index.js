@@ -2143,6 +2143,7 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   var patientVLFinalRitaRecencyResultValue = "";
   var patientBirhDate = "";
   var patientResidencyTypeValue = "";
+  var patientOccupationTypeValue = "";
   var patientGender = "";
   var patientMaritalStatus = "";
   var patientOccupation = ""; // Employment status
@@ -2216,236 +2217,241 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
         var patientTestDone = (utils.isFineValue(patientVLFinalRitaRecencyResultValue))? "yes":"";
         utils.getDhis2DropdownValue(utils.getDHIS2ResidencyType(omrsResidencyType), function (result) {
           patientResidencyTypeValue = result;
+          utils.getDhis2DropdownValue(utils.getDHIS2OccupationType(omrsOccupationType), function (result) {
+            patientOccupationTypeValue = result;
 
-          var dhis2EnrollementStructureVL =  {
-            "program": "CYyICYiO5zo",
-            "orgUnit": organizationUnit,
-            "eventDate": eventDate,
-            "status": "COMPLETED",
-            "storedBy": "Savics",
-            "programStage": "pBAeqPjnhdF",
-            "trackedEntityInstance": trackedEntityInstanceId,
-            "enrollment": enrollmentId,
-            "dataValues": [
-              {
-                "dataElement": "pbeBAIly2GT",
-                "value": organizationUnit
-              },
-              {
-                "dataElement": "txsxKp2l6y9",
-                "value": eventDate
-              },
-              {
-                "dataElement": "oLqMrGMI4Uf",
-                "value": eventDate
-              },
-              {
-                "dataElement": "GwCiJLY0of4",
-                "value": patientBirhDate
-              },
-              {
-                "dataElement": "ZvH6DY75uR1",
-                "value": patientResidencyTypeValue
-              },
-              {
-                "dataElement": "NrWXvZg3WtW",
-                "value": patientOccupation
-              },
-              {
-                "dataElement": "I809QdRlgCb",
-                "value": ""
-              },
-              {
-                "dataElement": "tnMNaBmQaIy",
-                "value": ""
-              },
-              {
-                "dataElement": "wXcnNSYryUd",
-                "value": ""
-              },
-              {
-                "dataElement": "OCZt4UJitnh",
-                "value": ""
-              },
-              {
-                "dataElement": "yu67Iiw64UQ",
-                "value": ""
-              },
-              {
-                "dataElement": "p5U0vUS0Q3V",
-                "value": patientVillage
-              },
-              {
-                "dataElement": "I79uRgVEyUc",
-                "value": patientCellule
-              },
-              {
-                "dataElement": "UaCDJMTQRLz",
-                "value": ""
-              },
-              {
-                "dataElement": "kPkjR4qEhhn",
-                "value": ""
-              },
-              {
-                "dataElement": "OTAM6B4xZwf",
-                "value": ""
-              },
-              {
-                "dataElement": "Cgt39EInKQV",
-                "value": ""
-              },
-              {
-                "dataElement": "KrYJW9kvJS2",
-                "value": ""
-              },
-              {
-                "dataElement": "Nld1zMZwPxK",
-                "value": ""
-              },
-              {
-                "dataElement": "jYMNto3ELj5",
-                "value": ""
-              },
-              {
-                "dataElement": "jmwJSKQthb7",
-                "value": ""
-              },
-              {
-                "dataElement": "xMLGFpVb0Kh",
-                "value": ""
-              },
-              {
-                "dataElement": "KRTWX8CatfN",
-                "value": ""
-              },
-              {
-                "dataElement": "Nxu3IZxrngL",
-                "value": ""
-              },
-              {
-                "dataElement": "gZLYfulH1cx",
-                "value": ""
-              },
-              {
-                "dataElement": "dlbRyDDWVdz",
-                "value": ""
-              },
-              {
-                "dataElement": "MWnDK640C17",
-                "value": ""
-              },
-              {
-                "dataElement": "MG6I5RT8YsE",
-                "value": ""
-              },
-              {
-                "dataElement": "LovSZ5zd8YL",
-                "value": ""
-              },
-              {
-                "dataElement": "ePONK5dlCAl",
-                "value": ""
-              },
-              {
-                "dataElement": "G3dUs7PuDqx",
-                "value": ""
-              },
-              {
-                "dataElement": "OKemd50jbHG",
-                "value": ""
-              },
-              {
-                "dataElement": "lrM4jhiDogd",
-                "value": ""
-              },
-              {
-                "dataElement": "kmA8X0Qwjor",
-                "value": ""
-              },
-              {
-                "dataElement": "L9lcjEkxHBv",
-                "value": ""
-              },
-              {
-                "dataElement": "eCbwnVkQ8Rt",
-                "value": ""
-              },
-              {
-                "dataElement": "OO8wNkgpAwK",
-                "value": ""
-              },
-              {
-                "dataElement": "BMf4geBAMFU",
-                "value": ""
-              },
-              {
-                "dataElement": "LpDBQwhUZ4U",
-                "value": ""
-              },
-              {
-                "dataElement": "yH3otrjN0qZ",
-                "value": ""
-              },
-              {
-                "dataElement": "EBAuC7pMu4O",
-                "value": ""
-              },
-              {
-                "dataElement": "nQGHwHA3ayC",
-                "value": ""
-              },
-              {
-                "dataElement": "qBYsHDuUBIv",
-                "value": patientVLFinalRitaRecencyResultValue
-              },
-              {
-                "dataElement": "Tgt3yKYd2oD",
-                "value": ""
-              },
-              {
-                "dataElement": "nMJKcTFHGj0",
-                "value": patientVLFinalRitaInconclusiveValue
-              },
-              {
-                "dataElement": "Ba8VCAO9Nqi",
-                "value": ""
-              },
-              {
-                "dataElement": "yu2bxd3xVIg",
-                "value": ""
-              },
-              {
-                "dataElement": "ptZMCKSxvU8",
-                "value": ""
-              },
-              {
-                "dataElement": "U8zMohYMqHi",
-                "value": eventDate
-              },
-              {
-                "dataElement": "ccYYcYf78sz",
-                "value": patientTestDone
-              }
+            var dhis2EnrollementStructureVL =  {
+              "program": "CYyICYiO5zo",
+              "orgUnit": organizationUnit,
+              "eventDate": eventDate,
+              "status": "COMPLETED",
+              "storedBy": "Savics",
+              "programStage": "pBAeqPjnhdF",
+              "trackedEntityInstance": trackedEntityInstanceId,
+              "enrollment": enrollmentId,
+              "dataValues": [
+                {
+                  "dataElement": "pbeBAIly2GT",
+                  "value": organizationUnit
+                },
+                {
+                  "dataElement": "txsxKp2l6y9",
+                  "value": eventDate
+                },
+                {
+                  "dataElement": "oLqMrGMI4Uf",
+                  "value": eventDate
+                },
+                {
+                  "dataElement": "GwCiJLY0of4",
+                  "value": patientBirhDate
+                },
+                {
+                  "dataElement": "ZvH6DY75uR1",
+                  "value": patientResidencyTypeValue
+                },
+                {
+                  "dataElement": "NrWXvZg3WtW",
+                  "value": patientOccupation
+                },
+                {
+                  "dataElement": "I809QdRlgCb",
+                  "value": ""
+                },
+                {
+                  "dataElement": "tnMNaBmQaIy",
+                  "value": ""
+                },
+                {
+                  "dataElement": "wXcnNSYryUd",
+                  "value": ""
+                },
+                {
+                  "dataElement": "OCZt4UJitnh",
+                  "value": ""
+                },
+                {
+                  "dataElement": "yu67Iiw64UQ",
+                  "value": ""
+                },
+                {
+                  "dataElement": "p5U0vUS0Q3V",
+                  "value": patientVillage
+                },
+                {
+                  "dataElement": "I79uRgVEyUc",
+                  "value": patientCellule
+                },
+                {
+                  "dataElement": "UaCDJMTQRLz",
+                  "value": ""
+                },
+                {
+                  "dataElement": "kPkjR4qEhhn",
+                  "value": ""
+                },
+                {
+                  "dataElement": "OTAM6B4xZwf",
+                  "value": ""
+                },
+                {
+                  "dataElement": "Cgt39EInKQV",
+                  "value": patientOccupationTypeValue
+                },
+                {
+                  "dataElement": "KrYJW9kvJS2",
+                  "value": ""
+                },
+                {
+                  "dataElement": "Nld1zMZwPxK",
+                  "value": ""
+                },
+                {
+                  "dataElement": "jYMNto3ELj5",
+                  "value": ""
+                },
+                {
+                  "dataElement": "jmwJSKQthb7",
+                  "value": ""
+                },
+                {
+                  "dataElement": "xMLGFpVb0Kh",
+                  "value": ""
+                },
+                {
+                  "dataElement": "KRTWX8CatfN",
+                  "value": ""
+                },
+                {
+                  "dataElement": "Nxu3IZxrngL",
+                  "value": ""
+                },
+                {
+                  "dataElement": "gZLYfulH1cx",
+                  "value": ""
+                },
+                {
+                  "dataElement": "dlbRyDDWVdz",
+                  "value": ""
+                },
+                {
+                  "dataElement": "MWnDK640C17",
+                  "value": ""
+                },
+                {
+                  "dataElement": "MG6I5RT8YsE",
+                  "value": ""
+                },
+                {
+                  "dataElement": "LovSZ5zd8YL",
+                  "value": ""
+                },
+                {
+                  "dataElement": "ePONK5dlCAl",
+                  "value": ""
+                },
+                {
+                  "dataElement": "G3dUs7PuDqx",
+                  "value": ""
+                },
+                {
+                  "dataElement": "OKemd50jbHG",
+                  "value": ""
+                },
+                {
+                  "dataElement": "lrM4jhiDogd",
+                  "value": ""
+                },
+                {
+                  "dataElement": "kmA8X0Qwjor",
+                  "value": ""
+                },
+                {
+                  "dataElement": "L9lcjEkxHBv",
+                  "value": ""
+                },
+                {
+                  "dataElement": "eCbwnVkQ8Rt",
+                  "value": ""
+                },
+                {
+                  "dataElement": "OO8wNkgpAwK",
+                  "value": ""
+                },
+                {
+                  "dataElement": "BMf4geBAMFU",
+                  "value": ""
+                },
+                {
+                  "dataElement": "LpDBQwhUZ4U",
+                  "value": ""
+                },
+                {
+                  "dataElement": "yH3otrjN0qZ",
+                  "value": ""
+                },
+                {
+                  "dataElement": "EBAuC7pMu4O",
+                  "value": ""
+                },
+                {
+                  "dataElement": "nQGHwHA3ayC",
+                  "value": ""
+                },
+                {
+                  "dataElement": "qBYsHDuUBIv",
+                  "value": patientVLFinalRitaRecencyResultValue
+                },
+                {
+                  "dataElement": "Tgt3yKYd2oD",
+                  "value": ""
+                },
+                {
+                  "dataElement": "nMJKcTFHGj0",
+                  "value": patientVLFinalRitaInconclusiveValue
+                },
+                {
+                  "dataElement": "Ba8VCAO9Nqi",
+                  "value": ""
+                },
+                {
+                  "dataElement": "yu2bxd3xVIg",
+                  "value": ""
+                },
+                {
+                  "dataElement": "ptZMCKSxvU8",
+                  "value": ""
+                },
+                {
+                  "dataElement": "U8zMohYMqHi",
+                  "value": eventDate
+                },
+                {
+                  "dataElement": "ccYYcYf78sz",
+                  "value": patientTestDone
+                }
 
-            ]
-          }
-
-
-          //Beginning data pushing form 4
-          formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2EnrollementStructureVL, 6, null, function (error, result) {
-            if (error) {
-              winston.error('An error occured when trying to add a recency VL information', error);
-              callback('An error occured when trying to add a recency VL information');
-            } else {
-              winston.info('Recency VL information added with success', result);
-              callback(null, 'Recency VL information added with success');
+              ]
             }
+
+
+            //Beginning data pushing form 4
+            formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2EnrollementStructureVL, 6, null, function (error, result) {
+              if (error) {
+                winston.error('An error occured when trying to add a recency VL information', error);
+                callback('An error occured when trying to add a recency VL information');
+              } else {
+                winston.info('Recency VL information added with success', result);
+                callback(null, 'Recency VL information added with success');
+              }
+            });
+            //End data pushing form 4
+
+
+
           });
-          //End data pushing form 4
-
-
-    });
+        });
+      });
     });
   });
 };
