@@ -547,6 +547,22 @@ exports.getDHIS2OccupationType = function (uuid) {
 }
 
 
+exports.getOccupationTypeConcept = function(patient){
+  if (exports.isFineValue(patient.person.attributes) == true) {
+    let i = 0;
+    let y = 0;
+    let tab = patient.person.attributes;
+    for (i=0; i<tab.length; i++){
+      if(tab[i].attributeType.display == 'Main Activity'){
+        y = i;
+        break;
+      }
+    }
+    return tab[y].value;
+  }
+}
+
+
 exports.getDHIS2YesNoRefuseUnknown = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){

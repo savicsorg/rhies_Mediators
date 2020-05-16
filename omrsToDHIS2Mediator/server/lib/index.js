@@ -1230,8 +1230,8 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
     omrsResidencyType = "";
   }
   
-  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs, "3cd97286-26fe-102b-80cb-0017a47871b2");
-  if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsOccupationType.name) == true && utils.isFineValue(omrsOccupationType.name.name) == true) {
+  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
     omrsOccupationType = omrsOccupationType.uuid;
   } else {
     omrsOccupationType = "";
@@ -2148,7 +2148,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   var patientMaritalStatus = "";
   var patientOccupation = ""; // Employment status
   var patientAddressObject = "";
-
+  var patientCellule = "";
+  var patientVillage = "";
 
   //Reporting date in DHIS2 must be the encounterDate
   var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
@@ -2184,8 +2185,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
     omrsResidencyType = "";
   }
   
-  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs, "3cd97286-26fe-102b-80cb-0017a47871b2");
-  if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsOccupationType.name) == true && utils.isFineValue(omrsOccupationType.name.name) == true) {
+  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
     omrsOccupationType = omrsOccupationType.uuid;
   } else {
     omrsOccupationType = "";
@@ -2195,10 +2196,6 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
 
   if (utils.isFineValue(incomingEncounter.patient.person.birthdate) == true) {
     patientBirhDate = utils.convertToDate(incomingEncounter.patient.person.birthdate);
-  }
-
-  if(utils.isFineValue(incomingEncounter.encounter.encounterDatetime) == true) {
-    patientVisitDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
   }
 
   patientAddressObject = utils.getdhis2ProvinceDistrictIds(incomingEncounter.patient);
