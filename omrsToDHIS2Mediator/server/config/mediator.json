@@ -6,7 +6,7 @@
   "defaultChannelConfig": [
     {
       "name": "openMRS to DHIS2 chanel",
-      "urlPattern": "/report/",
+      "urlPattern": "/context/",
       "alerts": [],
       "txRerunAcl": [],
       "txViewFullAcl": [],
@@ -30,7 +30,7 @@
     {
       "name": "OpenMrs to DHIS2 endpoint",
       "host": "savics-omrstodhis2",
-      "path": "/report/",
+      "path": "/context/",
       "port": "4002",
       "primary": true,
       "type": "http"
