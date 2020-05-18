@@ -140,6 +140,16 @@ function setupApp() {
                         })
                       }
 
+                      if (fields.encounter.form.display.trim().toUpperCase() == apiConf.cbsContactForm.trim().toUpperCase()) {
+                        addCbsContactInformation(fields, organizationUnit, trackedEntityInstanceId, enrollmentId, function (error, resp) {
+                          if (error) {
+                            reportEndOfProcess(req, res, error, 500, 'error while adding ' + fields.encounter.form.display.trim());
+                          } else {
+                            reportEndOfProcess(req, res, null, 200, fields.encounter.form.display.trim() + ' added with success');
+                          }
+                        })
+                      }
+
                     } else {
                       reportEndOfProcess(req, res, " ", 500, 'It is not possible to get the incoming form with the data received from OpenMRS');
                     }
@@ -579,8 +589,8 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
         "trackedEntityInstance": trackedEntityInstanceId,
         "orgUnit": organizationUnit,
         "program": "CYyICYiO5zo",
-        "enrollmentDate": "1900-01-01",
-        "incidentDate": "1900-01-01"
+        "enrollmentDate": "2000-01-01",
+        "incidentDate": "2000-01-01"
       }
 
       if (utils.isFineValue(resp) == true) {
@@ -763,6 +773,103 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
 var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //Declaration of all the variables for DHIS2 dropdown
   var patientRecencyAssayResultValue = "";
+ 
+  //Reporting date in DHIS2 must be the encounterDate
+  var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
+ 
+  //Retrieve the UUID for each dropdown concept from OpenMRS
+  //Begining of UUID retrieving 
+  var omrsRecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "b4b0e241-e41a-4d46-89dd-e531cf6d8202");
+  if (utils.isFineValue(omrsRecencyAssayResult) == true && utils.isFineValue(omrsRecencyAssayResult.name) == true && utils.isFineValue(omrsRecencyAssayResult.name.name) == true) {
+    omrsRecencyAssayResult = omrsRecencyAssayResult.uuid;
+  } else {
+    omrsRecencyAssayResult = "";
+  }
+
+  
+  
+  //Retrieving the matching value of the concept from DHIS2 for each dropdown
+  //Biginning of the retrieving
+  utils.getDhis2DropdownValue(utils.getDHIS2RecencyAssayResult(omrsRecencyAssayResult), function (result) {
+    patientRecencyAssayResultValue = result;
+    
+  //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
+                              
+                              //1- sending createNewEventStageInfoRecencyContact
+                              //DHIS2 Json payload updating before pushing
+                              var dhsi2RecencyStructure = {
+                                "program": "CYyICYiO5zo",
+                                "orgUnit": organizationUnit,
+                                "eventDate": eventDate,
+                                "status": "COMPLETED",
+                                "storedBy": "Savics",
+                                "programStage": "r45yv7rwDEO",
+                                "trackedEntityInstance": trackedEntityInstanceId,
+                                "enrollment": enrollmentId,
+                                "dataValues": [
+                                  {
+                                    "dataElement": "SNcELOKJCTs",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "K4l00GKVInN",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "W58gazENRqS",
+                                    "value": patientRecencyAssayResultValue
+                                  },
+                                  {
+                                    "dataElement": "xHo7COhyMKM",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "KX4MrpcRuAb",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "GyqLOJRotuL",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "FsbargPR5hR",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "buRJTweOy6h",
+                                    "value": ""
+                                  }
+                                ]
+                              }
+
+
+                              winston.info('Adding recency contact information ...');
+                              
+                              //Beginning of Data pushing
+                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyStructure, 1, formMapping.form1MappingBooleanTable, function (error, result) {
+                                if (error) {
+                                  winston.error('An error occured when trying to add a recency test information ', error);
+                                  callback('An error occured when trying to add a recency test information');
+                                } else {
+                                  winston.info('Recency test information added with success ', result);
+                                  callback(null, 'Recency test information added with success');
+                                  
+                                }
+                              });
+                              //End of data pushing
+
+                             
+  });
+  
+
+};
+// End of the CASE BASE SURVEILLANCE
+
+
+// Beginning of the CBS contact information Form
+var addCbsContactInformation = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
+  
+  //Declaration of all the variables for DHIS2 dropdown
   var patientRelationOfContactValue = "";
   var patientContactHivStatusValue = "";
   var patientRiskOfViolenceValue = "";
@@ -787,15 +894,6 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   var patientAgeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "2ecf52c4-f732-46a8-9f10-45a04ca70f49"));
   var patientContactHivPositifTrackedNumberValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8");
   var patientContactObservationsValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c");
-
-  //Retrieve the UUID for each dropdown concept from OpenMRS
-  //Begining of UUID retrieving 
-  var omrsRecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "b4b0e241-e41a-4d46-89dd-e531cf6d8202");
-  if (utils.isFineValue(omrsRecencyAssayResult) == true && utils.isFineValue(omrsRecencyAssayResult.name) == true && utils.isFineValue(omrsRecencyAssayResult.name.name) == true) {
-    omrsRecencyAssayResult = omrsRecencyAssayResult.uuid;
-  } else {
-    omrsRecencyAssayResult = "";
-  }
 
   var omrsRelationOfContact = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "d4a45c62-5d82-43a2-856d-6c75db9fe842");
   if (utils.isFineValue(omrsRelationOfContact) == true && utils.isFineValue(omrsRelationOfContact.name) == true && utils.isFineValue(omrsRelationOfContact.name.name) == true) {
@@ -896,91 +994,38 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   }
 
   //End of UUID retrieving
-  
-  
-  //Retrieving the matching value of the concept from DHIS2 for each dropdown
-  //Biginning of the retrieving
-  utils.getDhis2DropdownValue(utils.getDHIS2RecencyAssayResult(omrsRecencyAssayResult), function (result) {
-    patientRecencyAssayResultValue = result;
-    utils.getDhis2DropdownValue(utils.getDHIS2RelationOfContact(omrsRelationOfContact), function (result) {
-      patientRelationOfContactValue = result;
-      utils.getDhis2DropdownValue(utils.getDHIS2ContactHivStatus(omrsContactHivStatus), function (result) {
-        patientContactHivStatusValue = result;
-        utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsRiskOfViolence), function (result) {
-          patientRiskOfViolenceValue = result;
-          utils.getDhis2DropdownValue(utils.getDHIS2PlannedReferenceType(omrsPlannedReferenceType), function (result) {
-            patientPlannedReferenceTypeValue = result;
-            utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactInvited), function (result) {
-              patientContactInvitedValue = result;
-              utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactReceived), function (result) {
-                patientContactReceivedValue = result;
-                utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotReceived(omrsReasonContactNotReceived), function (result) {
-                  patientReasonContactNotReceivedValue = result;
-                  utils.getDhis2DropdownValue(utils.getDHIS2ContactNotifier(omrsContactNotifier), function (result) {
-                    patientContactNotifierValue = result;
-                    utils.getDhis2DropdownValue(utils.getDHIS2NotificationApproach(omrsNotificationApproach), function (result) {
-                      patientNotificationApproachValue = result;
-                      utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactTested), function (result) {
-                        patientContactTestedValue = result;
-                        utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotTested(omrsReasonContactNotTested), function (result) {
-                          patientReasonContactNotTestedValue = result;
-                          utils.getDhis2DropdownValue(utils.getDHIS2ContactHivResult(omrsContactHivResult), function (result) {
-                            patientContactHivResultValue = result;
-                            utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
-                              patientUntestedContactGivenTestKitValue = result;
-                              utils.getDhis2DropdownValue(utils.getDHIS2ContactGender(omrsContactGender), function (result) {
-                                patientContactGenderValue = result;
-  //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
-                              
-                              //1- sending createNewEventStageInfoRecencyContact
-                              //DHIS2 Json payload updating before pushing
-                              var dhsi2RecencyStructure = {
-                                "program": "CYyICYiO5zo",
-                                "orgUnit": organizationUnit,
-                                "eventDate": eventDate,
-                                "status": "COMPLETED",
-                                "storedBy": "Savics",
-                                "programStage": "r45yv7rwDEO",
-                                "trackedEntityInstance": trackedEntityInstanceId,
-                                "enrollment": enrollmentId,
-                                "dataValues": [
-                                  {
-                                    "dataElement": "SNcELOKJCTs",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "K4l00GKVInN",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "W58gazENRqS",
-                                    "value": patientRecencyAssayResultValue
-                                  },
-                                  {
-                                    "dataElement": "xHo7COhyMKM",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "KX4MrpcRuAb",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "GyqLOJRotuL",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "FsbargPR5hR",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "buRJTweOy6h",
-                                    "value": ""
-                                  }
-                                ]
-                              }
 
+  utils.getDhis2DropdownValue(utils.getDHIS2RelationOfContact(omrsRelationOfContact), function (result) {
+    patientRelationOfContactValue = result;
+    utils.getDhis2DropdownValue(utils.getDHIS2ContactHivStatus(omrsContactHivStatus), function (result) {
+      patientContactHivStatusValue = result;
+      utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsRiskOfViolence), function (result) {
+        patientRiskOfViolenceValue = result;
+        utils.getDhis2DropdownValue(utils.getDHIS2PlannedReferenceType(omrsPlannedReferenceType), function (result) {
+          patientPlannedReferenceTypeValue = result;
+          utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactInvited), function (result) {
+            patientContactInvitedValue = result;
+            utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactReceived), function (result) {
+              patientContactReceivedValue = result;
+              utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotReceived(omrsReasonContactNotReceived), function (result) {
+                patientReasonContactNotReceivedValue = result;
+                utils.getDhis2DropdownValue(utils.getDHIS2ContactNotifier(omrsContactNotifier), function (result) {
+                  patientContactNotifierValue = result;
+                  utils.getDhis2DropdownValue(utils.getDHIS2NotificationApproach(omrsNotificationApproach), function (result) {
+                    patientNotificationApproachValue = result;
+                    utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactTested), function (result) {
+                      patientContactTestedValue = result;
+                      utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotTested(omrsReasonContactNotTested), function (result) {
+                        patientReasonContactNotTestedValue = result;
+                        utils.getDhis2DropdownValue(utils.getDHIS2ContactHivResult(omrsContactHivResult), function (result) {
+                          patientContactHivResultValue = result;
+                          utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
+                            patientUntestedContactGivenTestKitValue = result;
+                            utils.getDhis2DropdownValue(utils.getDHIS2ContactGender(omrsContactGender), function (result) {
+                              patientContactGenderValue = result;
+//End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
 
-                              //2- sending createNewEventStageInfoContacts
+                              //1- sending createNewEventStageInfoContacts
                               //DHIS2 Json payload updating before pushing
                               var dhsi2ContactStructure =
                               {
@@ -1025,7 +1070,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                               }
 
 
-                              //3- sending createNewEventStageResultContactNotif
+                              //2- sending createNewEventStageResultContactNotif
                               //DHIS2 Json payload updating before pushing
                               var dhsi2NotifStructure =
                               {
@@ -1106,43 +1151,29 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                               }
 
 
-                              winston.info('Adding recency contact information ...');
-                              
-                              //Beginning of Data pushing
-                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyStructure, 1, formMapping.form1MappingBooleanTable, function (error, result) {
+                              winston.info('Now, adding contacts information...');
+                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
                                 if (error) {
-                                  winston.error('An error occured when trying to add a recency contact information ', error);
-                                  callback('An error occured when trying to add a recency contact information');
+                                  winston.error('An error occured when trying to add a contacts information ', error);
+                                  callback('An error occured when trying to add a contacts information ');
                                 } else {
-                                  winston.info('Recency contact information added with success ', result);
-                                  callback(null, 'Recency contact information added with success');
+                                    winston.info('Contacts information added with success ', result);
 
-
-                                  winston.info('Now, adding contacts information...');
-                                  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
-                                    if (error) {
-                                      winston.error('An error occured when trying to add a contacts information ', error);
-                                      callback('An error occured when trying to add a contacts information ');
-                                    } else {
-                                      winston.info('Contacts information added with success ', result);
-
-                                      winston.info('Now, adding results of contacts notifications...');
-                                      formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
-                                        if (error) {
-                                          winston.error('An error occured when trying to add a results of contacts notifications', error);
-                                          callback('An error occured when trying to add a results of contacts notifications');
-                                        } else {
-                                          winston.info('Results of contacts notifications added with success', result);
-                                          callback(null, 'Results of contacts notifications added with success');
-                                        }
-                                      })
-                                    }
-                                  })
+                                    winston.info('Now, adding results of contacts notifications...');
+                                    formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
+                                      if (error) {
+                                        winston.error('An error occured when trying to add a results of contacts notifications', error);
+                                        callback('An error occured when trying to add a results of contacts notifications');
+                                      } else {
+                                        winston.info('Results of contacts notifications added with success', result);
+                                        callback(null, 'Results of contacts notifications added with success');
+                                      }
+                                    })
+                                  }
                                 }
-                              });
-                              //End of data pushing
+                              );
 
-                              });
+
                             });
                           });
                         });
@@ -1153,14 +1184,12 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
               });
             });
           });
-        });  
-      });
+        });
+      });  
     });
   });
-  
-
 };
-// End of the CASE BASE SURVEILLANCE
+//End of the CBS contact information Form
 
 
 // Beginning of the ENROLLEMENT INFORMATION
