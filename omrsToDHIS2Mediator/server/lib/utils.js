@@ -1022,7 +1022,7 @@ exports.getDhis2District = function (value, callback) {
 exports.getDHIS2PatientAddress = function(value, callback){
   
   if (exports.isFineValue(value) == true) {
-    var toReturn = null;
+    /* var toReturn = null;
     var options = {
       url: apiConf.api.dhis2.url + 'api/organisationUnits.json?filter=displayName:eq:' +  value + '&fields=path',
       headers: {
@@ -1045,7 +1045,9 @@ exports.getDHIS2PatientAddress = function(value, callback){
           callback("");
         }
       }
-    });
+    }); */
+
+    callback("");
 
   } else {
     callback("");
