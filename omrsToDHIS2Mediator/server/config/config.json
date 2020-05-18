@@ -4,7 +4,7 @@
     "password": "0000",
     "apiURL": "https://openhim-core:8080",
     "trustSelfSigned": "true",
-    "urlPattern": "/report/",
+    "urlPattern": "/context/",
     "dhis2": {
       "url": "http://Ip-address:8082",
       "user": {
