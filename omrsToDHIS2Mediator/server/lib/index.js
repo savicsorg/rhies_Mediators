@@ -140,6 +140,16 @@ function setupApp() {
                         })
                       }
 
+                      if (fields.encounter.form.display.trim().toUpperCase() == apiConf.cbsContactForm.trim().toUpperCase()) {
+                        addCbsContactInformation(fields, organizationUnit, trackedEntityInstanceId, enrollmentId, function (error, resp) {
+                          if (error) {
+                            reportEndOfProcess(req, res, error, 500, 'error while adding ' + fields.encounter.form.display.trim());
+                          } else {
+                            reportEndOfProcess(req, res, null, 200, fields.encounter.form.display.trim() + ' added with success');
+                          }
+                        })
+                      }
+
                     } else {
                       reportEndOfProcess(req, res, " ", 500, 'It is not possible to get the incoming form with the data received from OpenMRS');
                     }
@@ -579,8 +589,8 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
         "trackedEntityInstance": trackedEntityInstanceId,
         "orgUnit": organizationUnit,
         "program": "CYyICYiO5zo",
-        "enrollmentDate": "1900-01-01",
-        "incidentDate": "1900-01-01"
+        "enrollmentDate": "2000-01-01",
+        "incidentDate": "2000-01-01"
       }
 
       if (utils.isFineValue(resp) == true) {
@@ -763,6 +773,103 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
 var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //Declaration of all the variables for DHIS2 dropdown
   var patientRecencyAssayResultValue = "";
+ 
+  //Reporting date in DHIS2 must be the encounterDate
+  var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
+ 
+  //Retrieve the UUID for each dropdown concept from OpenMRS
+  //Begining of UUID retrieving 
+  var omrsRecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "b4b0e241-e41a-4d46-89dd-e531cf6d8202");
+  if (utils.isFineValue(omrsRecencyAssayResult) == true && utils.isFineValue(omrsRecencyAssayResult.name) == true && utils.isFineValue(omrsRecencyAssayResult.name.name) == true) {
+    omrsRecencyAssayResult = omrsRecencyAssayResult.uuid;
+  } else {
+    omrsRecencyAssayResult = "";
+  }
+
+  
+  
+  //Retrieving the matching value of the concept from DHIS2 for each dropdown
+  //Biginning of the retrieving
+  utils.getDhis2DropdownValue(utils.getDHIS2RecencyAssayResult(omrsRecencyAssayResult), function (result) {
+    patientRecencyAssayResultValue = result;
+    
+  //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
+                              
+                              //1- sending createNewEventStageInfoRecencyContact
+                              //DHIS2 Json payload updating before pushing
+                              var dhsi2RecencyStructure = {
+                                "program": "CYyICYiO5zo",
+                                "orgUnit": organizationUnit,
+                                "eventDate": eventDate,
+                                "status": "COMPLETED",
+                                "storedBy": "Savics",
+                                "programStage": "r45yv7rwDEO",
+                                "trackedEntityInstance": trackedEntityInstanceId,
+                                "enrollment": enrollmentId,
+                                "dataValues": [
+                                  {
+                                    "dataElement": "SNcELOKJCTs",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "K4l00GKVInN",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "W58gazENRqS",
+                                    "value": patientRecencyAssayResultValue
+                                  },
+                                  {
+                                    "dataElement": "xHo7COhyMKM",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "KX4MrpcRuAb",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "GyqLOJRotuL",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "FsbargPR5hR",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "buRJTweOy6h",
+                                    "value": ""
+                                  }
+                                ]
+                              }
+
+
+                              winston.info('Adding recency contact information ...');
+                              
+                              //Beginning of Data pushing
+                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyStructure, 1, formMapping.form1MappingBooleanTable, function (error, result) {
+                                if (error) {
+                                  winston.error('An error occured when trying to add a recency test information ', error);
+                                  callback('An error occured when trying to add a recency test information');
+                                } else {
+                                  winston.info('Recency test information added with success ', result);
+                                  callback(null, 'Recency test information added with success');
+                                  
+                                }
+                              });
+                              //End of data pushing
+
+                             
+  });
+  
+
+};
+// End of the CASE BASE SURVEILLANCE
+
+
+// Beginning of the CBS contact information Form
+var addCbsContactInformation = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
+  
+  //Declaration of all the variables for DHIS2 dropdown
   var patientRelationOfContactValue = "";
   var patientContactHivStatusValue = "";
   var patientRiskOfViolenceValue = "";
@@ -787,15 +894,6 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   var patientAgeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "2ecf52c4-f732-46a8-9f10-45a04ca70f49"));
   var patientContactHivPositifTrackedNumberValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8");
   var patientContactObservationsValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c");
-
-  //Retrieve the UUID for each dropdown concept from OpenMRS
-  //Begining of UUID retrieving 
-  var omrsRecencyAssayResult = utils.getConceptValue(incomingEncounter.encounter.obs, "b4b0e241-e41a-4d46-89dd-e531cf6d8202");
-  if (utils.isFineValue(omrsRecencyAssayResult) == true && utils.isFineValue(omrsRecencyAssayResult.name) == true && utils.isFineValue(omrsRecencyAssayResult.name.name) == true) {
-    omrsRecencyAssayResult = omrsRecencyAssayResult.uuid;
-  } else {
-    omrsRecencyAssayResult = "";
-  }
 
   var omrsRelationOfContact = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "d4a45c62-5d82-43a2-856d-6c75db9fe842");
   if (utils.isFineValue(omrsRelationOfContact) == true && utils.isFineValue(omrsRelationOfContact.name) == true && utils.isFineValue(omrsRelationOfContact.name.name) == true) {
@@ -896,91 +994,38 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   }
 
   //End of UUID retrieving
-  
-  
-  //Retrieving the matching value of the concept from DHIS2 for each dropdown
-  //Biginning of the retrieving
-  utils.getDhis2DropdownValue(utils.getDHIS2RecencyAssayResult(omrsRecencyAssayResult), function (result) {
-    patientRecencyAssayResultValue = result;
-    utils.getDhis2DropdownValue(utils.getDHIS2RelationOfContact(omrsRelationOfContact), function (result) {
-      patientRelationOfContactValue = result;
-      utils.getDhis2DropdownValue(utils.getDHIS2ContactHivStatus(omrsContactHivStatus), function (result) {
-        patientContactHivStatusValue = result;
-        utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsRiskOfViolence), function (result) {
-          patientRiskOfViolenceValue = result;
-          utils.getDhis2DropdownValue(utils.getDHIS2PlannedReferenceType(omrsPlannedReferenceType), function (result) {
-            patientPlannedReferenceTypeValue = result;
-            utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactInvited), function (result) {
-              patientContactInvitedValue = result;
-              utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactReceived), function (result) {
-                patientContactReceivedValue = result;
-                utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotReceived(omrsReasonContactNotReceived), function (result) {
-                  patientReasonContactNotReceivedValue = result;
-                  utils.getDhis2DropdownValue(utils.getDHIS2ContactNotifier(omrsContactNotifier), function (result) {
-                    patientContactNotifierValue = result;
-                    utils.getDhis2DropdownValue(utils.getDHIS2NotificationApproach(omrsNotificationApproach), function (result) {
-                      patientNotificationApproachValue = result;
-                      utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactTested), function (result) {
-                        patientContactTestedValue = result;
-                        utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotTested(omrsReasonContactNotTested), function (result) {
-                          patientReasonContactNotTestedValue = result;
-                          utils.getDhis2DropdownValue(utils.getDHIS2ContactHivResult(omrsContactHivResult), function (result) {
-                            patientContactHivResultValue = result;
-                            utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
-                              patientUntestedContactGivenTestKitValue = result;
-                              utils.getDhis2DropdownValue(utils.getDHIS2ContactGender(omrsContactGender), function (result) {
-                                patientContactGenderValue = result;
-  //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
-                              
-                              //1- sending createNewEventStageInfoRecencyContact
-                              //DHIS2 Json payload updating before pushing
-                              var dhsi2RecencyStructure = {
-                                "program": "CYyICYiO5zo",
-                                "orgUnit": organizationUnit,
-                                "eventDate": eventDate,
-                                "status": "COMPLETED",
-                                "storedBy": "Savics",
-                                "programStage": "r45yv7rwDEO",
-                                "trackedEntityInstance": trackedEntityInstanceId,
-                                "enrollment": enrollmentId,
-                                "dataValues": [
-                                  {
-                                    "dataElement": "SNcELOKJCTs",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "K4l00GKVInN",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "W58gazENRqS",
-                                    "value": patientRecencyAssayResultValue
-                                  },
-                                  {
-                                    "dataElement": "xHo7COhyMKM",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "KX4MrpcRuAb",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "GyqLOJRotuL",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "FsbargPR5hR",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "buRJTweOy6h",
-                                    "value": ""
-                                  }
-                                ]
-                              }
 
+  utils.getDhis2DropdownValue(utils.getDHIS2RelationOfContact(omrsRelationOfContact), function (result) {
+    patientRelationOfContactValue = result;
+    utils.getDhis2DropdownValue(utils.getDHIS2ContactHivStatus(omrsContactHivStatus), function (result) {
+      patientContactHivStatusValue = result;
+      utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsRiskOfViolence), function (result) {
+        patientRiskOfViolenceValue = result;
+        utils.getDhis2DropdownValue(utils.getDHIS2PlannedReferenceType(omrsPlannedReferenceType), function (result) {
+          patientPlannedReferenceTypeValue = result;
+          utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactInvited), function (result) {
+            patientContactInvitedValue = result;
+            utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactReceived), function (result) {
+              patientContactReceivedValue = result;
+              utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotReceived(omrsReasonContactNotReceived), function (result) {
+                patientReasonContactNotReceivedValue = result;
+                utils.getDhis2DropdownValue(utils.getDHIS2ContactNotifier(omrsContactNotifier), function (result) {
+                  patientContactNotifierValue = result;
+                  utils.getDhis2DropdownValue(utils.getDHIS2NotificationApproach(omrsNotificationApproach), function (result) {
+                    patientNotificationApproachValue = result;
+                    utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactTested), function (result) {
+                      patientContactTestedValue = result;
+                      utils.getDhis2DropdownValue(utils.getDHIS2ReasonContactNotTested(omrsReasonContactNotTested), function (result) {
+                        patientReasonContactNotTestedValue = result;
+                        utils.getDhis2DropdownValue(utils.getDHIS2ContactHivResult(omrsContactHivResult), function (result) {
+                          patientContactHivResultValue = result;
+                          utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsUntestedContactGivenTestKit), function (result) {
+                            patientUntestedContactGivenTestKitValue = result;
+                            utils.getDhis2DropdownValue(utils.getDHIS2ContactGender(omrsContactGender), function (result) {
+                              patientContactGenderValue = result;
+//End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
 
-                              //2- sending createNewEventStageInfoContacts
+                              //1- sending createNewEventStageInfoContacts
                               //DHIS2 Json payload updating before pushing
                               var dhsi2ContactStructure =
                               {
@@ -1025,7 +1070,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                               }
 
 
-                              //3- sending createNewEventStageResultContactNotif
+                              //2- sending createNewEventStageResultContactNotif
                               //DHIS2 Json payload updating before pushing
                               var dhsi2NotifStructure =
                               {
@@ -1106,43 +1151,29 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                               }
 
 
-                              winston.info('Adding recency contact information ...');
-                              
-                              //Beginning of Data pushing
-                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2RecencyStructure, 1, formMapping.form1MappingBooleanTable, function (error, result) {
+                              winston.info('Now, adding contacts information...');
+                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
                                 if (error) {
-                                  winston.error('An error occured when trying to add a recency contact information ', error);
-                                  callback('An error occured when trying to add a recency contact information');
+                                  winston.error('An error occured when trying to add a contacts information ', error);
+                                  callback('An error occured when trying to add a contacts information ');
                                 } else {
-                                  winston.info('Recency contact information added with success ', result);
-                                  callback(null, 'Recency contact information added with success');
+                                    winston.info('Contacts information added with success ', result);
 
-
-                                  winston.info('Now, adding contacts information...');
-                                  formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
-                                    if (error) {
-                                      winston.error('An error occured when trying to add a contacts information ', error);
-                                      callback('An error occured when trying to add a contacts information ');
-                                    } else {
-                                      winston.info('Contacts information added with success ', result);
-
-                                      winston.info('Now, adding results of contacts notifications...');
-                                      formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
-                                        if (error) {
-                                          winston.error('An error occured when trying to add a results of contacts notifications', error);
-                                          callback('An error occured when trying to add a results of contacts notifications');
-                                        } else {
-                                          winston.info('Results of contacts notifications added with success', result);
-                                          callback(null, 'Results of contacts notifications added with success');
-                                        }
-                                      })
-                                    }
-                                  })
+                                    winston.info('Now, adding results of contacts notifications...');
+                                    formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
+                                      if (error) {
+                                        winston.error('An error occured when trying to add a results of contacts notifications', error);
+                                        callback('An error occured when trying to add a results of contacts notifications');
+                                      } else {
+                                        winston.info('Results of contacts notifications added with success', result);
+                                        callback(null, 'Results of contacts notifications added with success');
+                                      }
+                                    })
+                                  }
                                 }
-                              });
-                              //End of data pushing
+                              );
 
-                              });
+
                             });
                           });
                         });
@@ -1153,14 +1184,12 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
               });
             });
           });
-        });  
-      });
+        });
+      });  
     });
   });
-  
-
 };
-// End of the CASE BASE SURVEILLANCE
+//End of the CBS contact information Form
 
 
 // Beginning of the ENROLLEMENT INFORMATION
@@ -1172,7 +1201,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientMaritalStatus = "";
   var patientOccupation = ""; // Employment status
   var patientAddressObject = "";
-  var patientProvince = "";
+  var patientSecteur = "";
   var patientDistrict = "";
   var patientVillage = "";
   var patientCellule = "";
@@ -1201,6 +1230,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   var patientInitiatedOnTPTValue = "";
   var patientReasonNotInitOnTPTValue = "";
   var patientStableValue = "";
+  var patientIsPregnantValue = "";
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -1229,12 +1259,22 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
     omrsResidencyType = "";
   }
   
-  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs, "3cd97286-26fe-102b-80cb-0017a47871b2");
-  if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsOccupationType.name) == true && utils.isFineValue(omrsOccupationType.name.name) == true) {
+  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
     omrsOccupationType = omrsOccupationType.uuid;
   } else {
     omrsOccupationType = "";
   }
+
+
+  var omrsIsPregnant = utils.getConceptValue(incomingEncounter.encounter.obs, "be075303-3a46-4b89-8b8c-912acb2a75e7");
+  if (utils.isFineValue(omrsIsPregnant) == true && utils.isFineValue(omrsIsPregnant.name) == true && utils.isFineValue(omrsIsPregnant.name.name) == true) {
+    omrsIsPregnant = omrsIsPregnant.uuid;
+  } else {
+    omrsIsPregnant = "";
+  }
+
+
 
   var omrsVASWCLast12m = utils.getConceptValue(incomingEncounter.encounter.obs, "788e9f4c-5ba4-4a42-9974-83ea7128f0f8");
   if (utils.isFineValue(omrsVASWCLast12m) == true && utils.isFineValue(omrsVASWCLast12m.name) == true && utils.isFineValue(omrsVASWCLast12m.name.name) == true) {
@@ -1378,15 +1418,13 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   patientCellule = patientAddressObject.cellule;
   patientVillage = patientAddressObject.village;
   
-  //getting province from DHIS2
-  utils.getDhis2District(patientAddressObject.dhis2ProvinceId, function (result) {
-    patientProvince = result;
-    console.log("province to push to dhis2==============>>>", result)
-
-    //getting distict from DHIS2
-    utils.getDhis2District(patientAddressObject.dhis2DistrictId, function (result) {
-      patientDistrict = result;
-      console.log("district to push to dhis2==============>>>", result)
+  //getting patient secteur and district from DHIS2
+    var patientDetails = incomingEncounter.patient.person.preferredAddress.cityVillage;
+    console.log("SECETEUR NAME: " + patientDetails);
+    utils.getDHIS2PatientAddress(patientDetails,function(result){
+      console.log("VALUE RESULT : " + result);
+      patientSecteur = result.split('/')[5];
+      patientDistrict = result.split('/')[3];
 
       //getting gender from DHIS2
       utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
@@ -1399,6 +1437,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
         }
 
         //Beginning of the retrieving of all the dropdown value from DHIS2
+        patientIsPregnantValue = utils.getDHIS2YesNoUnknown(omrsIsPregnant);
         patientConselledOnLinkageValue = utils.getDHIS2Boolean(omrsConselledOnLinkage);
         patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
         patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
@@ -1474,6 +1513,10 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                     "value": patientVisitDate
                                                   },
                                                   {
+                                                    "dataElement": "GIC3Oq7ruS0",
+                                                    "value": ""
+                                                  },
+                                                  {
                                                     "dataElement": "I809QdRlgCb",
                                                     "value": ""
                                                   },
@@ -1499,7 +1542,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   },
                                                   {
                                                     "dataElement": "qsCPZIJLpYo",
-                                                    "value": ""
+                                                    "value": patientIsPregnantValue
                                                   },
                                                   {
                                                     "dataElement": "ZvH6DY75uR1",
@@ -1515,7 +1558,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                   },
                                                   {
                                                     "dataElement": "UaCDJMTQRLz",
-                                                    "value": ""
+                                                    "value": patientSecteur
                                                   },
                                                   {
                                                     "dataElement": "kPkjR4qEhhn",
@@ -1753,7 +1796,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
         });
       });
     });
-  });
+
 };
 //End of the ENROLLEMENT INFORMATION
 
@@ -1775,6 +1818,11 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   var patientAttendedEnhancedCounsellingValue = "";
   var patientTPTTherapyInProgressValue = "";
   var patientCompletedEnhancedCounsellingValue = "";
+  var patientAddressObject = "";
+  var patientSecteur = "";
+  var patientDistrict = "";
+  var patientVillage = "";
+  var patientCellule = "";
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -1877,6 +1925,13 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   }
   // End of UUID retrieving
 
+
+  patientAddressObject = utils.getdhis2ProvinceDistrictIds(incomingEncounter.patient);
+
+  //getting patient Cellule and Village
+  patientCellule = patientAddressObject.cellule;
+  patientVillage = patientAddressObject.village;
+
   //Retrieving all the dropdown value from DHIS2
     //Boolean retrieving
   patientDemographicChangeValue = utils.getDHIS2Boolean(omrsDemographicChange);
@@ -1919,11 +1974,19 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "txsxKp2l6y9",
-                      "value": ""
+                      "value": eventDate
                     },
                     {
                       "dataElement": "oLqMrGMI4Uf",
-                      "value": ""
+                      "value": eventDate
+                    },
+                    {
+                      "dataElement":"Vrm4tEU28YG",
+                      "value": patientVillage
+                    },
+                    {
+                      "dataElement": "fEX1sjE7mEm",
+                      "value": patientCellule
                     },
                     {
                       "dataElement": "I809QdRlgCb",
@@ -2107,7 +2170,15 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   //Declaration of all the variables for DHIS2 dropdown and patient data
   var patientVLFinalRitaInconclusiveValue = "";
   var patientVLFinalRitaRecencyResultValue = "";
-
+  var patientBirhDate = "";
+  var patientResidencyTypeValue = "";
+  var patientOccupationTypeValue = "";
+  var patientGender = "";
+  var patientMaritalStatus = "";
+  var patientOccupation = ""; // Employment status
+  var patientAddressObject = "";
+  var patientCellule = "";
+  var patientVillage = "";
 
   //Reporting date in DHIS2 must be the encounterDate
   var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
@@ -2126,231 +2197,300 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   } else {
     omrsVLFinalRitaRecencyResult = "";
   }
+
+
+  var omrsOccupationValue = utils.getConceptValue(incomingEncounter.encounter.obs, "4587542b-f1aa-47ad-8bed-75a705433950");
+  if (utils.isFineValue(omrsOccupationValue) == true && utils.isFineValue(omrsOccupationValue.name) == true && utils.isFineValue(omrsOccupationValue.name.name) == true) {
+    omrsOccupationValue = omrsOccupationValue.uuid;
+  } else {
+    omrsOccupationValue = "";
+  }
+
+
+  var omrsResidencyType = utils.getConceptValue(incomingEncounter.encounter.obs, "59525e15-fc5e-4bc4-9e29-87954348c15f");
+  if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsResidencyType.name) == true && utils.isFineValue(omrsResidencyType.name.name) == true) {
+    omrsResidencyType = omrsResidencyType.uuid;
+  } else {
+    omrsResidencyType = "";
+  }
+  
+  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
+    omrsOccupationType = omrsOccupationType.uuid;
+  } else {
+    omrsOccupationType = "";
+  }
+
+
+
+  if (utils.isFineValue(incomingEncounter.patient.person.birthdate) == true) {
+    patientBirhDate = utils.convertToDate(incomingEncounter.patient.person.birthdate);
+  }
+
+  patientAddressObject = utils.getdhis2ProvinceDistrictIds(incomingEncounter.patient);
+
+  //getting patient Cellule and Village
+  patientCellule = patientAddressObject.cellule;
+  patientVillage = patientAddressObject.village;
   
 
   utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsVLFinalRitaInconclusive), function (result) {
     patientVLFinalRitaInconclusiveValue = result;
     utils.getDhis2DropdownValue(utils.getDHIS2FinalRitaRecencyResult(omrsVLFinalRitaRecencyResult), function (result) {
       patientVLFinalRitaRecencyResultValue = result;
-      var patientTestDone = (utils.isFineValue(patientVLFinalRitaRecencyResultValue))? "yes":"";
+      utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
+        patientOccupation = result;
+        var patientTestDone = (utils.isFineValue(patientVLFinalRitaRecencyResultValue))? "yes":"";
+        utils.getDhis2DropdownValue(utils.getDHIS2ResidencyType(omrsResidencyType), function (result) {
+          patientResidencyTypeValue = result;
+          utils.getDhis2DropdownValue(utils.getDHIS2OccupationType(omrsOccupationType), function (result) {
+            patientOccupationTypeValue = result;
+            utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
+              patientGender = result;
+              utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
+                patientMaritalStatus = result;
+              
+                var dhis2EnrollementStructureVL =  {
+                  "program": "CYyICYiO5zo",
+                  "orgUnit": organizationUnit,
+                  "eventDate": eventDate,
+                  "status": "COMPLETED",
+                  "storedBy": "Savics",
+                  "programStage": "pBAeqPjnhdF",
+                  "trackedEntityInstance": trackedEntityInstanceId,
+                  "enrollment": enrollmentId,
+                  "dataValues": [
+                    {
+                      "dataElement": "pbeBAIly2GT",
+                      "value": organizationUnit
+                    },
+                    {
+                      "dataElement": "txsxKp2l6y9",
+                      "value": eventDate
+                    },
+                    {
+                      "dataElement": "oLqMrGMI4Uf",
+                      "value": eventDate
+                    },
+                    {
+                      "dataElement": "GwCiJLY0of4",
+                      "value": patientBirhDate
+                    },
+                    {
+                      "dataElement": "c4KsTiEImGx",
+                      "value": patientGender
+                    },
+                    {
+                      "dataElement": "PZo2sP0TOb6",
+                      "value": patientMaritalStatus
+                    },
+                    {
+                      "dataElement": "ZvH6DY75uR1",
+                      "value": patientResidencyTypeValue
+                    },
+                    {
+                      "dataElement": "NrWXvZg3WtW",
+                      "value": patientOccupation
+                    },
+                    {
+                      "dataElement": "I809QdRlgCb",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "tnMNaBmQaIy",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "wXcnNSYryUd",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "OCZt4UJitnh",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "yu67Iiw64UQ",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "p5U0vUS0Q3V",
+                      "value": patientVillage
+                    },
+                    {
+                      "dataElement": "I79uRgVEyUc",
+                      "value": patientCellule
+                    },
+                    {
+                      "dataElement": "UaCDJMTQRLz",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "kPkjR4qEhhn",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "OTAM6B4xZwf",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "Cgt39EInKQV",
+                      "value": patientOccupationTypeValue
+                    },
+                    {
+                      "dataElement": "KrYJW9kvJS2",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "Nld1zMZwPxK",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "jYMNto3ELj5",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "jmwJSKQthb7",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "xMLGFpVb0Kh",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "KRTWX8CatfN",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "Nxu3IZxrngL",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "gZLYfulH1cx",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "dlbRyDDWVdz",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "MWnDK640C17",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "MG6I5RT8YsE",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "LovSZ5zd8YL",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "ePONK5dlCAl",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "G3dUs7PuDqx",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "OKemd50jbHG",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "lrM4jhiDogd",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "kmA8X0Qwjor",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "L9lcjEkxHBv",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "eCbwnVkQ8Rt",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "OO8wNkgpAwK",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "BMf4geBAMFU",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "LpDBQwhUZ4U",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "yH3otrjN0qZ",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "EBAuC7pMu4O",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "nQGHwHA3ayC",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "qBYsHDuUBIv",
+                      "value": patientVLFinalRitaRecencyResultValue
+                    },
+                    {
+                      "dataElement": "Tgt3yKYd2oD",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "nMJKcTFHGj0",
+                      "value": patientVLFinalRitaInconclusiveValue
+                    },
+                    {
+                      "dataElement": "Ba8VCAO9Nqi",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "yu2bxd3xVIg",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "ptZMCKSxvU8",
+                      "value": ""
+                    },
+                    {
+                      "dataElement": "U8zMohYMqHi",
+                      "value": eventDate
+                    },
+                    {
+                      "dataElement": "ccYYcYf78sz",
+                      "value": patientTestDone
+                    }
 
-      var dhis2EnrollementStructureVL =  {
-        "program": "CYyICYiO5zo",
-        "orgUnit": organizationUnit,
-        "eventDate": eventDate,
-        "status": "COMPLETED",
-        "storedBy": "Savics",
-        "programStage": "pBAeqPjnhdF",
-        "trackedEntityInstance": trackedEntityInstanceId,
-        "enrollment": enrollmentId,
-        "dataValues": [
-          {
-            "dataElement": "pbeBAIly2GT",
-            "value": organizationUnit
-          },
-          {
-            "dataElement": "txsxKp2l6y9",
-            "value": ""
-          },
-          {
-            "dataElement": "oLqMrGMI4Uf",
-            "value": ""
-          },
-          {
-            "dataElement": "I809QdRlgCb",
-            "value": ""
-          },
-          {
-            "dataElement": "tnMNaBmQaIy",
-            "value": ""
-          },
-          {
-            "dataElement": "wXcnNSYryUd",
-            "value": ""
-          },
-          {
-            "dataElement": "OCZt4UJitnh",
-            "value": ""
-          },
-          {
-            "dataElement": "yu67Iiw64UQ",
-            "value": ""
-          },
-          {
-            "dataElement": "p5U0vUS0Q3V",
-            "value": ""
-          },
-          {
-            "dataElement": "I79uRgVEyUc",
-            "value": ""
-          },
-          {
-            "dataElement": "UaCDJMTQRLz",
-            "value": ""
-          },
-          {
-            "dataElement": "kPkjR4qEhhn",
-            "value": ""
-          },
-          {
-            "dataElement": "OTAM6B4xZwf",
-            "value": ""
-          },
-          {
-            "dataElement": "Cgt39EInKQV",
-            "value": ""
-          },
-          {
-            "dataElement": "KrYJW9kvJS2",
-            "value": ""
-          },
-          {
-            "dataElement": "Nld1zMZwPxK",
-            "value": ""
-          },
-          {
-            "dataElement": "jYMNto3ELj5",
-            "value": ""
-          },
-          {
-            "dataElement": "jmwJSKQthb7",
-            "value": ""
-          },
-          {
-            "dataElement": "xMLGFpVb0Kh",
-            "value": ""
-          },
-          {
-            "dataElement": "KRTWX8CatfN",
-            "value": ""
-          },
-          {
-            "dataElement": "Nxu3IZxrngL",
-            "value": ""
-          },
-          {
-            "dataElement": "gZLYfulH1cx",
-            "value": ""
-          },
-          {
-            "dataElement": "dlbRyDDWVdz",
-            "value": ""
-          },
-          {
-            "dataElement": "MWnDK640C17",
-            "value": ""
-          },
-          {
-            "dataElement": "MG6I5RT8YsE",
-            "value": ""
-          },
-          {
-            "dataElement": "LovSZ5zd8YL",
-            "value": ""
-          },
-          {
-            "dataElement": "ePONK5dlCAl",
-            "value": ""
-          },
-          {
-            "dataElement": "G3dUs7PuDqx",
-            "value": ""
-          },
-          {
-            "dataElement": "OKemd50jbHG",
-            "value": ""
-          },
-          {
-            "dataElement": "lrM4jhiDogd",
-            "value": ""
-          },
-          {
-            "dataElement": "kmA8X0Qwjor",
-            "value": ""
-          },
-          {
-            "dataElement": "L9lcjEkxHBv",
-            "value": ""
-          },
-          {
-            "dataElement": "eCbwnVkQ8Rt",
-            "value": ""
-          },
-          {
-            "dataElement": "OO8wNkgpAwK",
-            "value": ""
-          },
-          {
-            "dataElement": "BMf4geBAMFU",
-            "value": ""
-          },
-          {
-            "dataElement": "LpDBQwhUZ4U",
-            "value": ""
-          },
-          {
-            "dataElement": "yH3otrjN0qZ",
-            "value": ""
-          },
-          {
-            "dataElement": "EBAuC7pMu4O",
-            "value": ""
-          },
-          {
-            "dataElement": "nQGHwHA3ayC",
-            "value": ""
-          },
-          {
-            "dataElement": "qBYsHDuUBIv",
-            "value": patientVLFinalRitaRecencyResultValue
-          },
-          {
-            "dataElement": "Tgt3yKYd2oD",
-            "value": ""
-          },
-          {
-            "dataElement": "nMJKcTFHGj0",
-            "value": patientVLFinalRitaInconclusiveValue
-          },
-          {
-            "dataElement": "Ba8VCAO9Nqi",
-            "value": ""
-          },
-          {
-            "dataElement": "yu2bxd3xVIg",
-            "value": ""
-          },
-          {
-            "dataElement": "ptZMCKSxvU8",
-            "value": ""
-          },
-          {
-            "dataElement": "U8zMohYMqHi",
-            "value": eventDate
-          },
-          {
-            "dataElement": "ccYYcYf78sz",
-            "value": patientTestDone
-          }
-
-        ]
-      }
+                  ]
+                }
 
 
-      //Beginning data pushing form 4
-      formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2EnrollementStructureVL, 6, null, function (error, result) {
-        if (error) {
-          winston.error('An error occured when trying to add a recency VL information', error);
-          callback('An error occured when trying to add a recency VL information');
-        } else {
-          winston.info('Recency VL information added with success', result);
-          callback(null, 'Recency VL information added with success');
-        }
+                //Beginning data pushing form 4
+                formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2EnrollementStructureVL, 6, null, function (error, result) {
+                  if (error) {
+                    winston.error('An error occured when trying to add a recency VL information', error);
+                    callback('An error occured when trying to add a recency VL information');
+                  } else {
+                    winston.info('Recency VL information added with success', result);
+                    callback(null, 'Recency VL information added with success');
+                  }
+                });
+                //End data pushing form 4
+
+
+              });
+            });
+          });
+        });
       });
-      //End data pushing form 4
-
-
-
     });
   });
 };

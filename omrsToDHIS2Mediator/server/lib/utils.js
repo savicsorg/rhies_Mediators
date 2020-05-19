@@ -3,6 +3,7 @@ const URI = require('urijs');
 const _ = require('underscore');
 const moment = require('moment');
 var request = require('request');
+var deasync = require('deasync');
 var formMapping = require("../lib/formMapping");
 const apiConf = process.env.NODE_ENV === 'test' ? require('../config/test') : require('../config/config')
 
@@ -546,6 +547,22 @@ exports.getDHIS2OccupationType = function (uuid) {
 }
 
 
+exports.getOccupationTypeConcept = function(patient){
+  if (exports.isFineValue(patient.person.attributes) == true) {
+    let i = 0;
+    let y = 0;
+    let tab = patient.person.attributes;
+    for (i=0; i<tab.length; i++){
+      if(tab[i].attributeType.display == 'Main Activity'){
+        y = i;
+        break;
+      }
+    }
+    return tab[y].value;
+  }
+}
+
+
 exports.getDHIS2YesNoRefuseUnknown = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
@@ -560,6 +577,24 @@ exports.getDHIS2YesNoRefuseUnknown = function (uuid) {
         break; 
       case '3cd6fac4-26fe-102b-80cb-0017a47871b2':
         return 'oZhzCABE3Pr';
+        break;                
+      default:
+        return '';
+    }
+  } else {
+    return "";
+  }
+}
+
+
+exports.getDHIS2YesNoUnknown = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cd6f600-26fe-102b-80cb-0017a47871b2':
+        return 'Yes';
+        break;
+      case '3cd6f86c-26fe-102b-80cb-0017a47871b2':
+        return 'No';
         break;                
       default:
         return '';
@@ -942,8 +977,8 @@ exports.getdhis2ProvinceDistrictIds = function (patient) {
     return {
       "dhis2ProvinceId": FoundProvince,
       "dhis2DistrictId": FoundDistrict,
-      "village" : patient.person.preferredAddress.cityVillage,
-      "cellule" : patient.person.preferredAddress.address1
+      "village" : patient.person.preferredAddress.address1,
+      "cellule" : patient.person.preferredAddress.address3
     };
   } else {
     return {
@@ -962,13 +997,12 @@ exports.getdhis2ProvinceDistrictIds = function (patient) {
 
 exports.getDhis2District = function (value, callback) {
   var options = {
-    url: apiConf.api.dhis2.url + "/api/organisationUnits.json?filter=id:eq:" + value,
+    url: apiConf.api.dhis2.url + '/api/organisationUnits.json?filter=id:eq:' + value ,
     headers: {
       'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
       'Content-Type': 'application/json'
     }
   };
-
 
   request.get(options, function (error, response, body) {
     if (error) {
@@ -982,6 +1016,43 @@ exports.getDhis2District = function (value, callback) {
       }
     }
   });
+}
+
+
+exports.getDHIS2PatientAddress = function(value, callback){
+  
+  if (exports.isFineValue(value) == true) {
+    /* var toReturn = null;
+    var options = {
+      url: apiConf.api.dhis2.url + 'api/organisationUnits.json?filter=displayName:eq:' +  value + '&fields=path',
+      headers: {
+        'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+        'Content-Type': 'application/json'
+      }
+    };
+
+    request.get(options, function (error, response, body) {
+      if (error) {
+        console.log("Error : " + error);
+        callback("")
+      } else {
+        var resp = JSON.parse(body);
+        if (exports.isFineValue(resp) == true && exports.isFineValue(resp.organisationUnits) == true) {
+          
+          callback(resp.organisationUnits[0].path);
+          
+        } else {
+          callback("");
+        }
+      }
+    }); */
+
+    callback("");
+
+  } else {
+    callback("");
+  }
+  
 }
 
 

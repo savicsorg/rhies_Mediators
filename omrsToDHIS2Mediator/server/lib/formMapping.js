@@ -344,11 +344,11 @@ exports.pushFormToDhis2 = function (mappingTable, incomingEncounter, dhsi2Json, 
           }
 
           if (index == 2) {
-            console.log("--> HIV CASE-BASED SURVEILLANCE,partner notification: ", options.body);
+            console.log("--> HIV CASE-BASED SURVEILLANCE, informations on contact: ", options.body);
           }
 
           if (index == 3) {
-            console.log("--> HIV CASE-BASED SURVEILLANCE,recency testing: ", options.body);
+            console.log("--> HIV CASE-BASED SURVEILLANCE, notifications approach results: ", options.body);
           }
 
 
