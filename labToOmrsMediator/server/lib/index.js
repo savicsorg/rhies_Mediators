@@ -56,6 +56,27 @@ var tests = {
     }
 }
 
+function reportEndOfProcess(req, res, error, statusCode, message) {
+    res.set('Content-Type', 'application/json+openhim')
+    var responseBody = "[" + currenteLocation + "] " + message;
+    var stateLabel = "";
+    let orchestrations = [];
+
+    var headers = { 'content-type': 'application/json' }
+    if (error) {
+        stateLabel = "Failed";
+        winston.error(message, error);
+    } else {
+        stateLabel = "Successful";
+        winston.info(message);
+    }
+    var orchestrationResponse = { statusCode: statusCode, headers: headers }
+    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
+    res.send(utils.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
+}
+
+
+
 var locations = apiConf.locations;
 
 function _getTheGoodResult(results, fieldCompare, value) {
@@ -95,28 +116,7 @@ function setupApp() {
 
 
                 var transactionLocation = locations["l_" + data.facilityCode]["hfname"];
-                function reportEndOfProcess(req, res, error, statusCode, message) {
-                    res.set('Content-Type', 'application/json+openhim')
-                    var responseBody = "[" + transactionLocation + "] " + message;
-                    var stateLabel = "";
-                    let orchestrations = [];
-
-                    var headers = { 'content-type': 'application/json' }
-                    if (error) {
-                        stateLabel = "Failed";
-                        //winston.error(message, error);
-                    } else {
-                        stateLabel = "Successful";
-                        //winston.info(message);
-                    }
-
-                    var orchestrationResponse = { statusCode: statusCode, headers: headers }
-                    orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-                    res.send(utils.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
-                }
-
-
-
+                
                 console.log('New data received', data);
                 log.info('New data received', data);
 
@@ -361,7 +361,7 @@ function setupApp() {
                                                                         request.get(options, function (error, response, body) {
                                                                             if (error) {
                                                                                 log.log(error);
-                                                                                reportEndOfProcess(req, res, error, 500,error);                                                                               
+                                                                                reportEndOfProcess(req, res, error, 500, error);
                                                                             } else {
                                                                                 var recencies = JSON.parse(body).results;
                                                                                 if (recencies && recencies.length > 0) {
@@ -399,7 +399,7 @@ function setupApp() {
                                                                                         request.get(options, function (error, response, body) {
                                                                                             if (error) {
                                                                                                 log.error(error);
-                                                                                                reportEndOfProcess(req, res, error, 500,error);
+                                                                                                reportEndOfProcess(req, res, error, 500, error);
                                                                                             } else {
                                                                                                 var ritaResultConceptValue = JSON.parse(body).results;
                                                                                                 if (ritaResultConceptValue && ritaResultConceptValue.length > 0) {
@@ -417,7 +417,7 @@ function setupApp() {
                                                                                                     request.get(options, function (error, response, body) {
                                                                                                         if (error) {
                                                                                                             log.error(error);
-                                                                                                            reportEndOfProcess(req, res, error, 500,error);
+                                                                                                            reportEndOfProcess(req, res, error, 500, error);
                                                                                                         } else {
                                                                                                             var yesConceptValue = JSON.parse(body).results;
                                                                                                             if (yesConceptValue && yesConceptValue.length > 0) {
@@ -532,11 +532,11 @@ function setupApp() {
                                                                                                                             .on('done', function (err, resp) {
                                                                                                                                 if (response.statusCode == "201" || response.statusCode == "200") {
                                                                                                                                     log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID);
-                                                                                                                                    reportEndOfProcess(req, res, null, 200,"Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'." + "Sample ID: " + data.SampleID );
+                                                                                                                                    reportEndOfProcess(req, res, null, 200, "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'." + "Sample ID: " + data.SampleID);
                                                                                                                                 } else {
                                                                                                                                     log.warn("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
                                                                                                                                     log.error(response);
-                                                                                                                                    reportEndOfProcess(req, res, err, 500,"Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                                    reportEndOfProcess(req, res, err, 500, "Encounter creation aborted for " + data.SampleID + ".");
                                                                                                                                 }
 
                                                                                                                             })
@@ -552,14 +552,14 @@ function setupApp() {
                                                                                                             } else {
                                                                                                                 log.warn("Concept not found!", locations["l_" + data.facilityCode]["hfname"]);
                                                                                                                 log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                reportEndOfProcess(req, res, "Concept not found! " + locations["l_" + data.facilityCode]["hfname"], 500,"Encounter creation aborted for " + data.SampleID + ", Encounter creation aborted for " + data.SampleID + ".");
+                                                                                                                reportEndOfProcess(req, res, "Concept not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + ", Encounter creation aborted for " + data.SampleID + ".");
                                                                                                             }
                                                                                                         }
                                                                                                     });
                                                                                                 } else {
                                                                                                     log.warn("Concept not found!", locations["l_" + data.facilityCode]["hfname"]);
                                                                                                     log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                    reportEndOfProcess(req, res, "Concept not found! " + locations["l_" + data.facilityCode]["hfname"],500, "Encounter creation aborted for " + data.SampleID + "," + "Concept not found! "+ locations["l_" + data.facilityCode]["hfname"]);
+                                                                                                    reportEndOfProcess(req, res, "Concept not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + "," + "Concept not found! " + locations["l_" + data.facilityCode]["hfname"]);
                                                                                                 }
                                                                                             }
                                                                                         });
@@ -571,7 +571,7 @@ function setupApp() {
                                                                                 } else {
                                                                                     log.warn("RECENCY concept list not found!", locations["l_" + data.facilityCode]["hfname"]);
                                                                                     log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                    reportEndOfProcess(req, res, "RECENCY concept list not found! "+ locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + ", RECENCY concept list not found! " + locations["l_" + data.facilityCode]["hfname"]);
+                                                                                    reportEndOfProcess(req, res, "RECENCY concept list not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + ", RECENCY concept list not found! " + locations["l_" + data.facilityCode]["hfname"]);
                                                                                 }
                                                                             }
                                                                         });
@@ -587,14 +587,14 @@ function setupApp() {
                                                         case 'hiv_recency':
                                                             //TODO
                                                             log.info("New HIV recency result from Labware. SampleID: '" + data.SampleID + "'", data);
-                                                            reportEndOfProcess(req, res, null, 200,"New HIV recency result from Labware. SampleID: '" + data.SampleID + "'");
+                                                            reportEndOfProcess(req, res, null, 200, "New HIV recency result from Labware. SampleID: '" + data.SampleID + "'");
                                                             break;
                                                     }//END Switch
 
                                                 } else {
                                                     log.warn("Visite type not found!", locations["l_" + data.facilityCode]["hfname"]);
                                                     log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                    reportEndOfProcess(req, res, "Visite type not found! " + locations["l_" + data.facilityCode]["hfname"], 500,"Encounter creation aborted for " + data.SampleID + ", Visite type not found! " + locations["l_" + data.facilityCode]["hfname"]);
+                                                    reportEndOfProcess(req, res, "Visite type not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + ", Visite type not found! " + locations["l_" + data.facilityCode]["hfname"]);
                                                 }
                                             }
                                         });
@@ -606,13 +606,13 @@ function setupApp() {
                                             log.warn("No patient found in " + locations["l_" + data.facilityCode]["hfname"], "Name: " + data.firstName + " " + data.lastName);
                                             log.error("Encounter creation aborted for " + data.SampleID + ".");
 
-                                            reportEndOfProcess(req, res, "No patient found in " + locations["l_" + data.facilityCode]["hfname"] + "Name: " + data.firstName + " " + data.lastName, 500,"Encounter creation aborted for " + data.SampleID + ", No patient found in " + locations["l_" + data.facilityCode]["hfname"] + "Name: ");
+                                            reportEndOfProcess(req, res, "No patient found in " + locations["l_" + data.facilityCode]["hfname"] + "Name: " + data.firstName + " " + data.lastName, 500, "Encounter creation aborted for " + data.SampleID + ", No patient found in " + locations["l_" + data.facilityCode]["hfname"] + "Name: ");
                                         }
                                     } else {
                                         log.warn("Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision.");
                                         log.error("Encounter creation aborted for " + data.SampleID + ".");
 
-                                        reportEndOfProcess(req, res, "Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision.", 500,"Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision. Encounter creation aborted for " + data.SampleID + ".");
+                                        reportEndOfProcess(req, res, "Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision.", 500, "Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision. Encounter creation aborted for " + data.SampleID + ".");
                                     }
                                 } else if (response.statusCode == "403") {
                                     log.error("FORBIDEN statusCode: ", response.statusCode);
@@ -625,7 +625,7 @@ function setupApp() {
                                     }
                                 } else {
                                     log.error("Encounter creation aborted for unkown reason.", "Status Code " + response.statusCode);
-                                    reportEndOfProcess(req, res, "Encounter creation aborted for unkown reason. Status Code " + response.statusCode, 500,"Encounter creation aborted for unkown reason. Status Code " + response.statusCode);
+                                    reportEndOfProcess(req, res, "Encounter creation aborted for unkown reason. Status Code " + response.statusCode, 500, "Encounter creation aborted for unkown reason. Status Code " + response.statusCode);
                                 }
                             }
                         });
@@ -635,10 +635,10 @@ function setupApp() {
                             LoopA(data.firstName + " " + data.lastName);
                         } else if (!openmrsIPAddress) {
                             log.warn("Unknown health facility ", data.facilityCode, "Operation aborted");
-                            reportEndOfProcess(req, res, "Unknown health facility " + data.facilityCode + " Operation aborted", 501,"Unknown health facility " + data.facilityCode + " Operation aborted");
+                            reportEndOfProcess(req, res, "Unknown health facility " + data.facilityCode + " Operation aborted", 501, "Unknown health facility " + data.facilityCode + " Operation aborted");
                         } else {
                             log.warn("No patient found. Operation aborted");
-                            reportEndOfProcess(req, res, "No patient found. Operation aborted", 500,"No patient found. Operation aborted");
+                            reportEndOfProcess(req, res, "No patient found. Operation aborted", 500, "No patient found. Operation aborted");
                         }
                     }
                 }
