@@ -58,7 +58,7 @@ var tests = {
 
 function reportEndOfProcess(req, res, error, statusCode, message) {
     res.set('Content-Type', 'application/json+openhim')
-    var responseBody = "[" + currenteLocation + "] " + message;
+    var responseBody =  message;
     var stateLabel = "";
     let orchestrations = [];
 
