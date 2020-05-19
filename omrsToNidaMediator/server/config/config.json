@@ -27,7 +27,8 @@
             "token": {
                 "value": "",
                 "updateDate": ""
-            }
+            },
+            "environment": "test"
         },
         "register": true,
         "heartbeat": true

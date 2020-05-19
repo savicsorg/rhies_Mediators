@@ -40,7 +40,8 @@ var ENV = "prod";
  */
 function setupApp() {
   const app = express()
-
+  if (apiConf.api.nida && apiConf.api.nida.environment) {ENV=apiConf.api.nida.environment}
+  console.log('Prcessing with Environment ' + ENV);
 
   var CronJob = require('cron').CronJob;
   new CronJob('00 00 */2 * * *', function () {
@@ -65,23 +66,22 @@ function setupApp() {
     
     function reportEndOfProcess(req, res, error, statusCode, message) {
       res.set('Content-Type', 'application/json+openhim')
-      var responseBody = "[-] " + message;
+      var responseBody = "[" + currenteLocation + "] " + message;
       var stateLabel = "";
       let orchestrations = [];
-
+  
       var headers = { 'content-type': 'application/json' }
       if (error) {
-          stateLabel = "Failed";
-          winston.error(message, error);
+        stateLabel = "Failed";
+        winston.error(message, error);
       } else {
-          stateLabel = "Successful";
-          winston.info(message);
+        stateLabel = "Successful";
+        winston.info(message);
       }
-
       var orchestrationResponse = { statusCode: statusCode, headers: headers }
       orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
       res.send(utils.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
-  }
+    }
 
 
 
@@ -107,10 +107,7 @@ function setupApp() {
 
           request.post(options, function (error, response, body) {
             if (error) {
-              responseBody = error;
-              orchestrationResponse = error
-              orchestrations.push(utils.buildOrchestration('Return to openHim Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-              res.send(utils.buildReturnObject(mediatorConfig.urn, 'Internal Server Error', 500, headers, responseBody, orchestrations, properties))
+              reportEndOfProcess(req, res, error, 500, "An error occured when trying to retrieve information from NIDA");
             } else {
               if (body != null && body != undefined && body != '') {
                 reportEndOfProcess(req, res, null, 200, body);
@@ -206,6 +203,7 @@ exports.getNewNidaToken = function (callback) {
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
   if (apiConf.register) {
+    //if (false) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
