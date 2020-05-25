@@ -177,37 +177,6 @@ function setupApp() {
             var patientObject = {
               resourceType: "Patient",
               "id": PCID,
-              "active": active,
-              "extension": [
-                {
-                  "url": "fosaId",
-                  "valueString": FOSAID
-                },
-                {
-                  "url": "fatherName",
-                  "valueString": fatherName
-                },
-                {
-                  "url": "motherName",
-                  "valueString": motherName
-                },
-                {
-                  "url": "civilStatus",
-                  "valueString": civilStatus
-                },
-                {
-                  "url": "educationLevel",
-                  "valueString": educationLevel
-                },
-                {
-                  "url": "mainActivity",
-                  "valueString": mainActivity
-                },
-                {
-                  "url": "religion",
-                  "valueString": religion
-                }
-              ],
               "identifier": [
                 {
                   "system": "NIDA",
@@ -227,18 +196,64 @@ function setupApp() {
                   ]
                 }
               ],
-              "gender": gender,
+              "active": active,
               "birthDate": birthDate,
+              "gender": gender,
               "address": [
                 {
-                  "line": sector,
+                  "extension": [
+                    {
+                      "url": "umudugudu",
+                      "valueString": umudugudu
+                    },
+                    {
+                      "url": "cell",
+                      "valueString": cell
+                    },
+                    {
+                      "url": "sector",
+                      "valueString": sector
+                    }
+                  ],
                   "district": district,
                   "state": state,
                   "country": country
                 }
               ],
+              "extension": [
+                {
+                  "url": "fosaId",
+                  "valueString": FOSAID
+                },
+                {
+                  "url": "civilStatus",
+                  "valueString": civilStatus
+                },
+                {
+                  "url": "educationLevel",
+                  "valueString": educationLevel
+                },
+                {
+                  "url": "mainActivity",
+                  "valueString": mainActivity
+                },
+                {
+                  "url": "religion",
+                  "valueString": religion
+                }
+              ],
               "contact": [
                 {
+                  "extension": [
+                    {
+                      "url": "fatherName",
+                      "valueString": fatherName
+                    },
+                    {
+                      "url": "motherName",
+                      "valueString": motherName
+                    }
+                  ],
                   "telecom": [
                     {
                       "value": telecom
