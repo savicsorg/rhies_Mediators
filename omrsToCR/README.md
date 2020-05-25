@@ -11,7 +11,7 @@
 
 2. edit the **lib/index.js** file
 
-3. push your modifications to bitbucket
+3. push your modifications to github
 
 4. Before building the image, delete the **node_modules** folder
 
