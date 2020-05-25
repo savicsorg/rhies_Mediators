@@ -184,18 +184,6 @@ function setupApp() {
                   "valueString": FOSAID
                 },
                 {
-                  "url": "sector",
-                  "valueString": sector
-                },
-                {
-                  "url": "cell",
-                  "valueString": cell
-                },
-                {
-                  "url": "umudugudu",
-                  "valueString": umudugudu
-                },
-                {
                   "url": "fatherName",
                   "valueString": fatherName
                 },
@@ -243,6 +231,7 @@ function setupApp() {
               "birthDate": birthDate,
               "address": [
                 {
+                  "line": umudugudu, cell , sector,
                   "district": district,
                   "state": state,
                   "country": country
