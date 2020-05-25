@@ -231,8 +231,6 @@ function setupApp() {
               "birthDate": birthDate,
               "address": [
                 {
-                  "line": umudugudu,
-                  "line": cell,
                   "line": sector,
                   "district": district,
                   "state": state,
