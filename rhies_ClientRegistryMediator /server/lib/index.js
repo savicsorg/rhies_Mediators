@@ -330,8 +330,8 @@ function setupApp() {
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
-  if (false) {
-  //if (apiConf.register) {
+  //if (false) {
+  if (apiConf.register) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
