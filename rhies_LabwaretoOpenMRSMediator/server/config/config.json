@@ -5,7 +5,12 @@
         "apiURL": "https://core:8080",
         "openMrsUrl": "http://172.17.0.1:4023/patient",
         "urlPattern": "/test/",
-        "trustSelfSigned": "true"
+        "trustSelfSigned": "true",
+        "openmrs": {
+            "username": "geoffrey",
+            "password": "Ganyugxy1",
+            "rest_api": "/openmrs/ws/rest/v1"
+        }
     },
     "register": true,
     "heartbeat": true,
@@ -17,12 +22,12 @@
     "locations": {
         "l_440": {
             "hfname": "Remera HC",
-            "uuid":"f31f21e9-2ac7-48e6-9701-3a116ed1035f",
+            "uuid": "f31f21e9-2ac7-48e6-9701-3a116ed1035f",
             "ip": "http://openmrs-tomcat-remera-hc-440:8080"
         },
         "l_558": {
             "hfname": "Nyarugunga HC",
-            "uuid":"24016001-d38b-4f79-b427-428bc2e8c4ca",
+            "uuid": "24016001-d38b-4f79-b427-428bc2e8c4ca",
             "ip": "http://openmrs-tomcat-nyarugunga-hc-558:8080"
         },
         "l_36": {

@@ -16,3 +16,5 @@ node_modules
 dist/
 /labToOmrsMediator/server/nbproject/private/
 /omrsToNidaMediator/server/nbproject/private/
+/rhies_ClientRegistryMediator /server/nbproject/private/
+/rhies_OpenMRStoDHIS2Mediator/server/nbproject/private/
