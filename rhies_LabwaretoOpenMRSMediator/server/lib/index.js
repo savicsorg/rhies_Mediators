@@ -27,29 +27,29 @@ var port = process.env.NODE_ENV === 'test' ? 7001 : mediatorConfig.endpoints[0].
 
 var tests = {
     viral_load_2: {
-        form: "Adult HIV Flowsheet - New Lab",
-        visitType: "Primary Care Outpatient",
-        encounterType: "HIV VISIT",
-        parentConcept: "LABORATORY EXAMINATIONS CONSTRUCT",
-        concept: "HIV VIRAL LOAD",
+        form: "3cfa4d45-7556-4c59-abdc-836452a36714", //Adult HIV Flowsheet - New Lab,
+        visitType: "3515b588-b1df-4110-991b-0d603686d8e6", //"Primary Care Outpatient",
+        encounterType: "2dc31190-cf0e-4ab0-a5a1-6ad601d6ecc0", //HIV VISIT",
+        parentConcept: "3cd9b05c-26fe-102b-80cb-0017a47871b2", //LABORATORY EXAMINATIONS CONSTRUCT
+        concept: "3cd4a882-26fe-102b-80cb-0017a47871b2", //HIV VIRAL LOAD
     },
     recency_vl: {
         q: "RECEN", //the key word to research the recencies concepts list
-        form: "CBS Recency VL",
-        visitType: "Primary Care Outpatient",
-        encounterType: "CBS Recency VL",
-        recencyAssayTestConcept: "RECENCY ASSAY TEST",
-        recencyAssayResultConcept: "RECENCY ASSAY RESULTS",
-        recencyViralLoadConcept: "RECENCY VIRAL LOAD",
-        recencyViralLoadTestDateConcept: "RECENCY VIRAL LOAD TEST DATE",
-        recencyViralLoadResultConcept: "RECENCY VIRAL LOAD RESULT",
-        recencyViralLoadResultDateConcept: "RECENCY VIRAL LOAD RESULT DATE",
+        form: "cad4fef7-d937-478b-802d-6dfb8976dc8f", //CBS Recency VL
+        visitType: "3515b588-b1df-4110-991b-0d603686d8e6", //"Primary Care Outpatient",
+        encounterType: "20913c78-ab77-474a-a12c-9180160ba232", //CBS Recency VL
+        recencyAssayTestConcept: "b4b0e241-e41a-4d46-89dd-e531cf6d8202",
+        recencyAssayResultConcept: "b4b0e241-e41a-4d46-89dd-e531cf6d8202",
+        recencyViralLoadConcept: "c59b6935-3838-4198-8909-75f08d47ff2b",
+        recencyViralLoadTestDateConcept: "fa87bb43-ebcc-4919-96f8-c5013ce1bbca",
+        recencyViralLoadResultConcept: "aae8d7fe-8bbc-4d2e-926c-0e28b4d0e046",
+        recencyViralLoadResultDateConcept: "f4e3f60a-2f62-47bc-b968-156b3df91067",
 
-        yesConceptValue: "YES",
-        recentConceptValue: "RECENT",
-        longTermeConceptValue: "LONG-TERM",
-        invalideConceptValue: "INVALID",
-        negativeConceptValue: "NEGATIVE"
+        yesConceptValue: "3cd6f600-26fe-102b-80cb-0017a47871b2", //YES
+        recentConceptValue: "fb3b2a61-4f4b-46b2-9187-9ec769349a44", //RECENT
+        longTermeConceptValue: "819f5ebe-0b3e-44ba-b435-8f3d1b7bb130", //LONG-TERM
+        invalideConceptValue: "9340dede-5124-49cf-9b3c-5153cc0e537f", //INVALID
+        negativeConceptValue: "3cd28732-26fe-102b-80cb-0017a47871b2" //NEGATIVE"
     },
     hiv_recency: {
 
@@ -130,7 +130,7 @@ function setupApp() {
                         var options = {
                             url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/patient?q=" + q + "&v=full",
                             headers: {
-                                'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
+                                'Authorization': 'Basic ' + Buffer.from(locations["l_" + data.facilityCode]["username"] + ":" + locations["l_" + data.facilityCode]["password"]).toString('base64'),
                                 'Content-Type': 'application/json'
                             }
                         }
@@ -152,452 +152,229 @@ function setupApp() {
                                     if (results && results.length == 1) {
                                         patient = results[0];
 
-                                        options = {
-                                            url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/visittype",
-                                            headers: {
-                                                'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                'Content-Type': 'application/json'
-                                            }
-                                        }
+                                        var location = locations["l_" + data.facilityCode];
+                                        switch (testType) {
+                                            case 'viral_load_2':
+                                                console.log("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
 
-                                        //// 4. Get the VISIT TYPE 
-                                        log.info("Search for the VISIT TYPE '" + tests.recency_vl.visitType + "'...");
-                                        request.get(options, function (error, response, body) {
-                                            if (error) {
-                                                log.warn("VISIT TYPE " + tests.recency_vl.visitType + " not found!");
-                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                log.error(error);
-                                                reportEndOfProcess(req, res, error, 500, "Encounter creation aborted for " + data.SampleID + ", VISIT TYPE " + tests.recency_vl.visitType + " not found!");
-                                            } else {
-                                                var visittype = JSON.parse(body).results;
-                                                if (visittype && visittype.length > 0) {
-                                                    visittype = _getTheGoodResult(visittype, "display", tests.recency_vl.visitType)
-
-                                                    //// 2. Location 
-                                                    log.info("Search for the location '" + locations["l_" + data.facilityCode]["hfname"] + "'...");
-
-                                                    location = locations["l_" + data.facilityCode];
-                                                    switch (testType) {
-                                                        case 'viral_load_2':
-                                                            console.log("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
-                                                            options = {
-                                                                url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/form?q=" + tests.viral_load_2.form + "&v=full",
-                                                                headers: {
-                                                                    'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                    'Content-Type': 'application/json'
-                                                                }
-                                                            }
-
-                                                            //// 2. Form
-                                                            log.info("Search for the form '" + tests.viral_load_2.form + "'...");
-                                                            request.get(options, function (error, response, body) {
-                                                                if (error) {
-                                                                    log.error("Error on form search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                    log.error(error);
-                                                                    reportEndOfProcess(req, res, error, 500, "Error on form search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                } else {
-                                                                    var form = JSON.parse(body).results;
-                                                                    if (form && form.length > 0) {
-                                                                        form = _getTheGoodResult(form, "display", tests.viral_load_2.form)
-                                                                        options = {
-                                                                            url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/concept?q=" + tests.viral_load_2.parentConcept + "&v=full",
-                                                                            headers: {
-                                                                                'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                                'Content-Type': 'application/json'
+                                                
+                                                var encounterOptions = {
+                                                    url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/encounter",
+                                                    body: JSON.stringify(
+                                                            {
+                                                                "patient": patient.uuid,
+                                                                "form": tests.viral_load_2.form, //uuid of the concerned form in openmrs
+                                                                "encounterType": tests.viral_load_2.encounterType, //uuid of encounterType
+                                                                "location": location.uuid, //uuid of localtion
+                                                                "encounterDatetime": (new Date()).toISOString(),
+                                                                "obs": [
+                                                                    {
+                                                                        "concept": tests.viral_load_2.parentConcept, //uuid of perent concept
+                                                                        "person": patient.uuid, //uuid of patient
+                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                        "groupMembers": [
+                                                                            {
+                                                                                "concept": tests.viral_load_2.concept, //uuid of concept
+                                                                                "person": patient.uuid, //uuid of patient
+                                                                                "location": location.uuid, //uuid of location
+                                                                                "obsDatetime": (new Date()).toISOString(),
+                                                                                "value": data.Result.copies, //hiv concentration value (copie/ml) comming from labware
+                                                                                "resourceVersion": "1.8"//OpenMRS version
                                                                             }
-                                                                        }
-
-                                                                        //// 3. Parent concept
-                                                                        log.info("Search for encounter concept ");
-                                                                        request.get(options, function (error, response, body) {
-                                                                            if (error) {
-                                                                                log.error("Error on encounter concept search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                                log.error(error);
-                                                                                reportEndOfProcess(req, res, error, 500, "Error on encounter concept search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                            } else {
-                                                                                var parentConcept = JSON.parse(body).results;
-                                                                                if (parentConcept && parentConcept.length > 0) {
-                                                                                    parentConcept = _getTheGoodResult(parentConcept, "display", tests.viral_load_2.parentConcept)
-
-                                                                                    options = {
-                                                                                        url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/concept?q=" + tests.viral_load_2.concept,
-                                                                                        headers: {
-                                                                                            'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                                            'Content-Type': 'application/json'
-                                                                                        }
-                                                                                    };
-
-                                                                                    //// 4. Concept
-                                                                                    log.info("Search for obs concept ");
-                                                                                    request.get(options, function (error, response, body) {
-                                                                                        if (error) {
-                                                                                            log.error("Error on obs concept search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                                            log.error(error);
-                                                                                            reportEndOfProcess(req, res, error, 500, "Error on obs concept search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                                        } else {
-                                                                                            var concept = JSON.parse(body).results;
-                                                                                            if (concept && concept.length > 0) {
-                                                                                                concept = _getTheGoodResult(concept, "display", tests.viral_load_2.concept)
-
-                                                                                                var encounterOptions = {
-                                                                                                    url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/encounter",
-                                                                                                    body: JSON.stringify(
-                                                                                                            {
-                                                                                                                "patient": patient.uuid,
-                                                                                                                "form": form.uuid, //uuid of the concerned form in openmrs
-                                                                                                                "encounterType": form.encounterType.uuid, //uuid of encounterType
-                                                                                                                "location": location.uuid, //uuid of localtion
-                                                                                                                "encounterDatetime": (new Date()).toISOString(),
-                                                                                                                "obs": [
-                                                                                                                    {
-                                                                                                                        "concept": parentConcept.uuid, //uuid of perent concept
-                                                                                                                        "person": patient.uuid, //uuid of patient
-                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                        "groupMembers": [
-                                                                                                                            {
-                                                                                                                                "concept": concept.uuid, //uuid of concept
-                                                                                                                                "person": patient.uuid, //uuid of patient
-                                                                                                                                "location": location.uuid, //uuid of location
-                                                                                                                                "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                "value": data.Result.copies, //hiv concentration value (copie/ml) comming from labware
-                                                                                                                                "resourceVersion": "1.8"//OpenMRS version
-                                                                                                                            }
-                                                                                                                        ],
-                                                                                                                        "location": location.uuid//uuid of location
-                                                                                                                    }
-                                                                                                                ],
-                                                                                                                "visit": {
-                                                                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-                                                                                                                    "patient": patient.uuid,
-                                                                                                                    "visitType": visittype.uuid,
-                                                                                                                    "location": location.uuid,
-                                                                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-                                                                                                                },
-                                                                                                                "encounterProviders": [{
-                                                                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                                                                        "provider": "prov9b01-f749-4b3f-b8fe-8f6d460003bb",
-                                                                                                                        "resourceVersion": "1.9"//OpenMRS version
-                                                                                                                    }]
-                                                                                                            }
-                                                                                                    ),
-                                                                                                    headers: {
-                                                                                                        'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                                                        'Content-Type': 'application/json'
-                                                                                                    }
-                                                                                                };
-
-                                                                                                request.post(encounterOptions, function (error, response, body) {
-                                                                                                    if (error) {
-                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                        log.error(error);
-                                                                                                        log.error(response.body);
-                                                                                                        reportEndOfProcess(req, res, error, 500, "Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                    } else {
-                                                                                                        needle
-                                                                                                                .post(apiConf.api.openMrsUrl, data, {})
-                                                                                                                .on('readable', function () {
-
-                                                                                                                })
-                                                                                                                .on('done', function (err, resp) {
-                                                                                                                    if (response.statusCode == "201" || response.statusCode == "200") {
-                                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID);
-                                                                                                                        reportEndOfProcess(req, res, null, 200, "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'." + "Sample ID: " + data.SampleID);
-                                                                                                                    } else {
-                                                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
-                                                                                                                        log.error(response);
-                                                                                                                        reportEndOfProcess(req, res, err, 500, "Encounter creation aborted for " + data.SampleID);
-                                                                                                                    }
-                                                                                                                })
-                                                                                                    }
-                                                                                                });
-
-
-                                                                                            }
-                                                                                        }
-                                                                                    });
-                                                                                }
-                                                                            }
-                                                                        });
-                                                                    }//TODO Manage the case no form found here
-                                                                }
-                                                            });
-
-
-                                                            break;
-                                                        case 'recency_vl':
-                                                            log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
-                                                            options = {
-                                                                url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/form?q=" + tests.recency_vl.form + "&v=full",
-                                                                headers: {
-                                                                    'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                    'Content-Type': 'application/json'
-                                                                }
-                                                            }
-
-                                                            //// 2. Form 
-                                                            log.info("Search for the form '" + tests.recency_vl.form + "'...");
-                                                            request.get(options, function (error, response, body) {
-                                                                if (error) {
-                                                                    log.warn("Form " + tests.recency_vl.form + " not found!");
-                                                                    log.error("Error on search. Encounter creation aborted for " + data.SampleID + ".");
-                                                                    log.error(error);
-
-                                                                    reportEndOfProcess(req, res, error, "Error on search. Encounter creation aborted for " + data.SampleID + ", Form " + tests.recency_vl.form + " not found!");
-                                                                } else {
-                                                                    var form = JSON.parse(body).results;
-                                                                    if (form && form.length > 0) {
-                                                                        form = _getTheGoodResult(form, "display", tests.recency_vl.form);
-
-                                                                        options = {
-                                                                            url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/concept?q=" + tests.recency_vl.q + "&v=full",
-                                                                            headers: {
-                                                                                'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                                'Content-Type': 'application/json'
-                                                                            }
-                                                                        }
-
-                                                                        //// 3.0. Get the RECENCY concepts list
-                                                                        log.info("Search for the RECENCY list ...");
-                                                                        request.get(options, function (error, response, body) {
-                                                                            if (error) {
-                                                                                log.log(error);
-                                                                                reportEndOfProcess(req, res, error, 500, error);
-                                                                            } else {
-                                                                                var recencies = JSON.parse(body).results;
-                                                                                if (recencies && recencies.length > 0) {
-                                                                                    var recencyAssayResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayResultConcept)
-                                                                                    var recencyAssayTestConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyAssayTestConcept)
-                                                                                    var recencyViralLoadResultConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadResultConcept)
-                                                                                    var recencyViralLoadResultDateConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadResultDateConcept)
-                                                                                    var recencyViralLoadTestDateConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadTestDateConcept)
-                                                                                    var recentConceptValue = _getTheGoodResult(recencies, "display", tests.recency_vl.recentConceptValue)
-                                                                                    var recencyViralLoadConcept = _getTheGoodResult(recencies, "display", tests.recency_vl.recencyViralLoadConcept)
-
-                                                                                    if (data.Result && data.Result.copies) {
-
-                                                                                        var ritaConcept = "RECENT";
-                                                                                        if (data.Result.copies == "NEGATIVE") {
-                                                                                            ritaConcept = "INVALID";
-                                                                                        } else {
-                                                                                            var copiesml = parseInt(data.Result.copies, 10);
-                                                                                            if (copiesml > 1000) {
-                                                                                                ritaConcept = "RECENT";
-                                                                                            } else {
-                                                                                                ritaConcept = "LONG-TERM";
-                                                                                            }
-                                                                                        }
-
-                                                                                        options = {
-                                                                                            url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/concept?q=" + ritaConcept,
-                                                                                            headers: {
-                                                                                                'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                                                'Content-Type': 'application/json'
-                                                                                            }
-                                                                                        }
-
-                                                                                        //// 3.1. Get the RITA Concept
-                                                                                        request.get(options, function (error, response, body) {
-                                                                                            if (error) {
-                                                                                                log.error(error);
-                                                                                                reportEndOfProcess(req, res, error, 500, error);
-                                                                                            } else {
-                                                                                                var ritaResultConceptValue = JSON.parse(body).results;
-                                                                                                if (ritaResultConceptValue && ritaResultConceptValue.length > 0) {
-                                                                                                    var ritaResultConceptValue = _getTheGoodResult(ritaResultConceptValue, "display", ritaConcept)
-
-                                                                                                    options = {
-                                                                                                        url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/concept?q=" + tests.recency_vl.yesConceptValue,
-                                                                                                        headers: {
-                                                                                                            'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                                                            'Content-Type': 'application/json'
-                                                                                                        }
-                                                                                                    }
-
-                                                                                                    //// 3.2. Get the YES Concept
-                                                                                                    request.get(options, function (error, response, body) {
-                                                                                                        if (error) {
-                                                                                                            log.error(error);
-                                                                                                            reportEndOfProcess(req, res, error, 500, error);
-                                                                                                        } else {
-                                                                                                            var yesConceptValue = JSON.parse(body).results;
-                                                                                                            if (yesConceptValue && yesConceptValue.length > 0) {
-                                                                                                                var yesConceptValue = _getTheGoodResult(yesConceptValue, "display", tests.recency_vl.yesConceptValue)
-
-
-                                                                                                                var encounterOptions = {
-                                                                                                                    url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/encounter",
-                                                                                                                    body: JSON.stringify(
-                                                                                                                            {
-                                                                                                                                "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
-                                                                                                                                "patient": patient.uuid,
-                                                                                                                                "location": location.uuid,
-                                                                                                                                "form": form.uuid,
-                                                                                                                                "encounterType": form.encounterType.uuid,
-                                                                                                                                "obs": [
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyAssayTestConcept.uuid,
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": {
-                                                                                                                                            "uuid": yesConceptValue.uuid //ALWAYS YES concept
-                                                                                                                                        },
-                                                                                                                                        "resourceVersion": "1.8"
-                                                                                                                                    },
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyViralLoadConcept.uuid, //RECENCY VIRAL LOAD: YES
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": {
-                                                                                                                                            "uuid": yesConceptValue.uuid //ALWAYS YES concept
-                                                                                                                                        }
-                                                                                                                                    },
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyViralLoadResultConcept.uuid,
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": data.Result.copies,
-                                                                                                                                        "resourceVersion": "1.8"
-                                                                                                                                    },
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyViralLoadResultDateConcept.uuid,
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": (new Date(data.DateReleased.trim())).toISOString(),
-                                                                                                                                        "resourceVersion": "1.8"
-                                                                                                                                    },
-                                                                                                                                    {
-                                                                                                                                        "concept": recencyViralLoadTestDateConcept.uuid,
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": (new Date(data.DateReleased.trim())).toISOString()
-                                                                                                                                    }, {
-                                                                                                                                        "concept": recencyAssayResultConcept.uuid, //RITA RESULT
-                                                                                                                                        "person": patient.uuid,
-                                                                                                                                        "obsDatetime": (new Date()).toISOString(),
-                                                                                                                                        "location": location.uuid,
-                                                                                                                                        "voided": false,
-                                                                                                                                        "value": {
-                                                                                                                                            "uuid": ritaResultConceptValue.uuid // RECENT, LONG-TERM or INVALID
-                                                                                                                                        }
-                                                                                                                                    }
-                                                                                                                                ],
-                                                                                                                                "visit": {
-                                                                                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-                                                                                                                                    "patient": patient.uuid,
-                                                                                                                                    "visitType": visittype.uuid,
-                                                                                                                                    "location": location.uuid,
-                                                                                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-                                                                                                                                },
-                                                                                                                                "encounterProviders": [{
-                                                                                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                                                                                        "provider": "42d9557b-9ec1-4999-8aa3-14087c961b51", //Labware
-                                                                                                                                        "resourceVersion": "1.9"
-                                                                                                                                    }],
-                                                                                                                                "resourceVersion": "1.9"
-                                                                                                                            }
-                                                                                                                    ),
-                                                                                                                    headers: {
-                                                                                                                        'Authorization': 'Basic ' + Buffer.from(apiConf.api.openmrs.username + ":" + apiConf.api.openmrs.password).toString('base64'),
-                                                                                                                        'Content-Type': 'application/json'
-                                                                                                                    }
-                                                                                                                };
-
-                                                                                                                //res.sendStatus(200);
-                                                                                                                request.post(encounterOptions, function (error, response, body) {
-                                                                                                                    if (error) {
-                                                                                                                        log.warn("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                        log.error(error);
-                                                                                                                        log.error(response.body);
-                                                                                                                        reportEndOfProcess(req, res, error, 500, "Encounter creation aborted for " + data.SampleID + ", " + error);
-                                                                                                                    } else {
-
-                                                                                                                        //console.log('statusCode:', response && response.statusCode);
-                                                                                                                        //console.log('body:', body);
-                                                                                                                        //res.sendStatus(response.statusCode);
-                                                                                                                        needle
-                                                                                                                                .post(apiConf.api.openMrsUrl, data, {})
-                                                                                                                                .on('readable', function () {
-
-                                                                                                                                })
-                                                                                                                                .on('done', function (err, resp) {
-                                                                                                                                    if (response.statusCode == "201" || response.statusCode == "200") {
-                                                                                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID);
-                                                                                                                                        reportEndOfProcess(req, res, null, 200, "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'." + "Sample ID: " + data.SampleID);
-                                                                                                                                    } else {
-                                                                                                                                        log.warn("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
-                                                                                                                                        log.error(response);
-                                                                                                                                        reportEndOfProcess(req, res, err, 500, "Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                                    }
-
-                                                                                                                                })
-
-
-                                                                                                                    }
-                                                                                                                });
-
-
-
-
-
-                                                                                                            } else {
-                                                                                                                log.warn("Concept not found!", locations["l_" + data.facilityCode]["hfname"]);
-                                                                                                                log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                                reportEndOfProcess(req, res, "Concept not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + ", Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                            }
-                                                                                                        }
-                                                                                                    });
-                                                                                                } else {
-                                                                                                    log.warn("Concept not found!", locations["l_" + data.facilityCode]["hfname"]);
-                                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                                    reportEndOfProcess(req, res, "Concept not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + "," + "Concept not found! " + locations["l_" + data.facilityCode]["hfname"]);
-                                                                                                }
-                                                                                            }
-                                                                                        });
-                                                                                    } else {
-                                                                                        log.warn("Data with empty result received!");
-                                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                        reportEndOfProcess(req, res, "Encounter creation aborted for " + data.SampleID + ".", 500, "Encounter creation aborted for " + data.SampleID + "," + "Data with empty result received!");
-                                                                                    }
-                                                                                } else {
-                                                                                    log.warn("RECENCY concept list not found!", locations["l_" + data.facilityCode]["hfname"]);
-                                                                                    log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                                    reportEndOfProcess(req, res, "RECENCY concept list not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + ", RECENCY concept list not found! " + locations["l_" + data.facilityCode]["hfname"]);
-                                                                                }
-                                                                            }
-                                                                        });
-                                                                    } else {
-                                                                        log.warn("Form " + tests.recency_vl.form + " not found!", locations["l_" + data.facilityCode]["hfname"]);
-                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                                        reportEndOfProcess(req, res, "Form " + tests.recency_vl.form + " not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + ", Form " + tests.recency_vl.form + " not found! " + locations["l_" + data.facilityCode]["hfname"]);
+                                                                        ],
+                                                                        "location": location.uuid//uuid of location
                                                                     }
+                                                                ],
+                                                                "visit": {
+                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
+                                                                    "patient": patient.uuid,
+                                                                    "visitType": tests.viral_load_2.visitType,
+                                                                    "location": location.uuid,
+                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
+                                                                },
+                                                                "encounterProviders": [{
+                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
+                                                                        "provider": "prova70a-546b-4641-8ae0-8ef3b30490cb",
+                                                                        "resourceVersion": "1.8"//OpenMRS version
+                                                                    }]
+                                                            }
+                                                    ),
+                                                    headers: {
+                                                        'Authorization': 'Basic ' + Buffer.from(locations["l_" + data.facilityCode]["username"] + ":" + locations["l_" + data.facilityCode]["password"]).toString('base64'),
+                                                        'Content-Type': 'application/json'
+                                                    }
+                                                };
+
+                                                request.post(encounterOptions, function (error, response, body) {
+                                                    if (error) {
+                                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                                        log.error(error);
+                                                        log.error(response.body);
+                                                        reportEndOfProcess(req, res, error, 500, "Encounter creation aborted for " + data.SampleID + ".");
+                                                    } else {
+                                                        needle.post(apiConf.api.openMrsUrl, data, {})
+                                                                .on('readable', function () {
+
+                                                                })
+                                                                .on('done', function (err, resp) {
+                                                                    if (response.statusCode == "201" || response.statusCode == "200") {
+                                                                        log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID);
+                                                                        reportEndOfProcess(req, res, null, 200, "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'." + "Sample ID: " + data.SampleID);
+                                                                    } else {
+                                                                        log.error("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
+                                                                        log.error(response);
+                                                                        reportEndOfProcess(req, res, err, 500, "Encounter creation aborted for " + data.SampleID);
+                                                                    }
+                                                                })
+                                                    }
+                                                });
+
+                                                break;
+                                            case 'recency_vl':
+                                                log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                if (data.Result && data.Result.copies) {
+
+                                                    var ritaConcept = tests.recency_vl.recentConceptValue;//"RECENT";
+                                                    if (data.Result.copies == "NEGATIVE") {
+                                                        ritaConcept = tests.recency_vl.invalideConceptValue; //"INVALID";
+
+                                                    } else {
+                                                        var copiesml = parseInt(data.Result.copies, 10);
+                                                        if (copiesml > 1000) {
+                                                            ritaConcept = tests.recency_vl.recentConceptValue;//"RECENT";
+                                                        } else {
+                                                            ritaConcept = tests.recency_vl.longTermeConceptValue;//"LONG-TERM";
+                                                        }
+                                                    }
+                                                                
+                                                    var encounterOptions = {
+                                                        url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/encounter",
+                                                        body: JSON.stringify(
+                                                                {
+                                                                    "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
+                                                                    "patient": patient.uuid,
+                                                                    "location": location.uuid,
+                                                                    "form": tests.recency_vl.form,
+                                                                    "encounterType": tests.recency_vl.encounterType,
+                                                                    "obs": [
+                                                                        {
+                                                                            "concept": tests.recency_vl.recencyAssayTestConcept,
+                                                                            "person": patient.uuid,
+                                                                            "obsDatetime": (new Date()).toISOString(),
+                                                                            "location": location.uuid,
+                                                                            "voided": false,
+                                                                            "value": {
+                                                                                "uuid": tests.recency_vl.yesConceptValue //ALWAYS YES concept
+                                                                            },
+                                                                            "resourceVersion": "1.8"
+                                                                        },
+                                                                        {
+                                                                            "concept": tests.recency_vl.recencyViralLoadConcept, //RECENCY VIRAL LOAD: YES
+                                                                            "person": patient.uuid,
+                                                                            "obsDatetime": (new Date()).toISOString(),
+                                                                            "location": location.uuid,
+                                                                            "voided": false,
+                                                                            "value": {
+                                                                                "uuid": tests.recency_vl.yesConceptValue //ALWAYS YES concept
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "concept": tests.recency_vl.recencyViralLoadResultConcept,
+                                                                            "person": patient.uuid,
+                                                                            "obsDatetime": (new Date()).toISOString(),
+                                                                            "location": location.uuid,
+                                                                            "voided": false,
+                                                                            "value": data.Result.copies,
+                                                                            "resourceVersion": "1.8"
+                                                                        },
+                                                                        {
+                                                                            "concept": tests.recency_vl.recencyViralLoadResultDateConcept,
+                                                                            "person": patient.uuid,
+                                                                            "obsDatetime": (new Date()).toISOString(),
+                                                                            "location": location.uuid,
+                                                                            "voided": false,
+                                                                            "value": (new Date(data.DateReleased.trim())).toISOString(),
+                                                                            "resourceVersion": "1.8"
+                                                                        },
+                                                                        {
+                                                                            "concept": tests.recency_vl.recencyViralLoadTestDateConcept,
+                                                                            "person": patient.uuid,
+                                                                            "obsDatetime": (new Date()).toISOString(),
+                                                                            "location": location.uuid,
+                                                                            "voided": false,
+                                                                            "value": (new Date(data.DateReleased.trim())).toISOString()
+                                                                        }, {
+                                                                            "concept": tests.recency_vl.recencyAssayResultConcept, //RITA RESULT
+                                                                            "person": patient.uuid,
+                                                                            "obsDatetime": (new Date()).toISOString(),
+                                                                            "location": location.uuid,
+                                                                            "voided": false,
+                                                                            "value": {
+                                                                                "uuid": ritaConcept // RECENT, LONG-TERM or INVALID
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "visit": {
+                                                                        //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
+                                                                        "patient": patient.uuid,
+                                                                        "visitType": tests.recency_vl.visitType,
+                                                                        "location": location.uuid,
+                                                                        "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
+                                                                    },
+                                                                    "encounterProviders": [{
+                                                                            "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
+                                                                            "provider": "prov0820-969f-48e0-a0e8-eeb7d00266a1", //Labware
+                                                                            "resourceVersion": "1.8"
+                                                                        }],
+                                                                    "resourceVersion": "1.9"
                                                                 }
-                                                            });
+                                                        ),
+                                                        headers: {
+                                                            'Authorization': 'Basic ' + Buffer.from(locations["l_" + data.facilityCode]["username"] + ":" + locations["l_" + data.facilityCode]["password"]).toString('base64'),
+                                                            'Content-Type': 'application/json'
+                                                        }
+                                                    };
 
-                                                            break;
-                                                        case 'hiv_recency':
-                                                            //TODO
-                                                            log.info("New HIV recency result from Labware. SampleID: '" + data.SampleID + "'", data);
-                                                            reportEndOfProcess(req, res, null, 200, "New HIV recency result from Labware. SampleID: '" + data.SampleID + "'");
-                                                            break;
-                                                    }//END Switch
+                                                    //res.sendStatus(200);
+                                                    request.post(encounterOptions, function (error, response, body) {
+                                                        if (error) {
+                                                            log.warn("Encounter creation aborted for " + data.SampleID + ".");
+                                                            log.error(error);
+                                                            log.error(response.body);
+                                                            reportEndOfProcess(req, res, error, 500, "Encounter creation aborted for " + data.SampleID + ", " + error);
+                                                        } else {
+                                                            needle
+                                                                    .post(apiConf.api.openMrsUrl, data, {})
+                                                                    .on('readable', function () {
 
+                                                                    })
+                                                                    .on('done', function (err, resp) {
+                                                                        if (response.statusCode == "201" || response.statusCode == "200") {
+                                                                            log.info("Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'.", "Sample ID: ", data.SampleID);
+                                                                            reportEndOfProcess(req, res, null, 200, "Encounter created sucessfully for '" + locations["l_" + data.facilityCode]["hfname"] + "'." + "Sample ID: " + data.SampleID);
+                                                                        } else {
+                                                                            log.warn("Encounter creation aborted for " + data.SampleID + ".", "Cause:");
+                                                                            log.error(response);
+                                                                            reportEndOfProcess(req, res, err, 500, "Encounter creation aborted for " + data.SampleID + ".");
+                                                                        }
+
+                                                                    })
+                                                        }
+                                                    });
                                                 } else {
-                                                    log.warn("Visite type not found!", locations["l_" + data.facilityCode]["hfname"]);
+                                                    log.warn("Data with empty result received!");
                                                     log.error("Encounter creation aborted for " + data.SampleID + ".");
-                                                    reportEndOfProcess(req, res, "Visite type not found! " + locations["l_" + data.facilityCode]["hfname"], 500, "Encounter creation aborted for " + data.SampleID + ", Visite type not found! " + locations["l_" + data.facilityCode]["hfname"]);
+                                                    reportEndOfProcess(req, res, "Encounter creation aborted for " + data.SampleID + ".", 500, "Encounter creation aborted for " + data.SampleID + "," + "Data with empty result received!");
                                                 }
-                                            }
-                                        });
+
+                                                break;
+                                            case 'hiv_recency':
+                                                //TODO
+                                                log.info("New HIV recency result from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                reportEndOfProcess(req, res, null, 200, "New HIV recency result from Labware. SampleID: '" + data.SampleID + "'");
+                                                break;
+                                        }//END Switch
+
                                     } else if (results && results.length == 0) {//No result found
                                         if (nd_of_research < 2) {//Second research possible by name 
                                             log.warn("No patient found, searching by name: " + data.firstName + " " + data.lastName);
@@ -624,7 +401,7 @@ function setupApp() {
                                         reportEndOfProcess(req, res, "ACCESS FORBIDEN", 500, "Encounter creation aborted for " + data.SampleID + ". ACCESS FORBIDEN");
                                     }
                                 } else {
-                                    log.error("Encounter creation aborted for unkown reason.", "Status Code " + response.statusCode);
+                                    log.error("Encounter creation aborted for unkown reason. Attempting to research Patient.", "Status Code " + response.statusCode);
                                     reportEndOfProcess(req, res, "Encounter creation aborted for unkown reason. Status Code " + response.statusCode, 500, "Encounter creation aborted for unkown reason. Status Code " + response.statusCode);
                                 }
                             }
@@ -642,7 +419,7 @@ function setupApp() {
                         }
                     }
                 }
-                log.info("Searching patient by tracnetID: " + data.tracnetID);
+                log.info("Searching patient by tractnetID: " + data.tractnetID);
                 LoopA(data.tracnetID);//Search by TracknetID Firts
             });
 
