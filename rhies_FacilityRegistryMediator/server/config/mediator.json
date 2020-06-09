@@ -1,0 +1,52 @@
+{
+    "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0f9",
+    "version": "1.0.0",
+    "name": "Facility Registry Mediator",
+    "description": "A mediator for facility registry to able facility data exchange",
+    "defaultChannelConfig": [
+      {
+        "name": "facility Registry chanel",
+        "urlPattern": "/facilityregistry/",
+        "alerts": [],
+        "txRerunAcl": [],
+        "txViewFullAcl": [],
+        "txViewAcl": [],
+        "properties": [],
+        "matchContentTypes": [],
+        "routes": [
+          {
+            "name": "Facility Registry Route",
+            "host": "savics-facilityRegistry",
+            "port": "4004",
+            "primary": true,
+            "type": "http"
+          }
+        ],
+        "allow": ["facregistry"],
+        "type": "http"
+      }
+    ],
+    "endpoints": [
+      {
+        "name": "Facility Registry endpoint",
+        "host": "savics-facilityRegistry",
+        "path": "/facilityregistry/",
+        "port": "4004",
+        "primary": true,
+        "type": "http"
+      }
+    ],
+    "configDefs": [
+      {
+        "param": "upstreamUrl",
+        "displayName": "Upstream URL",
+        "description": "The URL of the service upstream of the mediator",
+        "type": "string",
+        "template": []
+      }
+    ],
+    "config": {
+      "upstreamUrl": "http://savics-facilityRegistry:4004"
+    }
+  }
+  
