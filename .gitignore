@@ -1,20 +1,7 @@
-.DS_Store
-._.DS_Store
-
-*.seed
-*.log
-*.dat
-*.out
-*.pid
-*.gz
+.gitignore
+rhies_ClientRegistryMediator/
+rhies_FacilityRegistryMediator/
+rhies_LabwaretoOpenMRSMediator/
+rhies_NIDAtoOpenMRSMediator/
 
 
-logs/*
-/.idea
-package-lock.json
-node_modules
-dist/
-/labToOmrsMediator/server/nbproject/private/
-/omrsToNidaMediator/server/nbproject/private/
-/rhies_ClientRegistryMediator /server/nbproject/private/
-/rhies_OpenMRStoDHIS2Mediator/server/nbproject/private/
