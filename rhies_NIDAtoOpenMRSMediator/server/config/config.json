@@ -1,0 +1,36 @@
+{
+    "api": {
+        "username": "root@openhim.org",
+        "password": "0000",
+        "apiURL": "https://core:8080",
+        "trustSelfSigned": "true",
+        "urlPattern": "/persons/",
+        "nida": {
+            "test": {
+                "claimtokenUrl": "https://uat.nida.gov.rw:8081/onlineauthentication/claimtoken",
+                "getcitizenUrl": "https://uat.nida.gov.rw:8081/onlineauthentication/getcitizen",
+                "keyPhrase": "R4NhP!!t=MW^HxxCg8!mB?dvj+4n%!Ega47M?qh2Eff98B?L4q3_ZbhDFndgWG%xT3JQYCbXgKPAZ%KkUG?DJf%HxFZQcNRu_QZMbp3FX_wH#76jgs7nfNcK7=kCj6Tw",
+                "user": {
+                    "name": "HIES",
+                    "pwd": "Sw3tvX^5bxT?f8aNVM32YYrfE#3j+AufsLASEsS5Z-VM&G^G_z2_=YgXaZmMCE$CLP?7#%QVqvyHX_FQ^D%6WZ5t8xrFeThZVW%rhxcA226dfd!257F+CNx7CJ$eCyt+"
+                }
+            },
+            "prod": {
+                "claimtokenUrl": "https://onlineauthentication.nida.gov.rw/onlineauthentication/claimtoken",
+                "getcitizenUrl": "https://onlineauthentication.nida.gov.rw/onlineauthentication/getcitizen",
+                "keyPhrase": "?ChnoiuUm7Pu7ng4Ksh9XTM4GdbC8KSPH!rnPXgunCNSkf0QEoGAv6?v6uWkg71Tq-3?@!q2m4Wuf!UBuC_VcsuS$$wvb@nwS!Cks2UL_UoGkUp$Qu7V9gQ_Wkb_O!1q",
+                "user": {
+                    "name": "HIES",
+                    "pwd": "$mxr$LOEsf1A7rL0afPOmhDYO23GSY291sc6Qod4NP5ZNWn0JB5jvSS4YPTkXh2Ku8PQpVk2c0aOtUm8Qd_r9SOjQohaM9hE2vFVgNM3qchMReMdD1LUiMRSuEaaNkri"
+                }
+            },
+            "token": {
+                "value": "",
+                "updateDate": ""
+            },
+            "environment": "test"
+        },
+        "register": true,
+        "heartbeat": true
+    }
+}
