@@ -114,11 +114,12 @@ function setupApp() {
             form.parse(req, function (err, fields, files) {
                 var data = fields;
 
-
-                var transactionLocation = locations["l_" + data.facilityCode]["hfname"];
-
                 console.log('New data received', data);
                 log.info('New data received', data);
+                
+                if (locations["l_" + data.facilityCode]){
+                
+                var transactionLocation = locations["l_" + data.facilityCode]["hfname"];
 
                 var nd_of_research = 0;
                 var forbidenRepeatTime = 0;
@@ -193,8 +194,8 @@ function setupApp() {
                                                                     "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
                                                                 },
                                                                 "encounterProviders": [{
-                                                                        "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                        "provider": "prova70a-546b-4641-8ae0-8ef3b30490cb",
+                                                                        "encounterRole": apiConf.api.openmrs.encounterRole,
+                                                                        "provider": apiConf.api.openmrs.provider, //Labware
                                                                         "resourceVersion": "1.8"//OpenMRS version
                                                                     }]
                                                             }
@@ -322,8 +323,8 @@ function setupApp() {
                                                                         "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
                                                                     },
                                                                     "encounterProviders": [{
-                                                                            "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-                                                                            "provider": "prov0820-969f-48e0-a0e8-eeb7d00266a1", //Labware
+                                                                            "encounterRole": apiConf.api.openmrs.encounterRole,
+                                                                            "provider": apiConf.api.openmrs.provider, //Labware
                                                                             "resourceVersion": "1.8"
                                                                         }],
                                                                     "resourceVersion": "1.9"
@@ -421,8 +422,13 @@ function setupApp() {
                 }
                 log.info("Searching patient by tractnetID: " + data.tractnetID);
                 LoopA(data.tracnetID);//Search by TracknetID Firts
+                }else{
+                    log.error("ACCESS FORBIDEN - Please use POST method", "Status Code 403"  );
+                }
             });
 
+        }else{
+            log.error("ACCESS FORBIDEN - Please use POST method", "Status Code 403"  );
         }
     })
     return app

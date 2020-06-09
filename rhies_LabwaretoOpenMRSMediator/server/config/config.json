@@ -4,10 +4,12 @@
         "password": "0000",
         "apiURL": "https://core:8080",
         "openMrsUrl": "http://172.17.0.1:4023/patient",
-        "urlPattern": "/test/",
+        "urlPattern": "/test",
         "trustSelfSigned": "true",
         "openmrs": {
-            "rest_api": "/openmrs/ws/rest/v1"
+            "rest_api": "/openmrs/ws/rest/v1",
+            "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
+            "provider": "prov0820-969f-48e0-a0e8-eeb7d00266a1"
         }
     },
     "register": false,
