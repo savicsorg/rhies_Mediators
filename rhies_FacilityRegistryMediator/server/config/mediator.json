@@ -17,7 +17,7 @@
           {
             "name": "Facility Registry Route",
             "host": "savics-facilityRegistry",
-            "port": "4004",
+            "port": "4005",
             "primary": true,
             "type": "http"
           }
@@ -31,7 +31,7 @@
         "name": "Facility Registry endpoint",
         "host": "savics-facilityRegistry",
         "path": "/facilityregistry/",
-        "port": "4004",
+        "port": "4005",
         "primary": true,
         "type": "http"
       }
@@ -46,7 +46,7 @@
       }
     ],
     "config": {
-      "upstreamUrl": "http://savics-facilityRegistry:4004"
+      "upstreamUrl": "http://savics-facilityRegistry:4005"
     }
   }
   
