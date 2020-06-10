@@ -38,108 +38,35 @@ function setupApp() {
   // start the rest of your app here
   const app = express();
 
-  //Coonect only one time to the mongoDB
-  mongodbCon.connectToServer( function( err, client ) {
-    var db = mongodbCon.getDb();
-    if (err) winston.info("Database connection error : ", err);
-    
-  //Call Facility record pulling fucntion each mn in the config with Cron 
-   cron.schedule(myConfig.facilityregistry.cronschedule, () =>{
-
-      tools.getFacilityRecordFromDHIS2(function(resultat){
-    
-        var resultTab = []
-        resultTab = tools.structureFacilityRecord(db, resultat);
-        console.log(resultTab);
-        tools.saveFacilities(db, resultTab);
-
-
-      })
-
-    });
-
-    
-    //Pushing Facility information to openMRS instances db
-    cronPushing.schedule(myConfig.facilityregistry.pushingschedule, () =>{
+  //Pushing Facility information to openMRS instances db
+  cronPushing.schedule(myConfig.facilityregistry.pushingschedule, () =>{
       
-        var openmrsInstancesTab = myConfig.facilityregistry.openmrsinstances
-        var facilitiesTab = tools.getAllFacilities(db);
-        winston.info('PUSHING START with a list of ' + facilitiesTab.length + ' facilities to update (or add) ...for : ' + tools.getTodayDate());
-        for(var i=0; i<openmrsInstancesTab.length; i++){
-            try{
+      var openmrsInstancesTab = myConfig.facilityregistry.openmrsinstances
+      var facilitiesTab = tools.getAllFacilities(db);
+      winston.info('PUSHING START with a list of ' + facilitiesTab.length + ' facilities to update (or add) ...for : ' + tools.getTodayDate());
+      for(var i=0; i<openmrsInstancesTab.length; i++){
+          try{
 
-              tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab);
+            tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab);
 
-            } catch(e){
+          } catch(e){
 
-                continue;
+              continue;
 
-            } finally {
+          } finally {
 
-            }
+          }
 
-            if (i == openmrsInstancesTab.length-1){
+          if (i == openmrsInstancesTab.length-1){
               winston.info('End of updating process for all the openmrs instances at ' + tools.getTodayDate());
-            } 
-        }
+          } 
+      }
       
 
-    });
-
-
-    function reportEndOfProcess(req, res, error, statusCode, message) {
-      res.set('Content-Type', 'application/json+openhim')
-      var responseBody = message;
-      var stateLabel = "";
-      let orchestrations = [];
-
-      var headers = { 'content-type': 'application/json' }
-      if (error) {
-        stateLabel = "Failed";
-        winston.error(message, error);
-      } else {
-        stateLabel = "Successful";
-        winston.info(message);
-      }
-      var orchestrationResponse = { statusCode: statusCode, headers: headers }
-      orchestrations.push(utils.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-      res.send(utils.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
-    }
-
-
-    //Facility registry resource endpoint for GET only
-    app.get('/facilityregistry/', (req, res) => {
-      winston.info(`Processing ${req.method} request on ${req.url}`);
-      var resultTab = tools.getAllFacilities(db);
-      winston.info('All facilities found. Number of facilities --> ' + resultTab.length);
-      res.json({allFacilityList: resultTab});
-    })
-    .get('/facilityregistry/fosa/:fosaID', (req, res) => {
-      var fosaID = parseInt(req.params.fosaID);
-      if(!fosaID && fosaID!==0){
-        winston.info('No facility found for Fosa ID --> ' + fosaID);
-        res.status(404).json({error: "on fosaID type"});
-      }
-      if(typeof(fosaID)=='number'){
-        winston.info(`Processing ${req.method} request on ${req.url}`);
-        var resultOne = tools.getOneFacilityByFosa(db,fosaID);
-        if(resultOne!=''){
-          winston.info('One facility found for Fosa ID --> ' + fosaID);
-          res.json({facility: resultOne});
-        } else {
-          winston.info('No facility found for Fosa ID --> ' + fosaID);
-          res.json({facility: "No facility for fosa=" + fosaID});
-        }
-      } 
-    })
-    .use(function(req, res, next){
-      winston.info(`Processing ${req.method} request on ${req.url}`);
-      res.setHeader('Content-Type', 'text/plain');
-      res.status(404).send('Not such a resource !');
-    });
-    //End of resource
-    
   });
+
+
+    
   return app;
 }
 

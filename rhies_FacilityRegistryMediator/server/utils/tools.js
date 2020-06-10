@@ -1,131 +1,12 @@
-
-var request = require('request');
+'use strict'
+var URI = require('urijs');
 var config = require('../config/config');
-var fRecModel = require('../models/facilityModel')
-var mapFile = require('./mapFile');
-var deasync = require('deasync');
 var mysql = require('mysql');
 const { uuid } = require('uuidv4');
-const mongodb = require('mongodb');
 const winston = require('winston');
-const async = require('async');
-const MongoClient = mongodb.MongoClient;
-
-var apiConfig = config;
 
 
 
-exports.structureFacilityRecord =  function  (myDB,responseBody) {
-    
-    let tbFRecords = [];
-    let extractDate = exports.getTodayDate();
-    for (var  z = 0;  z < responseBody.length; z ++) {
-        
-        let modelFRecord = new fRecModel.facRecordModel.constructor();
-        let tab = responseBody[z].path.split("/");
-         
-        modelFRecord.idDHIS2 = responseBody[z].id;
-        modelFRecord.fosaCode = responseBody[z].code;
-        modelFRecord.name = responseBody[z].name;
-        modelFRecord.type = responseBody[z].featureType;
-        modelFRecord.description = "FOSAID: " + responseBody[z].code + " TYPE: " + "XX";
-        modelFRecord.lastUpdated = responseBody[z].lastUpdated;
-        modelFRecord.openingDate = responseBody[z].openingDate;
-        modelFRecord.coordinates = responseBody[z].coordinates;
-        modelFRecord.phoneNumber = responseBody[z].phoneNumber;
-        modelFRecord.email = responseBody[z].email;
-
-        async.parallel(
-            [
-                function(callback){
-                    mapFile.getProvinceName(myDB, tab[2], function(result){
-                        callback(null, result);
-                    });
-                },
-                function(callback){
-                    mapFile.getDistrictName(myDB, tab[3], function(result){
-                        callback(null, result);
-                    });
-                },
-                function(callback){
-                    mapFile.getSubDistrictName(myDB, tab[4], function(result){
-                        callback(null, result);
-                    });
-                },
-                function(callback){
-                    mapFile.getSectorName(myDB, tab[5], function(result){
-                        callback(null, result);
-                    });
-                }
-            ], 
-            function(err, allResults){
-                if (err){
-                    winston.info('Error when retrieving map info : ' , err);
-                    modelFRecord.pays = "Rwanda";
-                    modelFRecord.province = null;
-                    modelFRecord.district = null;
-                    modelFRecord.sector = null;
-                    modelFRecord.cellule = null;
-                } else {
-                    modelFRecord.pays = "Rwanda";
-                    modelFRecord.province = allResults[0];
-                    modelFRecord.district = allResults[1];
-                    modelFRecord.sector = allResults[3];
-                    modelFRecord.cellule = allResults[2];
-                    
-                }
-                modelFRecord.extractDate = extractDate;
-                tbFRecords.push(modelFRecord);
-                winston.info('Facilities structure successfully built!');
-                
-            }
-            
-        );
-        
-        
-        
-    }
-
-    return tbFRecords;
-}
-
-
-exports.getFacilityRecordFromDHIS2 = function (callback) {
-    
-    var endPoint = "/api/organisationUnits.json?level=6&fields=id,code,name,lastUpdated,featureType,url,path,openingDate,closingDate,phoneNumber,coordinates,email&pageSize=30000";    
-    var options = {
-        url: apiConfig.api.dhis2.url + endPoint,
-        headers: {
-        'Authorization': 'Basic ' + new Buffer(apiConfig.api.dhis2.user.name + ":" + apiConfig.api.dhis2.user.pwd).toString('base64'),
-        'Content-Type': 'application/json'
-        },
-    };
-
-    request.get(options, function (error, response) {
-        if (error) {
-            console.log("An error occured on request: " + error);
-        } else {
-            var ResponseBody = response;
-            if (ResponseBody !== null) {
-                if (ResponseBody.statusCode == 200) {
-                    var objResponse = JSON.parse(ResponseBody.body);
-                    var tab = [];
-                    var facRegTab = objResponse.organisationUnits;
-                    for(var e =0; e < objResponse.organisationUnits.length; e++){
-                        tab.push(facRegTab[e])
-                    }
-                    callback(tab);
-                    
-                } else {
-                    console.log("An error occured on response: " + error);
-                }
-            } else {
-                console.log("Error no ResponseBody found")
-            }
-
-        }
-    });
-};
 
 
 exports.getTodayDate = function() {
@@ -140,74 +21,6 @@ exports.getTodayDate = function() {
 
     // prints date & time in YYYY-MM-DD HH:MM:SS format
     return year + "-" + month + "-" + date + " " + time;
-}
-
-
-exports.saveFacilities = function(myDB, facilityTab) {
-
-    myDB.collection("facilities").deleteMany({}, function(err, result){
-        if (err) {
-            winston.info("Error while removing all facility documents into the database: ", err);
-                     
-        } else {
-            winston.info("Old facility documents successfully deleted! ");
-            winston.info("Number of new documents to insert----> " + facilityTab.length);
-            for(let i=0; i<facilityTab.length; i++){
-                myDB.collection("facilities").insertOne(facilityTab[i], function(err, result) {
-                    if (err) {
-                        winston.info("Error while inserting facility documents into the database: ", err);
-                                 
-                    } else {
-                        winston.info("Facility succesfully inserted for the fosaCode: " + facilityTab[i].fosaCode);
-                    };
-                });
-            }
-                     
-        }
-    });
-
-}
-
-
-exports.getAllFacilities = function(myDB){
-    
-    var facilitiesTab = null;
-    myDB.collection("facilities").find({"fosaCode":{$ne:null}}).toArray( function(err, result) {
-        if (err) {
-            winston.info("Error while retrieving DISTRICT name from the database: ", err);
-                     
-        } else {
-            facilitiesTab =  result;        
-        };
-    });
-
-    while(facilitiesTab==null){
-        deasync.runLoopOnce();
-    }
-    return facilitiesTab;
-
-}
-
-
-exports.getOneFacilityByFosa = function(myDB, fosaId){
-
-    var facilitiesTab = null
-    var query = { fosaCode: '' + fosaId  };
-    myDB.collection("facilities").find(query).toArray( function(err, result) {
-        if (err) {
-            winston.info("Error while retrieving DISTRICT name from the database: ", err);
-                     
-        } else {
-            facilitiesTab =  result;
-                     
-        };
-    });
-
-    while(facilitiesTab==null){
-        deasync.runLoopOnce();
-    }
-    return facilitiesTab;    
-
 }
 
 
@@ -278,3 +91,63 @@ exports.createNewOpenmrsLocation = function(con, fc, host){
     });
 
 }
+
+
+exports.reportEndOfProcess = function(req, res, error, statusCode, message) {
+    res.set('Content-Type', 'application/json+openhim')
+    var responseBody = message;
+    var stateLabel = "";
+    let orchestrations = [];
+
+    var headers = { 'content-type': 'application/json' }
+    if (error) {
+      stateLabel = "Failed";
+      winston.error(message, error);
+    } else {
+      stateLabel = "Successful";
+      winston.info(message);
+    }
+    var orchestrationResponse = { statusCode: statusCode, headers: headers }
+    orchestrations.push(exports.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
+    res.send(exports.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
+}
+
+
+exports.buildOrchestration = function (name, beforeTimestamp, method, url, requestHeaders, requestContent, res, body) {
+    var ur = new URI(url)
+    return {
+      name: name,
+      request: {
+        method: method,
+        headers: requestHeaders,
+        body: requestContent,
+        timestamp: beforeTimestamp,
+        path: ur.path(),
+        querystring: ur.query()
+      },
+      response: {
+        status: res.statusCode,
+        headers: res.headers,
+        body: body,
+        timestamp: new Date()
+      }
+    }
+}
+  
+
+exports.buildReturnObject = function(urn, status, statusCode, headers, responseBody, orchestrations, properties){
+    var response = {
+      status: statusCode,
+      headers: headers,
+      body: responseBody,
+      timestamp: new Date().getTime()
+    }
+    return {
+      'x-mediator-urn': urn,
+      status: status,
+      response: response,
+      orchestrations: orchestrations,
+      properties: properties
+    }
+}
+  
