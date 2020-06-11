@@ -46,15 +46,16 @@ function setupApp() {
       request(endpoint, function(err, res, body) {
 
         if(err){
-            let msg = 'Error while connecting to the facility registry Server. Check if the facility registry server is on and/or the Internet connection.';
+            let msg = 'Error while connecting to the facility registry Server. Check if the facility registry server (app and DB) is on and/or the Internet connection.';
             winston.info(msg, err);
+            tools.reportEndOfProcess(request, res, err, 500, msg + ' ' + err);
         } else {
             var facilitiesTab = JSON.parse(body).FacilitiesList;
             winston.info('PUSHING START with a list of ' + facilitiesTab.length + ' facilities to update (or add) ...for : ' + tools.getTodayDate());
             for(var i=0; i<openmrsInstancesTab.length; i++){
                 try{
 
-                  tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab);
+                  tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab, request, res);
 
                 } catch(e){
 
@@ -64,9 +65,6 @@ function setupApp() {
 
                 }
 
-                if (i == openmrsInstancesTab.length-1){
-                    winston.info('End of updating process for all the openmrs instances at ' + tools.getTodayDate());
-                } 
             }
           }
 
@@ -91,8 +89,8 @@ function setupApp() {
 function start(callback) {
     if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
   
-   //if (apiConf.register) {
-   if (false) {
+   if (apiConf.register) {
+   //if (false) {
       medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
         if (err) {
           winston.error('Failed to register this mediator, check your config')

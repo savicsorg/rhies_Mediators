@@ -4,6 +4,7 @@ var config = require('../config/config');
 var mysql = require('mysql');
 const { uuid } = require('uuidv4');
 const winston = require('winston');
+const mediatorConfig = require('../config/mediator');
 
 
 
@@ -24,9 +25,10 @@ exports.getTodayDate = function() {
 }
 
 
-exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityTab){
+exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityTab,request, res){
 
-    var sql = ""
+    var sql = "";
+    var transactionSuccess = true;
     var con = mysql.createConnection({
     host: hostUrl,
     user: "root",
@@ -37,8 +39,13 @@ exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityT
 
     con.connect(function(err) {
         if (err) {
-            winston.info('Error when connecting to the instance : ' + hostUrl +':' + port + ' --->  ', err);
+            let msg = 'Error when connecting to the instance : ' + hostUrl +':' + port + '';
+            exports.reportEndOfProcess(request, res, err, 500, msg + ' ' + err);
+            transactionSuccess = fasle;
         } else {
+            let msg = 'Successfully Connected to the instance : ' + hostUrl +':' + port + '';
+            winston.info(msg);
+                        
             for(var i = 0; i < facilityTab.length; i++){
                 
                 let f = facilityTab[i]
@@ -57,23 +64,30 @@ exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityT
 
                 con.query(sql, function (err, result) {
                     if (err) { 
-                        winston.info(err);
+                        let msg = 'Error when updating the location table for the instance ' + hostUrl +':' + port + '. SQL details : ' + sql;
+                        exports.reportEndOfProcess(request, res, err, 500, msg + ' ' + err);
+                        transactionSuccess = fasle;
                     } else {
                         if (result.affectedRows==0){
-                            exports.createNewOpenmrsLocation(con, f, hostUrl)
+                            exports.createNewOpenmrsLocation(con, f, hostUrl, port, request, res, transactionSuccess)
                         } 
                         if (result.affectedRows==1) {
-                            winston.info(f.name+ ' successfully updated on ' + hostUrl + ' ');
+                            let msg = f.name+ ' successfully updated on ' + hostUrl + ':' + port;
+                            winston.info(msg);
                         }
                     }
                 });
+            }
+            if(transactionSuccess){
+                let msg = 'The list of the facilities (locations) has been succesfully updated on the openmrs instance ' + hostUrl + ':' + port;
+                exports.reportEndOfProcess(request, res, null, 200 , msg);
             }
         }
     });
 }
 
 
-exports.createNewOpenmrsLocation = function(con, fc, host){
+exports.createNewOpenmrsLocation = function(con, fc, host, port, request, res, transactionSuccess){
     var lat = null;
     var long = null
     var uuidVal = uuid();
@@ -86,8 +100,14 @@ exports.createNewOpenmrsLocation = function(con, fc, host){
                VALUES("' + fc.name + '", "' + fc.description + '", "' + fc.sector + '", "' + fc.cellule + '",  "' + fc.province + '", "Rwanda", "' + lat + '", "' + long + '", "' + fc.openingDate + '", "' + fc.district + '", 0, "' + uuidVal + '", 1);';
     con.query(sql, function (err, result) {
         if (err) {
-            winston.info(err)
-        } else { winston.info(fc.name+ ' successfully created! on ' + host + ' '); }
+            let msg = 'Error when inserting new facility in the location table for the instance ' + hostUrl +':' + port + '. SQL details : ' + sql;
+            exports.reportEndOfProcess(request, res, err, 500, msg + ' ' + err);
+            transactionSuccess = false;
+        } else { 
+            let msg = fc.name+ ' successfully created! on ' + host + ':' + port;
+            winston.info(msg);
+
+        }
     });
 
 }
@@ -102,7 +122,7 @@ exports.reportEndOfProcess = function(req, res, error, statusCode, message) {
     var headers = { 'content-type': 'application/json' }
     if (error) {
       stateLabel = "Failed";
-      winston.error(message, error);
+      winston.error(message);
     } else {
       stateLabel = "Successful";
       winston.info(message);
