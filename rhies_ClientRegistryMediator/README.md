@@ -1,8 +1,7 @@
-## OpenMRStoClientMediator ##
+## RHIES Client Registry mediator ##
 
 ### Prerequisites ###
 * Netbeans or VS code or any editor you prefere
-
 
 
 * Follow the steps to modify the omrstonida mediator
