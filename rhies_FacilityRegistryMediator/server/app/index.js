@@ -7,10 +7,9 @@ const express = require('express');
 const medUtils = require('openhim-mediator-utils');
 const winston = require('winston');
 const _ = require('underscore');
-const utils = require('./utils');
+var request = require('request');
 const cron = require('node-cron');
 const cronPushing = require('node-cron');
-const mongodbCon = require('../models/mongodbCon');
 var myConfig = require('../config/config')
 
 var tools = require('../utils/tools');
@@ -42,26 +41,36 @@ function setupApp() {
   cronPushing.schedule(myConfig.facilityregistry.pushingschedule, () =>{
       
       var openmrsInstancesTab = myConfig.facilityregistry.openmrsinstances
-      var facilitiesTab = tools.getAllFacilities(db);
-      winston.info('PUSHING START with a list of ' + facilitiesTab.length + ' facilities to update (or add) ...for : ' + tools.getTodayDate());
-      for(var i=0; i<openmrsInstancesTab.length; i++){
-          try{
+      var endpoint = myConfig.facilityregistry.server.url + ":" + myConfig.facilityregistry.server.port + myConfig.facilityregistry.server.urlPattern;
 
-            tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab);
+      request(endpoint, function(err, res, body) {
 
-          } catch(e){
+        if(err){
+            let msg = 'Error while connecting to the facility registry Server. Check if the facility registry server is on and/or the Internet connection.';
+            winston.info(msg, err);
+        } else {
+            var facilitiesTab = JSON.parse(body).FacilitiesList;
+            winston.info('PUSHING START with a list of ' + facilitiesTab.length + ' facilities to update (or add) ...for : ' + tools.getTodayDate());
+            for(var i=0; i<openmrsInstancesTab.length; i++){
+                try{
 
-              continue;
+                  tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab);
 
-          } finally {
+                } catch(e){
 
+                    continue;
+
+                } finally {
+
+                }
+
+                if (i == openmrsInstancesTab.length-1){
+                    winston.info('End of updating process for all the openmrs instances at ' + tools.getTodayDate());
+                } 
+            }
           }
 
-          if (i == openmrsInstancesTab.length-1){
-              winston.info('End of updating process for all the openmrs instances at ' + tools.getTodayDate());
-          } 
-      }
-      
+      });
 
   });
 
@@ -82,8 +91,8 @@ function setupApp() {
 function start(callback) {
     if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
   
-   if (apiConf.register) {
-   //if (false) {
+   //if (apiConf.register) {
+   if (false) {
       medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
         if (err) {
           winston.error('Failed to register this mediator, check your config')

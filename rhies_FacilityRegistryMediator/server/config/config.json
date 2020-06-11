@@ -8,12 +8,13 @@
   },
   "facilityregistry": {
       "server": {
-          "url" : "http://130.104.12.92",
-          "port": "4009",
+          "url" : "http://localhost",
+          "port": "4004",
+          "urlPattern": "/facilityregistry/",
           "username": "",
           "pwd": ""
       },
-      "pushingschedule":"35 11 * * *",
+      "pushingschedule":"30 01 * * *",
       "openmrsinstances":[
         {
           "name":"localhost",
