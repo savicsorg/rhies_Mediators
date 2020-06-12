@@ -1,0 +1,34 @@
+{
+  "api": {
+    "username": "root@openhim.org",
+    "password": "0000",
+    "apiURL": "https://openhim-core:8080",
+    "trustSelfSigned": "true",
+    "urlPattern": "/facilityregistry/"
+  },
+  "facilityregistry": {
+      "server": {
+          "url" : "http://localhost",
+          "port": "4004",
+          "urlPattern": "/facilityregistry/",
+          "username": "",
+          "pwd": ""
+      },
+      "pushingschedule":"30 01 * * *",
+      "openmrsinstances":[
+        {
+          "name":"localhost",
+          "port":"3306",
+          "pwd": "root"
+        },
+        {
+          "name":"localhosting",
+          "port":"3306",
+          "pwd": "root"
+        }
+      ]
+  },
+  "register": true,
+  "verbose" :true,
+  "heartbeat": true
+}
