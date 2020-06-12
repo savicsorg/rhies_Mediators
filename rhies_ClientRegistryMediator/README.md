@@ -3,14 +3,15 @@
 ### Prerequisites ###
 * Netbeans or VS code or any editor you prefere
 
+### How to modify the ClientRegistryMediator ###
 
 * Follow the steps to modify the omrstonida mediator
 
 1. Open the **server** folder inside your ide
 
-2. edit the **lib/index.js** file
+2. Edit the **lib/index.js** file
 
-3. push your modifications to github
+3. Push your modifications to GitHub
 
 4. Before building the image, delete the **node_modules** folder
 
