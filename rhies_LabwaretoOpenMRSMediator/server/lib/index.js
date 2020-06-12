@@ -113,13 +113,11 @@ function setupApp() {
             var form = new formidable.IncomingForm();
             form.parse(req, function (err, fields, files) {
                 var data = fields;
-
-                console.log('New data received', data);
-                log.info('New data received', data);
                 
                 if (locations["l_" + data.facilityCode]){
                 
                 var transactionLocation = locations["l_" + data.facilityCode]["hfname"];
+                log.info('New data received', data, transactionLocation);
 
                 var nd_of_research = 0;
                 var forbidenRepeatTime = 0;
@@ -156,6 +154,7 @@ function setupApp() {
                                         var location = locations["l_" + data.facilityCode];
                                         switch (testType) {
                                             case 'viral_load_2':
+                                                log.info("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
                                                 console.log("New HIV VIRAL LOAD 2 test from Labware. SampleID: '" + data.SampleID + "'", data);
 
                                                 
@@ -233,6 +232,7 @@ function setupApp() {
                                                 break;
                                             case 'recency_vl':
                                                 log.info("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
+                                                console.log("New Recency VL test from Labware. SampleID: '" + data.SampleID + "'", data);
                                                 if (data.Result && data.Result.copies) {
 
                                                     var ritaConcept = tests.recency_vl.recentConceptValue;//"RECENT";
@@ -424,11 +424,13 @@ function setupApp() {
                 LoopA(data.tracnetID);//Search by TracknetID Firts
                 }else{
                     log.error("ACCESS FORBIDEN - Please use POST method", "Status Code 403"  );
+                    reportEndOfProcess(req, res, "ACCESS FORBIDEN - Please use POST method", 403, "ACCESS FORBIDEN - Please use POST method");
                 }
             });
 
         }else{
-            log.error("ACCESS FORBIDEN - Please use POST method", "Status Code 403"  );
+            log.error("ACCESS FORBIDEN - Please use POST method or Check the URL Route", "Status Code 403"  );
+            reportEndOfProcess(req, res, "ACCESS FORBIDEN - Please use POST method or Check the URL Route", 403);
         }
     })
     return app
