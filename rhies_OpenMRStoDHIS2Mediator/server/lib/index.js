@@ -1824,6 +1824,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   var patientVillage = "";
   var patientCellule = "";
   var patientWHOStageValue = "";
+  var patientOINameValue = "";
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -1950,7 +1951,10 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   patientAttendedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
   patientCompletedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
     //End of boolean retrieving
-
+  
+  //This is a dropdown in OpenMRS and free text in DHIS2
+  patientOINameValue = utils.getOINameConceptValue(incomingEncounter.encounter.obs, '0ae23a5a-15f5-102d-96e4-000c29c2a5d7');
+  
   utils.getDhis2DropdownValue(utils.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
     patientReasonARTChangedOrStoppedValue = result;
     utils.getDhis2DropdownValue(utils.getDHIS2DrugToxicityType(omrsDrugToxicityType), function(result){
@@ -2101,7 +2105,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                       },
                       {
                         "dataElement": "G3dUs7PuDqx",
-                        "value": ""
+                        "value": patientOINameValue
                       },
                       {
                         "dataElement": "OKemd50jbHG",
