@@ -891,7 +891,6 @@ exports.getDHIS2TPTTherapyInProgress = function (uuid) {
 }
 
 
-
 exports.getDHIS2WHOStage = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
@@ -916,6 +915,26 @@ exports.getDHIS2WHOStage = function (uuid) {
 
 }
 
+
+exports.getOINameConceptValue = function(obs, uuid) {
+  if (exports.isFineValue(obs) == true) {
+    var i;
+    var yesFound = false;
+    for (i = 0; i < obs.length; i++) {
+      if (obs[i].concept.uuid == uuid) {
+        yesFound = true;
+        return obs[i].value.display;
+        
+      }
+    }
+    if (yesFound === false){
+      return "";
+    }
+  } else {
+    return "";
+  }
+
+}
 
 
 exports.isDate = function (value) {
