@@ -1823,6 +1823,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   var patientDistrict = "";
   var patientVillage = "";
   var patientCellule = "";
+  var patientWHOStageValue = "";
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -1922,6 +1923,14 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     omrsCompletedEnhancedCounselling = omrsCompletedEnhancedCounselling.uuid;
   } else {
     omrsCompletedEnhancedCounselling = "";
+  }
+
+
+  var omrsWHOStage =  = utils.getConceptValue(incomingEncounter.encounter.obs, "3cdb3b02-26fe-102b-80cb-0017a47871b2");
+  if (utils.isFineValue(omrsWHOStage) == true && utils.isFineValue(omrsWHOStage.name) == true && utils.isFineValue(omrsWHOStage.name.name) == true) {
+    omrsWHOStage = omrsWHOStage.uuid;
+  } else {
+    omrsWHOStage = "";
   }
   // End of UUID retrieving
 
@@ -2070,7 +2079,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                     },
                     {
                       "dataElement": "MWnDK640C17",
-                      "value": ""
+                      "value": patientWHOStageValue
                     },
                     {
                       "dataElement": "MG6I5RT8YsE",
