@@ -7,10 +7,12 @@ const express = require('express');
 const medUtils = require('openhim-mediator-utils');
 const winston = require('winston');
 const _ = require('underscore');
-var request = require('request');
+//var facServerrequest = require('http')
+var http = require('http');
 const cron = require('node-cron');
 const cronPushing = require('node-cron');
 var myConfig = require('../config/config')
+var facServerrequest = require('request');
 
 var tools = require('../utils/tools');
 var getFacilityRegistry = [];
@@ -37,44 +39,45 @@ function setupApp() {
   // start the rest of your app here
   const app = express();
 
+
   //Pushing Facility information to openMRS instances db
   cronPushing.schedule(myConfig.facilityregistry.pushingschedule, () =>{
-      
-      var openmrsInstancesTab = myConfig.facilityregistry.openmrsinstances
+
+    var openmrsInstancesTab = myConfig.facilityregistry.openmrsinstances
+    app.all('*', function(req, myResponse) {
       var endpoint = myConfig.facilityregistry.server.url + ":" + myConfig.facilityregistry.server.port + myConfig.facilityregistry.server.urlPattern;
-
-      request(endpoint, function(err, res, body) {
-
-        if(err){
-            let msg = 'Error while connecting to the facility registry Server. Check if the facility registry server (app and DB) is on and/or the Internet connection.';
-            winston.info(msg, err);
-            tools.reportEndOfProcess(request, res, err, 500, msg + ' ' + err);
+      facServerrequest.get(endpoint, function(error,response,body) {
+            
+        if(error){
+          error = winston.error('Error while connecting to the facility registry Server ');
+          let msg = 'Error while connecting to the facility registry Server. Check if the facility registry server (app and DB) is on and/or the Internet connection.';
+          tools.reportEndOfProcess(req, myResponse, error, 500, msg + ' ' + error);
         } else {
             var facilitiesTab = JSON.parse(body).FacilitiesList;
             winston.info('PUSHING START with a list of ' + facilitiesTab.length + ' facilities to update (or add) ...for : ' + tools.getTodayDate());
             for(var i=0; i<openmrsInstancesTab.length; i++){
-                try{
+              try{
 
-                  tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab, request, res);
+                tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab, req, myResponse);
 
-                } catch(e){
+              } catch(e){
 
-                    continue;
+                continue;
 
-                } finally {
+              } finally {
 
-                }
+              }
 
             }
-          }
+        }
 
       });
-
+    });
+    http.request({url:myConfig.api.apiURL,method:'POST',port:port,path:'/facilityregistry/'}, function(rq, rs){}).end();
   });
-
-
     
   return app;
+
 }
 
 

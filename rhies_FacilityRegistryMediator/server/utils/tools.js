@@ -5,10 +5,11 @@ var mysql = require('mysql');
 const { uuid } = require('uuidv4');
 const winston = require('winston');
 const mediatorConfig = require('../config/mediator');
+var myConfig = require('../config/config')
 
 
 
-
+var endpoint = myConfig.facilityregistry.server.url + ":" + myConfig.facilityregistry.server.port + myConfig.facilityregistry.server.urlPattern;
 
 exports.getTodayDate = function() {
     
@@ -25,7 +26,7 @@ exports.getTodayDate = function() {
 }
 
 
-exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityTab,request, res){
+exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityTab,request, resu){
 
     var sql = "";
     var transactionSuccess = true;
@@ -39,9 +40,10 @@ exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityT
 
     con.connect(function(err) {
         if (err) {
-            let msg = 'Error when connecting to the instance : ' + hostUrl +':' + port + '';
-            exports.reportEndOfProcess(request, res, err, 500, msg + ' ' + err);
-            transactionSuccess = fasle;
+            let msg = 'Error when connecting to the instance : ' + hostUrl +':' + port + '.  ';
+            //exports.reportEndOfProcess(request, resu, err, 500, msg + ' ' + err);
+            winston.info(msg, err);
+            transactionSuccess = false;
         } else {
             let msg = 'Successfully Connected to the instance : ' + hostUrl +':' + port + '';
             winston.info(msg);
@@ -65,11 +67,11 @@ exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityT
                 con.query(sql, function (err, result) {
                     if (err) { 
                         let msg = 'Error when updating the location table for the instance ' + hostUrl +':' + port + '. SQL details : ' + sql;
-                        exports.reportEndOfProcess(request, res, err, 500, msg + ' ' + err);
-                        transactionSuccess = fasle;
+                        exports.reportEndOfProcess(request, resu, err, 500, msg + ' ' + err);
+                        transactionSuccess = false;
                     } else {
                         if (result.affectedRows==0){
-                            exports.createNewOpenmrsLocation(con, f, hostUrl, port, request, res, transactionSuccess)
+                            exports.createNewOpenmrsLocation(con, f, hostUrl, port, request, resu, transactionSuccess)
                         } 
                         if (result.affectedRows==1) {
                             let msg = f.name+ ' successfully updated on ' + hostUrl + ':' + port;
@@ -80,14 +82,14 @@ exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityT
             }
             if(transactionSuccess){
                 let msg = 'The list of the facilities (locations) has been succesfully updated on the openmrs instance ' + hostUrl + ':' + port;
-                exports.reportEndOfProcess(request, res, null, 200 , msg);
+                exports.reportEndOfProcess(request, resu, null, 200 , msg);
             }
         }
     });
 }
 
 
-exports.createNewOpenmrsLocation = function(con, fc, host, port, request, res, transactionSuccess){
+exports.createNewOpenmrsLocation = function(con, fc, host, port, request, resc, transactionSuccess){
     var lat = null;
     var long = null
     var uuidVal = uuid();
@@ -101,7 +103,7 @@ exports.createNewOpenmrsLocation = function(con, fc, host, port, request, res, t
     con.query(sql, function (err, result) {
         if (err) {
             let msg = 'Error when inserting new facility in the location table for the instance ' + hostUrl +':' + port + '. SQL details : ' + sql;
-            exports.reportEndOfProcess(request, res, err, 500, msg + ' ' + err);
+            exports.reportEndOfProcess(request, resc, err, 500, msg + ' ' + err);
             transactionSuccess = false;
         } else { 
             let msg = fc.name+ ' successfully created! on ' + host + ':' + port;
@@ -113,27 +115,26 @@ exports.createNewOpenmrsLocation = function(con, fc, host, port, request, res, t
 }
 
 
-exports.reportEndOfProcess = function(req, res, error, statusCode, message) {
-    res.set('Content-Type', 'application/json+openhim')
-    var responseBody = message;
+exports.reportEndOfProcess = function(reqForm, resForm, errorForm, statusCodeForm, messageForm) {
+    resForm.set('Content-Type', 'application/json+openhim');
+    var responseBody = messageForm;
     var stateLabel = "";
     let orchestrations = [];
-
     var headers = { 'content-type': 'application/json' }
-    if (error) {
+    if (errorForm) {
       stateLabel = "Failed";
-      winston.error(message);
+      winston.error(messageForm);
     } else {
       stateLabel = "Successful";
-      winston.info(message);
+      winston.info(messageForm);
     }
-    var orchestrationResponse = { statusCode: statusCode, headers: headers }
-    orchestrations.push(exports.buildOrchestration('Primary Route', new Date().getTime(), req.method, req.url, req.headers, req.body, orchestrationResponse, responseBody))
-    res.send(exports.buildReturnObject(mediatorConfig.urn, stateLabel, statusCode, headers, responseBody, orchestrations, { property: 'Primary Route' }));
+    var orchestrationResponse = { statusCode: statusCodeForm, headers: headers }
+    orchestrations.push(exports.buildOrchestration('Primary Route', new Date().getTime(), reqForm.method, reqForm.url, reqForm.headers, reqForm.body, orchestrationResponse, responseBody))
+    resForm.send(exports.buildReturnObject(mediatorConfig.urn, stateLabel, statusCodeForm, headers, responseBody, orchestrations, { property: 'Primary Route' }));
 }
 
 
-exports.buildOrchestration = function (name, beforeTimestamp, method, url, requestHeaders, requestContent, res, body) {
+exports.buildOrchestration = function (name, beforeTimestamp, method, url, requestHeaders, requestContent, resp, body) {
     var ur = new URI(url)
     return {
       name: name,
@@ -146,8 +147,8 @@ exports.buildOrchestration = function (name, beforeTimestamp, method, url, reque
         querystring: ur.query()
       },
       response: {
-        status: res.statusCode,
-        headers: res.headers,
+        status: resp.statusCode,
+        headers: resp.headers,
         body: body,
         timestamp: new Date()
       }
