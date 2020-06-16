@@ -891,6 +891,52 @@ exports.getDHIS2TPTTherapyInProgress = function (uuid) {
 }
 
 
+exports.getDHIS2WHOStage = function (uuid) {
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '3cd7ee16-26fe-102b-80cb-0017a47871b2':
+        return 'svKQ8CX1NG1';
+        break;
+      case '3cd7ef9c-26fe-102b-80cb-0017a47871b2':
+        return 'k5rhaBb4Vxl';
+        break;
+      case '3cd7f118-26fe-102b-80cb-0017a47871b2':
+        return 'i8AQ5keQ28R';
+        break;
+      case '3cd7f294-26fe-102b-80cb-0017a47871b2':
+        return 'oEspstl5HfP';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return ''
+  }
+
+}
+
+
+exports.getOINameConceptValue = function(obs, uuid) {
+  if (exports.isFineValue(obs) == true) {
+    var i;
+    var yesFound = false;
+    for (i = 0; i < obs.length; i++) {
+      if (obs[i].concept.uuid == uuid) {
+        yesFound = true;
+        return obs[i].value.display;
+        
+      }
+    }
+    if (yesFound === false){
+      return "";
+    }
+  } else {
+    return "";
+  }
+
+}
+
+
 exports.isDate = function (value) {
   if (exports.isString(value) == true) {
     //2019-09-12T00:00:00.000+0100
