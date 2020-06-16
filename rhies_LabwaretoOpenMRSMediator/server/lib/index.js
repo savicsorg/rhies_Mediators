@@ -37,9 +37,9 @@ var tests = {
         q: "RECEN", //the key word to research the recencies concepts list
         form: "cad4fef7-d937-478b-802d-6dfb8976dc8f", //CBS Recency VL
         visitType: "3515b588-b1df-4110-991b-0d603686d8e6", //"Primary Care Outpatient",
-        encounterType: "20913c78-ab77-474a-a12c-9180160ba232", //CBS Recency VL
-        recencyAssayTestConcept: "b4b0e241-e41a-4d46-89dd-e531cf6d8202",
-        recencyAssayResultConcept: "b4b0e241-e41a-4d46-89dd-e531cf6d8202",
+        encounterType: "2dc31190-cf0e-4ab0-a5a1-6ad601d6ecc0", //HIV VISIT",
+        recencyAssayTestConcept: "b4b0e241-e41a-4d46-89dd-e531cf6d8202",//
+        recencyAssayResultConcept: "a2053e28-9ce9-4647-8a96-6f1b7c62f429",//CBS FINAL RITA RECENCY RESULT
         recencyViralLoadConcept: "c59b6935-3838-4198-8909-75f08d47ff2b",
         recencyViralLoadTestDateConcept: "fa87bb43-ebcc-4919-96f8-c5013ce1bbca",
         recencyViralLoadResultConcept: "aae8d7fe-8bbc-4d2e-926c-0e28b4d0e046",
