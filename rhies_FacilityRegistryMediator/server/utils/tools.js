@@ -26,7 +26,7 @@ exports.getTodayDate = function() {
 }
 
 
-exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityTab,request, resu){
+exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityTab, callback){
 
     var sql = "";
     var transactionSuccess = true;
@@ -38,16 +38,18 @@ exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityT
     port: port
     });
 
+    var messageBuffer = "";
+    var count = 0;
+    var e = 0;
     con.connect(function(err) {
         if (err) {
-            let msg = 'Error when connecting to the instance : ' + hostUrl +':' + port + '.  ';
-            //exports.reportEndOfProcess(request, resu, err, 500, msg + ' ' + err);
-            winston.info(msg, err);
-            transactionSuccess = false;
+            
+            messageBuffer = 'Error when connecting to the instance : ' + hostUrl +':' + port + '.  ' + '.  DETAILS: ' + err + '.  ';
+
         } else {
             let msg = 'Successfully Connected to the instance : ' + hostUrl +':' + port + '';
             winston.info(msg);
-                        
+                     
             for(var i = 0; i < facilityTab.length; i++){
                 
                 let f = facilityTab[i]
@@ -67,29 +69,33 @@ exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityT
                 con.query(sql, function (err, result) {
                     if (err) { 
                         let msg = 'Error when updating the location table for the instance ' + hostUrl +':' + port + '. SQL details : ' + sql;
-                        exports.reportEndOfProcess(request, resu, err, 500, msg + ' ' + err);
-                        transactionSuccess = false;
+                        messageBuffer = messageBuffer + msg + '.  DETAILS: ' + err + '.  ';
                     } else {
                         if (result.affectedRows==0){
-                            exports.createNewOpenmrsLocation(con, f, hostUrl, port, request, resu, transactionSuccess)
+                            exports.createNewOpenmrsLocation(con, f, hostUrl, port)
                         } 
                         if (result.affectedRows==1) {
                             let msg = f.name+ ' successfully updated on ' + hostUrl + ':' + port;
                             winston.info(msg);
                         }
                     }
+                    
                 });
+                count = count + 1;
             }
-            if(transactionSuccess){
-                let msg = 'The list of the facilities (locations) has been succesfully updated on the openmrs instance ' + hostUrl + ':' + port;
-                exports.reportEndOfProcess(request, resu, null, 200 , msg);
-            }
+            while(count < facilityTab.length){
+                e++
+            };
+            messageBuffer = messageBuffer + ' ' +  'The list of the facilities (locations) has been succesfully updated on the openmrs instance ' + hostUrl + ':' + port;
+            
         }
+        callback(messageBuffer); 
     });
+    
 }
 
 
-exports.createNewOpenmrsLocation = function(con, fc, host, port, request, resc, transactionSuccess){
+exports.createNewOpenmrsLocation = function(con, fc, host, port){
     var lat = null;
     var long = null
     var uuidVal = uuid();
@@ -102,9 +108,8 @@ exports.createNewOpenmrsLocation = function(con, fc, host, port, request, resc, 
                VALUES("' + fc.name + '", "' + fc.description + '", "' + fc.sector + '", "' + fc.cellule + '",  "' + fc.province + '", "Rwanda", "' + lat + '", "' + long + '", "' + fc.openingDate + '", "' + fc.district + '", 0, "' + uuidVal + '", 1);';
     con.query(sql, function (err, result) {
         if (err) {
-            let msg = 'Error when inserting new facility in the location table for the instance ' + hostUrl +':' + port + '. SQL details : ' + sql;
-            exports.reportEndOfProcess(request, resc, err, 500, msg + ' ' + err);
-            transactionSuccess = false;
+            let msg = 'Error when inserting new facility in the location table for the instance ' + host +':' + port + '. SQL details : ' + sql;
+            messageBuffer = messageBuffer + msg + '.  DETAILS: ' + err + '.  ';
         } else { 
             let msg = fc.name+ ' successfully created! on ' + host + ':' + port;
             winston.info(msg);
@@ -123,7 +128,7 @@ exports.reportEndOfProcess = function(reqForm, resForm, errorForm, statusCodeFor
     var headers = { 'content-type': 'application/json' }
     if (errorForm) {
       stateLabel = "Failed";
-      winston.error(messageForm);
+      winston.info(messageForm);
     } else {
       stateLabel = "Successful";
       winston.info(messageForm);

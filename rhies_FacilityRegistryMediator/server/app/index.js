@@ -8,7 +8,7 @@ const medUtils = require('openhim-mediator-utils');
 const winston = require('winston');
 const _ = require('underscore');
 //var facServerrequest = require('http')
-var http = require('http');
+var https = require('https');
 const cron = require('node-cron');
 const cronPushing = require('node-cron');
 var myConfig = require('../config/config')
@@ -45,35 +45,42 @@ function setupApp() {
 
     var openmrsInstancesTab = myConfig.facilityregistry.openmrsinstances
     app.all('*', function(req, myResponse) {
+      var msgBuffer = "";
+      var statusLog = 0; 
       var endpoint = myConfig.facilityregistry.server.url + ":" + myConfig.facilityregistry.server.port + myConfig.facilityregistry.server.urlPattern;
       facServerrequest.get(endpoint, function(error,response,body) {
-            
+           
         if(error){
-          error = winston.error('Error while connecting to the facility registry Server ');
-          let msg = 'Error while connecting to the facility registry Server. Check if the facility registry server (app and DB) is on and/or the Internet connection.';
-          tools.reportEndOfProcess(req, myResponse, error, 500, msg + ' ' + error);
+          msgBuffer = 'Error while connecting to the facility registry Server. Check if the facility registry server (app and DB) is on and/or the Internet connection.';
+          tools.reportEndOfProcess(req, myResponse, error, 500 , msgBuffer);
         } else {
-            var facilitiesTab = JSON.parse(body).FacilitiesList;
-            winston.info('PUSHING START with a list of ' + facilitiesTab.length + ' facilities to update (or add) ...for : ' + tools.getTodayDate());
-            for(var i=0; i<openmrsInstancesTab.length; i++){
-              try{
-
-                tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab, req, myResponse);
-
-              } catch(e){
-
-                continue;
-
-              } finally {
-
-              }
-
-            }
+          var facilitiesTab = JSON.parse(body).FacilitiesList;
+          winston.info('PUSHING START with a list of ' + facilitiesTab.length + ' facilities to update (or add) ...for : ' + tools.getTodayDate());
+          for(var i=0; i<openmrsInstancesTab.length; i++){
+              tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab, function(result){
+                msgBuffer = msgBuffer + result + '  ';
+                if (i = (openmrsInstancesTab.length-1)){
+                  tools.reportEndOfProcess(req, myResponse, null, 200 , msgBuffer);
+                }  
+              });  
+          }
+          
         }
-
       });
+      
     });
-    http.request({url:myConfig.api.apiURL,method:'POST',port:port,path:'/facilityregistry/'}, function(rq, rs){}).end();
+    
+    var hostname = myConfig.api.openhimServer;
+    var requestOptions = {
+      port: '5000',
+      path: '/facilityregistry/',
+      method:'POST',
+      auth: myConfig.api.routeUser + ":" + myConfig.api.routePass,
+      headers : {
+        'content-type':'application/json'
+      }
+    };
+    https.request(hostname,requestOptions, function(rq, rs){}).end();
   });
     
   return app;
