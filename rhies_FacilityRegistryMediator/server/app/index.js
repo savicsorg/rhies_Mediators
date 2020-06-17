@@ -17,7 +17,6 @@ var facServerrequest = require('request');
 var tools = require('../utils/tools');
 const fs = require('fs');
 const https = require('https');
-const http = require('http');
 var getFacilityRegistry = [];
 
 
@@ -96,7 +95,7 @@ function start(callback) {
     if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
   
    if (apiConf.register) {
-   //if (false) {
+  //  if (false) {
       medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
         if (err) {
           winston.error('Failed to register this mediator, check your config')

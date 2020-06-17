@@ -9,6 +9,7 @@ const winston = require('winston');
 const _ = require('underscore');
 const Fhir = require('fhir').Fhir;
 var request = require('request');
+const fs = require('fs');
 var https = require('https');
 var http = require('http');
 const utils = require('./utils');
@@ -333,7 +334,7 @@ function setupApp() {
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
-  //if (false) {
+  // if (false) {
   if (apiConf.register) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
