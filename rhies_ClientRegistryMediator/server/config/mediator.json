@@ -16,20 +16,20 @@
       "routes": [
         {
           "name": "OpenMrs to Client Registry Route",
-          "host": "omrsToCRMediator",
+          "host": "rhies-client-registry-mediator",
           "port": "4004",
           "primary": true,
-          "type": "http"
+          "type": "https"
         }
       ],
       "allow": ["openmrs"],
-      "type": "http"
+      "type": "https"
     }
   ],
   "endpoints": [
     {
       "name": "OpenMrs to Client Registry endpoint",
-      "host": "omrsTOCRMediator",
+      "host": "rhies-client-registry-mediator",
       "path": "/patient/",
       "port": "4004",
       "primary": true,

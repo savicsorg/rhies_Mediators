@@ -357,9 +357,8 @@ function start(callback) {
 
           // Create and start HTTPS server
           var httpsServer = https.createServer({
-            key: fs.readFileSync('./certificates/privkey.pem'),
-            cert: fs.readFileSync('./certificates/cert.pem'),
-            ca: fs.readFileSync('./certificates/chain.pem')
+            key: fs.readFileSync('./config/certificates/privkey.pem'),
+            cert: fs.readFileSync('./config/certificates/cert.pem')
         }, app);
           const server = httpsServer.listen(port, () => {
             if (apiConf.heartbeat) {
@@ -386,9 +385,8 @@ function start(callback) {
 
     // Create and start HTTPS server
     var httpsServer = https.createServer({
-      key: fs.readFileSync('./certificates/privkey.pem'),
-      cert: fs.readFileSync('./certificates/cert.pem'),
-      ca: fs.readFileSync('./certificates/chain.pem')
+      key: fs.readFileSync('./config/certificates/privkey.pem'),
+      cert: fs.readFileSync('./config/certificates/cert.pem'),
   }, app);
     const server = httpsServer.listen(port, () => callback(server))
 

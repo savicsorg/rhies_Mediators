@@ -2,14 +2,14 @@
   "api": {
     "username": "root@openhim.org",
     "password": "0000",
-    "apiURL": "https://localhost:8080",
+    "apiURL": "https://core:8080",
     "trustSelfSigned": "true",
     "urlPattern": "/patient/",
     "clientRegistry": {
-      "url": "http://localhost:8080/Patient/",
+      "url": "https://197.243.18.18:1530/clientregistry/Patient",
       "user": {
-        "name": "rhies",
-        "pwd": "patients@rhies"
+        "name": "rhiesEMR",
+        "pwd": "YWRtaW5QYXNzMTIzNA"
       }
     }
   },
