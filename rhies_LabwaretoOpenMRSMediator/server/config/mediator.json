@@ -19,11 +19,11 @@
           "host": "rhies-labware-mediator",
           "port": "4000",
           "primary": true,
-          "type": "http"
+          "type": "https"
         }
       ],
       "allow": ["labware"],
-      "type": "http"
+      "type": "https"
     }
   ],
   "endpoints": [
@@ -33,7 +33,7 @@
       "path": "/test/",
       "port": "4000",
       "primary": true,
-      "type": "http"
+      "type": "https"
     }
   ],
   "configDefs": [

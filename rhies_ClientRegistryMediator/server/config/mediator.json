@@ -33,7 +33,7 @@
       "path": "/patient/",
       "port": "4004",
       "primary": true,
-      "type": "http"
+      "type": "https"
     }
   ],
   "configDefs": [
