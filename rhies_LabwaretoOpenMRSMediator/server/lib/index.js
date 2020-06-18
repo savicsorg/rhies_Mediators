@@ -166,18 +166,18 @@ function setupApp() {
                                                                 "form": tests.viral_load_2.form, //uuid of the concerned form in openmrs
                                                                 "encounterType": tests.viral_load_2.encounterType, //uuid of encounterType
                                                                 "location": location.uuid, //uuid of localtion
-                                                                "encounterDatetime": (new Date()).toISOString(),
+                                                                "encounterDatetime": (new Date(data.SampleDate)).toISOString(),
                                                                 "obs": [
                                                                     {
                                                                         "concept": tests.viral_load_2.parentConcept, //uuid of perent concept
                                                                         "person": patient.uuid, //uuid of patient
-                                                                        "obsDatetime": (new Date()).toISOString(),
+                                                                        "obsDatetime": (new Date(data.DateReleased)).toISOString(),
                                                                         "groupMembers": [
                                                                             {
                                                                                 "concept": tests.viral_load_2.concept, //uuid of concept
                                                                                 "person": patient.uuid, //uuid of patient
                                                                                 "location": location.uuid, //uuid of location
-                                                                                "obsDatetime": (new Date()).toISOString(),
+                                                                                "obsDatetime": (new Date(data.DateReleased)).toISOString(),
                                                                                 "value": data.Result.copies, //hiv concentration value (copie/ml) comming from labware
                                                                                 "resourceVersion": "1.8"//OpenMRS version
                                                                             }
@@ -185,13 +185,13 @@ function setupApp() {
                                                                         "location": location.uuid//uuid of location
                                                                     }
                                                                 ],
-                                                                "visit": {
-                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-                                                                    "patient": patient.uuid,
-                                                                    "visitType": tests.viral_load_2.visitType,
-                                                                    "location": location.uuid,
-                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-                                                                },
+//                                                                "visit": {
+//                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
+//                                                                    "patient": patient.uuid,
+//                                                                    "visitType": tests.viral_load_2.visitType,
+//                                                                    "location": location.uuid,
+//                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
+//                                                                },
                                                                 "encounterProviders": [{
                                                                         "encounterRole": apiConf.api.openmrs.encounterRole,
                                                                         "provider": apiConf.api.openmrs.provider, //Labware
@@ -315,13 +315,13 @@ function setupApp() {
                                                                             }
                                                                         }
                                                                     ],
-                                                                    "visit": {
-                                                                        //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-                                                                        "patient": patient.uuid,
-                                                                        "visitType": tests.recency_vl.visitType,
-                                                                        "location": location.uuid,
-                                                                        "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-                                                                    },
+//                                                                    "visit": {
+//                                                                        //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
+//                                                                        "patient": patient.uuid,
+//                                                                        "visitType": tests.recency_vl.visitType,
+//                                                                        "location": location.uuid,
+//                                                                        "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
+//                                                                    },
                                                                     "encounterProviders": [{
                                                                             "encounterRole": apiConf.api.openmrs.encounterRole,
                                                                             "provider": apiConf.api.openmrs.provider, //Labware
