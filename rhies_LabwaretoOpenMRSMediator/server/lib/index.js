@@ -130,7 +130,7 @@ function setupApp() {
                     var openmrsIPAddress = locations["l_" + data.facilityCode];
                     if (q && q != "" && openmrsIPAddress) {
                         var options = {
-                            url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/patient?q=" + q + "&v=full",
+                            url: openmrsIPAddress.ip + apiConf.api.openmrs.rest_api + "/patient?q=" + q,
                             headers: {
                                 'Authorization': 'Basic ' + Buffer.from(locations["l_" + data.facilityCode]["username"] + ":" + locations["l_" + data.facilityCode]["password"]).toString('base64'),
                                 'Content-Type': 'application/json'
@@ -390,40 +390,39 @@ function setupApp() {
                                             reportEndOfProcess(req, res, "No patient found in " + locations["l_" + data.facilityCode]["hfname"] + "Name: " + data.firstName + " " + data.lastName, 500, "Encounter creation aborted for " + data.SampleID + ", No patient found in " + locations["l_" + data.facilityCode]["hfname"] + "Name: ");
                                         }
                                     } else {
-                                        log.warn("Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision.");
-                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                        log.warn("Oups, it looks like we found many patients corresponding with the input data, we are not able to take decision.");
+                                        log.error("Encounter creation aborted for " + data.SampleID + " in " + locations["l_" + data.facilityCode]["hfname"] +".");
 
                                         reportEndOfProcess(req, res, "Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision.", 500, "Oups, it looks like we have we found many patients corresponding with the input data, we are not able to take decision. Encounter creation aborted for " + data.SampleID + ".");
                                     }
                                 } else if (response.statusCode == "403") {
                                     log.error("FORBIDEN statusCode: ", response.statusCode);
                                     if (forbidenRepeatTime < 1) {
-                                        LoopA(data.tractnetID);//Search by TracknetID Firts
+                                        LoopA(data.tracnetID);//Search by TracknetID Firts
                                     } else {
-                                        log.error("ACCESS FORBIDEN");
-                                        log.error("Encounter creation aborted for " + data.SampleID + ".");
+                                        log.error("ACCESS FORBIDEN: Encounter creation aborted for " + data.SampleID + "in " + locations["l_" + data.facilityCode]["hfname"] +".");
                                         reportEndOfProcess(req, res, "ACCESS FORBIDEN", 500, "Encounter creation aborted for " + data.SampleID + ". ACCESS FORBIDEN");
                                     }
                                 } else {
-                                    log.error("Encounter creation aborted for unkown reason. Attempting to research Patient.", "Status Code " + response.statusCode);
+                                    log.error("Encounter creation aborted for unkown reason. Attempting to research Patient in " + locations["l_" + data.facilityCode]["hfname"] +".", "Status Code " + response.statusCode);
                                     reportEndOfProcess(req, res, "Encounter creation aborted for unkown reason. Status Code " + response.statusCode, 500, "Encounter creation aborted for unkown reason. Status Code " + response.statusCode);
                                 }
                             }
                         });
                     } else {
                         if (nd_of_research < 2) {//Second research possible by name 
-                            log.warn("No patient found, searching by name : " + data.firstName + " " + data.lastName);
+                            log.warn("No patient found, searching by name : " + data.firstName + " " + data.lastName +" in " + locations["l_" + data.facilityCode]["hfname"] +".");
                             LoopA(data.firstName + " " + data.lastName);
                         } else if (!openmrsIPAddress) {
                             log.warn("Unknown health facility ", data.facilityCode, "Operation aborted");
                             reportEndOfProcess(req, res, "Unknown health facility " + data.facilityCode + " Operation aborted", 501, "Unknown health facility " + data.facilityCode + " Operation aborted");
                         } else {
-                            log.warn("No patient found. Operation aborted");
+                            log.warn("No patient found. Operation aborted in " + locations["l_" + data.facilityCode]["hfname"] +".");
                             reportEndOfProcess(req, res, "No patient found. Operation aborted", 500, "No patient found. Operation aborted");
                         }
                     }
                 }
-                log.info("Searching patient by tractnetID: " + data.tractnetID);
+                log.info("Searching patient by tracnetID: " + data.tracnetID +"in " + locations["l_" + data.facilityCode]["hfname"] +".");
                 LoopA(data.tracnetID);//Search by TracknetID Firts
                 }else{
                     log.error("ACCESS FORBIDEN - Please use POST method", "Status Code 403"  );
