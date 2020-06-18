@@ -16,7 +16,7 @@
       "routes": [
         {
           "name": "labware to OpenMrs Route",
-          "host": "labToOmrsMediator",
+          "host": "rhies-labware-mediator",
           "port": "4000",
           "primary": true,
           "type": "http"
@@ -29,7 +29,7 @@
   "endpoints": [
     {
       "name": "labware to OpenMrs endpoint",
-      "host": "labToOmrsMediator",
+      "host": "rhies-labware-mediator",
       "path": "/test/",
       "port": "4000",
       "primary": true,
