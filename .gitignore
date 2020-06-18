@@ -14,10 +14,7 @@ logs/*
 package-lock.json
 node_modules
 dist/
-/labToOmrsMediator/server/nbproject/private/
-/omrsToNidaMediator/server/nbproject/private/
+/rhies_LabwaretoOpenMRSMediator/server/nbproject/private/
+/rhies_NIDAtoOpenMRSMediator/server/nbproject/private/
 /rhies_ClientRegistryMediator /server/nbproject/private/
-rhies_LabwaretoOpenMRSMediator/
-rhies_ClientRegistryMediator/
-rhies_NIDAtoOpenMRSMediator/
-rhies_FacilityRegistryMediator/
+
