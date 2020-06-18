@@ -2,23 +2,26 @@
   "api": {
     "username": "root@openhim.org",
     "password": "0000",
-    "apiURL": "https://192.168.1.162:8080",
+    "apiURL": "https://openhim-core:8080",
     "trustSelfSigned": "true",
-    "urlPattern": "/facilityregistry/"
+    "urlPattern": "/facilityregistry/",
+    "openhimServer": "https://openhim-core",
+    "routeUser": "facility",
+    "routePass": "registry"
   },
   "facilityregistry": {
       "server": {
-          "url" : "http://127.0.0.1",
+          "url" : "http://rhies-facility-registry",
           "port": "4004",
           "urlPattern": "/facilityregistry/",
           "username": "",
           "pwd": ""
       },
-      "pushingschedule":"30 01 * * *",
+      "pushingschedule":"00 14 * * *",
       "openmrsinstances":[
         {
           "name":"instance1",
-          "port":"3306",
+          "port":"3311",
           "pwd": "root"
         },
         {

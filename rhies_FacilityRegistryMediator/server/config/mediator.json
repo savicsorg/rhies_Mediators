@@ -16,20 +16,20 @@
         "routes": [
           {
             "name": "Facility Registry Route",
-            "host": "savics-facilityRegistry",
+            "host": "rhies-frtoomrs",
             "port": "4005",
             "primary": true,
             "type": "http"
           }
         ],
-        "allow": ["facregistry"],
+        "allow": ["root@openhim.org"],
         "type": "http"
       }
     ],
     "endpoints": [
       {
         "name": "Facility Registry endpoint",
-        "host": "savics-facilityRegistry",
+        "host": "rhies-frtoomrs",
         "path": "/facilityregistry/",
         "port": "4005",
         "primary": true,
@@ -46,7 +46,7 @@
       }
     ],
     "config": {
-      "upstreamUrl": "http://savics-facilityRegistry:4005"
+      "upstreamUrl": "http://rhies-frtoomrs:4005"
     }
   }
   
