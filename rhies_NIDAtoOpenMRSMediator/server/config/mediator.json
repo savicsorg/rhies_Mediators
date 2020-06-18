@@ -16,24 +16,24 @@
       "routes": [
         {
           "name": "OpenMrs to nida Route",
-          "host": "omrsToNidaMediator",
+          "host": "rhies-nida-mediator",
           "port": "4001",
           "primary": true,
-          "type": "http"
+          "type": "https"
         }
       ],
       "allow": ["openmrs"],
-      "type": "http"
+      "type": "https"
     }
   ],
   "endpoints": [
     {
       "name": "OpenMrs to nida endpoint",
-      "host": "omrsToNidaMediator",
+      "host": "rhies-nida-mediator",
       "path": "/persons/",
       "port": "4001",
       "primary": true,
-      "type": "http"
+      "type": "https"
     }
   ],
   "configDefs": [
