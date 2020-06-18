@@ -2,10 +2,10 @@
   "api": {
     "username": "root@openhim.org",
     "password": "0000",
-    "apiURL": "https://openhim-core:8080",
+    "apiURL": "https://core:8080",
     "trustSelfSigned": "true",
     "urlPattern": "/facilityregistry/",
-    "openhimServer": "https://openhim-core",
+    "openhimServer": "https://core",
     "routeUser": "facility",
     "routePass": "registry"
   },

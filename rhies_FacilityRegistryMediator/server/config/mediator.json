@@ -16,24 +16,24 @@
         "routes": [
           {
             "name": "Facility Registry Route",
-            "host": "rhies-frtoomrs",
+            "host": "rhies-facility-registry-mediator",
             "port": "4005",
             "primary": true,
-            "type": "http"
+            "type": "https"
           }
         ],
         "allow": ["root@openhim.org"],
-        "type": "http"
+        "type": "https"
       }
     ],
     "endpoints": [
       {
         "name": "Facility Registry endpoint",
-        "host": "rhies-frtoomrs",
+        "host": "rhies-facility-registry-mediator",
         "path": "/facilityregistry/",
         "port": "4005",
         "primary": true,
-        "type": "http"
+        "type": "https"
       }
     ],
     "configDefs": [
