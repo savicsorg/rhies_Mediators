@@ -16,7 +16,7 @@
         "routes": [
           {
             "name": "OpenMRS to DHIS2 Route",
-            "host": "rhies-omrstodhis2",
+            "host": "rhies-dhis2-mediator",
             "port": "4002",
             "primary": true,
             "type": "http"
@@ -29,7 +29,7 @@
     "endpoints": [
       {
         "name": "OpenMRS to DHIS2 endpoint",
-        "host": "rhies-omrstodhis2",
+        "host": "rhies-dhis2-mediator",
         "path": "/context/",
         "port": "4002",
         "primary": true,
@@ -46,6 +46,6 @@
       }
     ],
     "config": {
-      "upstreamUrl": "http://rhies-omrstodhis2:4002"
+      "upstreamUrl": "http://rhies-dhis2-mediator:4002"
     }
   }
