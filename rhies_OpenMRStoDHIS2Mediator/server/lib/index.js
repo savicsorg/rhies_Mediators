@@ -780,6 +780,7 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
 var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, trackedEntityInstanceId, enrollmentId, callback) {
   //Declaration of all the variables for DHIS2 dropdown
   var patientRecencyAssayResultValue = "";
+  var patientSampleRefSiteValue = ""
  
   //Reporting date in DHIS2 must be the encounterDate
   var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
@@ -793,12 +794,20 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
     omrsRecencyAssayResult = "";
   }
 
+
+  var omrsSampleRefSite = utils.getConceptValue(incomingEncounter.encounter.obs, "367b90c5-d5d9-4800-b467-69cedd7f9c24");
+  if (utils.isFineValue(omrsSampleRefSite) == true && utils.isFineValue(omrsSampleRefSite.name) == true && utils.isFineValue(omrsSampleRefSite.name.name) == true) {
+    omrsSampleRefSite = omrsSampleRefSite.uuid;
+  } else {
+    omrsSampleRefSite = "";
+  }
   
   
   //Retrieving the matching value of the concept from DHIS2 for each dropdown
   //Biginning of the retrieving
   utils.getDhis2DropdownValue(utils.getDHIS2RecencyAssayResult(omrsRecencyAssayResult), function (result) {
     patientRecencyAssayResultValue = result;
+    patientSampleRefSiteValue = utils.getSampleRefDHIS2Site(omrsSampleRefSite);
     
   //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
                               
@@ -816,7 +825,7 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                 "dataValues": [
                                   {
                                     "dataElement": "SNcELOKJCTs",
-                                    "value": ""
+                                    "value": patientSampleRefSiteValue
                                   },
                                   {
                                     "dataElement": "K4l00GKVInN",
