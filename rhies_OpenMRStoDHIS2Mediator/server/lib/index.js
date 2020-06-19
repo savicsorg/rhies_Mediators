@@ -807,7 +807,8 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
   //Biginning of the retrieving
   utils.getDhis2DropdownValue(utils.getDHIS2RecencyAssayResult(omrsRecencyAssayResult), function (result) {
     patientRecencyAssayResultValue = result;
-    patientSampleRefSiteValue = utils.getSampleRefDHIS2Site(omrsSampleRefSite);
+    utils.getDhis2DropdownValue(utils.getSampleRefDHIS2Site(omrsSampleRefSite), function(result){
+      patientSampleRefSiteValue = result;
     
   //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
                               
@@ -872,9 +873,12 @@ var addHivCaseBaseSurveillance = function (incomingEncounter, organizationUnit, 
                                   
                                 }
                               });
-                              //End of data pushing
-
-                             
+                
+                           //End of data pushing
+    
+    
+    
+    });                      
   });
   
 
@@ -2540,8 +2544,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
-  if (apiConf.register) {
-  //if (false) {
+ if (apiConf.register) {
+ //if (false) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
@@ -2592,8 +2596,8 @@ function start(callback) {
 
     // Create and start HTTPS server
       var httpsServer = https.createServer({
-          key: fs.readFileSync('./config/certificates/privkey.pem'),
-          cert: fs.readFileSync('./config/certificates/cert.pem')
+          key: fs.readFileSync('../config/certificates/privkey.pem'),
+          cert: fs.readFileSync('../config/certificates/cert.pem')
       }, app);
     const server = httpsServer.listen(port, () => callback(server))
 

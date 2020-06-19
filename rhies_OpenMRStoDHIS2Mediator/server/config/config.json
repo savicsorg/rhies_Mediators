@@ -6,10 +6,10 @@
       "trustSelfSigned": "true",
       "urlPattern": "/context/",
       "dhis2": {
-        "url": "http://Ip-address:8082",
+        "url": "http://IPAddress:Port",
         "user": {
           "name": "amza",
-          "pwd": "password"
+          "pwd": ""
         }
       }
     },
