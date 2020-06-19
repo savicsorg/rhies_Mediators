@@ -8,7 +8,10 @@ The purpose of Rwandan Health Information Exchange System (RHIES) project is to 
 ?
 
 ## Created and Developed By ###
-https://savics.org
+[Savics SRL](https://savics.org)
+
+## In Collaboration with ###
+[Rwanda Biomedical Centre (RBC)](https://www.rbc.gov.rw/)
 
 ## Main Contributors ###
 * Developers: Mamadou Ben TRAORE, Anatole ABE
