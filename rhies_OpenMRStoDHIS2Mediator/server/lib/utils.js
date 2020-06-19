@@ -427,7 +427,6 @@ exports.getDHIS2ReasonContactNotTested = function (uuid) {
 }
 
 
-
 exports.getDHIS2ContactHivResult = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
@@ -1123,6 +1122,46 @@ exports.getDhis2DropdownValue = function (value, callback) {
       }
     }
   });
+}
+
+
+exports.getSampleRefDHIS2Site = function(uuid){
+  if (exports.isFineValue(uuid) == true) {
+    switch(uuid){
+      case '82a89734-4e68-4dc9-b947-cb12514dcea1':
+        return 'mAZ2XGPCmHh';
+        break;
+      case 'a810cdff-0221-425a-bde5-d33f1366a126':
+        return 'KkEbGoiJWOw';
+        break;
+      case 'b757c3c7-d259-419f-9fa8-56292c0d2d0d':
+        return 'AFN3KYxAF3k';
+        break;
+      case '325e942f-c41d-4032-b86d-2cdff25b7b81':
+        return 'Sbzd3FNR8zA';
+        break;
+      case '3cb82e34-7ea2-44f6-af0b-f0ea4d995bf4':
+        return 'hCrIuARntxq';
+         break;
+      case 'f2e75b8c-b770-4019-a70e-7acec43c53ee':
+        return 'vua8576MKE0';
+        break;
+      case '8a75974a-67b6-4a57-8902-4217819dba4c':
+        return 'tKcelDKqfNr';
+        break;
+      case '2b472c6b-a0d4-44b1-bb2f-3d44289a19e5':
+        return 'KhmcXUJ5NSA';
+        break;
+      case '1c15dbae-76be-400e-8d04-aeb5cee0c577':
+        return 'jZkJOAXdHy8';
+        break;
+      default:
+        return '';
+    }
+  } else {
+    return ''
+  }
+
 }
 
 
