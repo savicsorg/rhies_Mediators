@@ -14,4 +14,4 @@ The purpose of Rwandan Health Information Exchange System (RHIES) project is to 
 [Rwanda Biomedical Centre (RBC)](https://www.rbc.gov.rw/)
 
 ## Main Contributors ###
-* Developers: Mamadou Ben TRAORE, Anatole ABE
+* Developers: Gilbert AGBODAMAKOU, Mamadou Ben TRAORE, Anatole ABE
