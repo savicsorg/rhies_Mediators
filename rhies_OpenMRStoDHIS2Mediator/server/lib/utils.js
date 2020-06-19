@@ -190,7 +190,7 @@ exports.getDHIS2RecencyAssayResult = function (uuid) {
       case '819f5ebe-0b3e-44ba-b435-8f3d1b7bb130':
         return 'MCaRcKcQByZ';
         break;
-      case '9340dede-5124-49cf-9b3c-5153cc0e537f':
+      case 'fb3b2a61-4f4b-46b2-9187-9ec769349a44':
         return 'Uz46DvWmRpz';
         break;
       default:
