@@ -1,0 +1,24 @@
+{
+    "api": {
+      "username": "root@openhim.org",
+      "password": "0000",
+      "apiURL": "https://openhim-core:8080",
+      "trustSelfSigned": "true",
+      "urlPattern": "/context/",
+      "dhis2": {
+        "url": "http://Ip-address:8082",
+        "user": {
+          "name": "amza",
+          "pwd": "password"
+        }
+      }
+    },
+    "CaseBaseForme": "HIV CASE-BASED SURVEILLANCE Form - Index testing, partner notification, recency testing information",
+    "enrollmentForm": "Confidential HIV CRF - SECTION 1: Enrollment Information",
+    "followupForm": "Confidential HIV CRF - SECTION II: Follow up Information",
+    "recencyVLForm": "CBS Recency VL",
+    "cbsContactForm": "CBS contact information",
+    "register": true,
+    "verbose" :true,
+    "heartbeat": true
+  }

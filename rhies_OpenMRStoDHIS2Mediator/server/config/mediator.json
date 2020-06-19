@@ -1,0 +1,51 @@
+{
+    "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0e8",
+    "version": "0.0.2",
+    "name": "OpenMRS to DHIS2 mediator",
+    "description": "A mediator to post OpenMRS CBS encounters to DHIS2",
+    "defaultChannelConfig": [
+      {
+        "name": "OpenMRS to DHIS2 chanel",
+        "urlPattern": "/context/",
+        "alerts": [],
+        "txRerunAcl": [],
+        "txViewFullAcl": [],
+        "txViewAcl": [],
+        "properties": [],
+        "matchContentTypes": [],
+        "routes": [
+          {
+            "name": "OpenMRS to DHIS2 Route",
+            "host": "rhies-omrstodhis2",
+            "port": "4002",
+            "primary": true,
+            "type": "http"
+          }
+        ],
+        "allow": ["openmrs"],
+        "type": "http"
+      }
+    ],
+    "endpoints": [
+      {
+        "name": "OpenMRS to DHIS2 endpoint",
+        "host": "rhies-omrstodhis2",
+        "path": "/context/",
+        "port": "4002",
+        "primary": true,
+        "type": "http"
+      }
+    ],
+    "configDefs": [
+      {
+        "param": "upstreamUrl",
+        "displayName": "Upstream URL",
+        "description": "The URL of the service upstream of the mediator",
+        "type": "string",
+        "template": []
+      }
+    ],
+    "config": {
+      "upstreamUrl": "http://rhies-omrstodhis2:4002"
+    }
+  }
