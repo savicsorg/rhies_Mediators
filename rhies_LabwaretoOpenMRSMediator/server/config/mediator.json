@@ -5,7 +5,7 @@
   "description": "A mediator to get post from LabWare to OpenMRS",
   "defaultChannelConfig": [
     {
-      "name": "labware to OpenMrs chanel",
+      "name": "Labware to OpenMRS channel",
       "urlPattern": "/test/",
       "alerts": [],
       "txRerunAcl": [],
@@ -15,7 +15,7 @@
       "matchContentTypes": [],
       "routes": [
         {
-          "name": "labware to OpenMrs Route",
+          "name": "Labware to OpenMRS Route",
           "host": "rhies-labware-mediator",
           "port": "4000",
           "primary": true,
@@ -28,7 +28,7 @@
   ],
   "endpoints": [
     {
-      "name": "labware to OpenMrs endpoint",
+      "name": "Labware to OpenMRS endpoint",
       "host": "rhies-labware-mediator",
       "path": "/test/",
       "port": "4000",

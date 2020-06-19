@@ -5,7 +5,7 @@
   "description": "A mediator to post OpenMRS patient to Client Registry",
   "defaultChannelConfig": [
     {
-      "name": "OpenMRS to Client Registry chanel",
+      "name": "OpenMRS to Client Registry channel",
       "urlPattern": "/patient/",
       "alerts": [],
       "txRerunAcl": [],
@@ -15,7 +15,7 @@
       "matchContentTypes": [],
       "routes": [
         {
-          "name": "OpenMrs to Client Registry Route",
+          "name": "OpenMRS to Client Registry Route",
           "host": "rhies-client-registry-mediator",
           "port": "4004",
           "primary": true,
@@ -28,7 +28,7 @@
   ],
   "endpoints": [
     {
-      "name": "OpenMrs to Client Registry endpoint",
+      "name": "OpenMRS to Client Registry endpoint",
       "host": "rhies-client-registry-mediator",
       "path": "/patient/",
       "port": "4004",
