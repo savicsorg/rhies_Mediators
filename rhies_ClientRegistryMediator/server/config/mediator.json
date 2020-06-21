@@ -19,11 +19,11 @@
           "host": "rhies-client-registry-mediator",
           "port": "4004",
           "primary": true,
-          "type": "https"
+          "type": "http"
         }
       ],
       "allow": ["openmrs"],
-      "type": "https"
+      "type": "http"
     }
   ],
   "endpoints": [
@@ -33,7 +33,7 @@
       "path": "/patient/",
       "port": "4004",
       "primary": true,
-      "type": "https"
+      "type": "http"
     }
   ],
   "configDefs": [

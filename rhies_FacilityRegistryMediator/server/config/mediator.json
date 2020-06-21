@@ -19,11 +19,11 @@
             "host": "rhies-facility-registry-mediator",
             "port": "4005",
             "primary": true,
-            "type": "https"
+            "type": "http"
           }
         ],
         "allow": ["root@openhim.org"],
-        "type": "https"
+        "type": "http"
       }
     ],
     "endpoints": [
@@ -33,7 +33,7 @@
         "path": "/facilityregistry/",
         "port": "4005",
         "primary": true,
-        "type": "https"
+        "type": "http"
       }
     ],
     "configDefs": [

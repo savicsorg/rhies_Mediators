@@ -19,11 +19,11 @@
           "host": "rhies-nida-mediator",
           "port": "4001",
           "primary": true,
-          "type": "https"
+          "type": "http"
         }
       ],
       "allow": ["openmrs"],
-      "type": "https"
+      "type": "http"
     }
   ],
   "endpoints": [
@@ -33,7 +33,7 @@
       "path": "/persons/",
       "port": "4001",
       "primary": true,
-      "type": "https"
+      "type": "http"
     }
   ],
   "configDefs": [
