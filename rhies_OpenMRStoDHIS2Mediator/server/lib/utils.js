@@ -1165,6 +1165,69 @@ exports.getSampleRefDHIS2Site = function(uuid){
 }
 
 
+exports.getCBSContactAge = function(obs){
+  if (exports.isFineValue(obs) == true) {
+    var i;
+    var z;
+    var myIndexI;
+    var myIndexZ;
+    var yesFound = false;
+    var ageInYear = true;
+    var ageValue = 0;
+    for(z=0; z < obs.length; z++){
+      for (i = 0; i < obs[z].groupMembers.length; i++) {
+        if (obs[z].groupMembers[i].concept.uuid == "4f60313a-5520-493d-8ec6-83c8c5ef7220") {
+          myIndexI = i;
+          myIndexZ = z
+          yesFound = true;
+          //Stop looping when the value is found
+          break;
+        }
+      }
+    }
+
+    if (yesFound) {
+      //GET CBS CONTACT AGE VALUE
+      for(var y=0; y < obs[myIndexZ].groupMembers.length; y++ ){
+        if(obs[myIndexZ].groupMembers[y].concept.uuid == "2ecf52c4-f732-46a8-9f10-45a04ca70f49"){
+          ageValue = obs[myIndexZ].groupMembers[y].value;
+          break;
+        }
+      }
+
+      //Check if Age in Years or Months
+      if (obs[myIndexZ].groupMembers[myIndexI].value.display == "NO"){
+        ageInYear = false;
+      }
+
+      //Age value in Years
+      if(ageInYear){
+
+        if(ageValue < 0){ 
+          return 0;
+        } else {
+          return ageValue;
+        }
+        
+      //Age Value in months
+      } else{
+        if(ageValue < 0){ 
+          return 0;
+        } else{
+          return Math.round((ageValue/12).toFixed(0));
+        }
+        
+      }
+    } else {
+      return "";
+    }
+  } else {
+    return "";
+  }
+
+}
+
+
 exports.buildReturnObject = (urn, status, statusCode, headers, responseBody, orchestrations, properties) => {
   var response = {
     status: statusCode,

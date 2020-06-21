@@ -904,6 +904,8 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
   var patientContactHivResultValue = "";
   var patientUntestedContactGivenTestKitValue = "";
   var patientContactGenderValue = "";
+  var patientContactOnART = "";
+
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -911,9 +913,18 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
   
   //Retrive non dropdown concept for CBS CONTACT GROUP ConvSet
   var patientCodeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "41c410a4-18a4-4221-98ad-1daf1b22de4d"));
-  var patientAgeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "2ecf52c4-f732-46a8-9f10-45a04ca70f49"));
+  var patientAgeOfContactValue = utils.getCBSContactAge(incomingEncounter.encounter.obs);
   var patientContactHivPositifTrackedNumberValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8");
   var patientContactObservationsValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c");
+
+
+  var omrsContactOnART = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "c1063a9d-515b-440a-af6a-89375cb44ca0");
+  if (utils.isFineValue(omrsContactOnART) == true && utils.isFineValue(omrsContactOnART.name) == true && utils.isFineValue(omrsContactOnART.name.name) == true) {
+    omrsContactOnART = omrsContactOnART.uuid;
+  } else {
+    omrsContactOnART = "";
+  }
+
 
   var omrsRelationOfContact = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "d4a45c62-5d82-43a2-856d-6c75db9fe842");
   if (utils.isFineValue(omrsRelationOfContact) == true && utils.isFineValue(omrsRelationOfContact.name) == true && utils.isFineValue(omrsRelationOfContact.name.name) == true) {
@@ -1043,157 +1054,161 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
                             patientUntestedContactGivenTestKitValue = result;
                             utils.getDhis2DropdownValue(utils.getDHIS2ContactGender(omrsContactGender), function (result) {
                               patientContactGenderValue = result;
+                              utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactOnART), function(result){
+                                patientContactOnART = result;
 //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
 
                               //1- sending createNewEventStageInfoContacts
                               //DHIS2 Json payload updating before pushing
-                              var dhsi2ContactStructure =
-                              {
-                                "program": "CYyICYiO5zo",
-                                "orgUnit": organizationUnit,
-                                "eventDate": eventDate,
-                                "status": "COMPLETED",
-                                "storedBy": "amza",
-                                "programStage": "RtQV53iuq7z",
-                                "trackedEntityInstance": trackedEntityInstanceId,
-                                "enrollment": enrollmentId,
-                                "dataValues": [
-                                  {
-                                    "dataElement": "CIh22FjXvOR",
-                                    "value": patientCodeOfContactValue
-                                  },
-                                  {
-                                    "dataElement": "m3pQUNk6AeL",
-                                    "value": patientContactGenderValue
-                                  },
-                                  {
-                                    "dataElement": "Zxkghqkbn7p",
-                                    "value": patientRelationOfContactValue
-                                  },
-                                  {
-                                    "dataElement": "scledbnTVVK",
-                                    "value": patientContactHivStatusValue
-                                  },
-                                  {
-                                    "dataElement": "mfAyPSJA74t",
-                                    "value": patientRiskOfViolenceValue
-                                  },
-                                  {
-                                    "dataElement": "iz0c8aW79QH",
-                                    "value": patientPlannedReferenceTypeValue
-                                  },
-                                  {
-                                    "dataElement": "MgkDDuHQHeN",
-                                    "value": patientAgeOfContactValue
-                                  }
-                                ]
-                              }
-
-
-                              //2- sending createNewEventStageResultContactNotif
-                              //DHIS2 Json payload updating before pushing
-                              var dhsi2NotifStructure =
-                              {
-                                "program": "CYyICYiO5zo",
-                                "orgUnit": organizationUnit,
-                                "eventDate": eventDate,
-                                "status": "COMPLETED",
-                                "storedBy": "Savics",
-                                "programStage": "b9rxVAiJaxA",
-                                "trackedEntityInstance": trackedEntityInstanceId,
-                                "enrollment": enrollmentId,
-                                "dataValues": [
-                                  {
-                                    "dataElement": "VsEnL2R7crc",
-                                    "value": patientContactInvitedValue
-                                  },
-                                  {
-                                    "dataElement": "VuZnWho10cr",
-                                    "value": patientContactReceivedValue
-                                  },
-                                  {
-                                    "dataElement": "SUL0FdHdNyq",
-                                    "value": patientContactTestedValue
-                                  },
-                                  {
-                                    "dataElement": "y0Z5EVxKowc",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "iTx0txf0FVj",
-                                    "value": patientUntestedContactGivenTestKitValue
-                                  },
-                                  {
-                                    "dataElement": "jJxPUCWKW1K",
-                                    "value": patientContactObservationsValue
-                                  },
-                                  {
-                                    "dataElement": "i5f4SA6TGRt",
-                                    "value": patientReasonContactNotReceivedValue
-                                  },
-                                  {
-                                    "dataElement": "Y7RU4f1g49C",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "GE0hAdM6xMg",
-                                    "value": patientContactNotifierValue
-                                  },
-                                  {
-                                    "dataElement": "r3DvI1uxJM0",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "UXx7mkioReb",
-                                    "value": patientNotificationApproachValue
-                                  },
-                                  {
-                                    "dataElement": "kVoTnMfXnyt",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "sCvxPIDQ66r",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "r1PVDg5nIGZ",
-                                    "value": patientContactHivPositifTrackedNumberValue
-                                  },
-                                  {
-                                    "dataElement": "OsZRlnXq7Qk",
-                                    "value": patientReasonContactNotTestedValue
-                                  },
-                                  {
-                                    "dataElement": "yRpn8oL0vxv",
-                                    "value": patientContactHivResultValue
-                                  }
-                                ]
-                              }
-
-
-                              winston.info('Now, adding contacts information...');
-                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
-                                if (error) {
-                                  winston.error('An error occured when trying to add a contacts information ', error);
-                                  callback('An error occured when trying to add a contacts information ');
-                                } else {
-                                    winston.info('Contacts information added with success ', result);
-
-                                    winston.info('Now, adding results of contacts notifications...');
-                                    formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
-                                      if (error) {
-                                        winston.error('An error occured when trying to add a results of contacts notifications', error);
-                                        callback('An error occured when trying to add a results of contacts notifications');
-                                      } else {
-                                        winston.info('Results of contacts notifications added with success', result);
-                                        callback(null, 'Results of contacts notifications added with success');
-                                      }
-                                    })
-                                  }
+                                var dhsi2ContactStructure =
+                                {
+                                  "program": "CYyICYiO5zo",
+                                  "orgUnit": organizationUnit,
+                                  "eventDate": eventDate,
+                                  "status": "COMPLETED",
+                                  "storedBy": "amza",
+                                  "programStage": "RtQV53iuq7z",
+                                  "trackedEntityInstance": trackedEntityInstanceId,
+                                  "enrollment": enrollmentId,
+                                  "dataValues": [
+                                    {
+                                      "dataElement": "CIh22FjXvOR",
+                                      "value": patientCodeOfContactValue
+                                    },
+                                    {
+                                      "dataElement": "m3pQUNk6AeL",
+                                      "value": patientContactGenderValue
+                                    },
+                                    {
+                                      "dataElement": "Zxkghqkbn7p",
+                                      "value": patientRelationOfContactValue
+                                    },
+                                    {
+                                      "dataElement": "scledbnTVVK",
+                                      "value": patientContactHivStatusValue
+                                    },
+                                    {
+                                      "dataElement": "mfAyPSJA74t",
+                                      "value": patientRiskOfViolenceValue
+                                    },
+                                    {
+                                      "dataElement": "iz0c8aW79QH",
+                                      "value": patientPlannedReferenceTypeValue
+                                    },
+                                    {
+                                      "dataElement": "MgkDDuHQHeN",
+                                      "value": patientAgeOfContactValue
+                                    }
+                                  ]
                                 }
-                              );
 
 
+                                //2- sending createNewEventStageResultContactNotif
+                                //DHIS2 Json payload updating before pushing
+                                var dhsi2NotifStructure =
+                                {
+                                  "program": "CYyICYiO5zo",
+                                  "orgUnit": organizationUnit,
+                                  "eventDate": eventDate,
+                                  "status": "COMPLETED",
+                                  "storedBy": "Savics",
+                                  "programStage": "b9rxVAiJaxA",
+                                  "trackedEntityInstance": trackedEntityInstanceId,
+                                  "enrollment": enrollmentId,
+                                  "dataValues": [
+                                    {
+                                      "dataElement": "VsEnL2R7crc",
+                                      "value": patientContactInvitedValue
+                                    },
+                                    {
+                                      "dataElement": "VuZnWho10cr",
+                                      "value": patientContactReceivedValue
+                                    },
+                                    {
+                                      "dataElement": "SUL0FdHdNyq",
+                                      "value": patientContactTestedValue
+                                    },
+                                    {
+                                      "dataElement": "y0Z5EVxKowc",
+                                      "value": patientContactOnART
+                                    },
+                                    {
+                                      "dataElement": "iTx0txf0FVj",
+                                      "value": patientUntestedContactGivenTestKitValue
+                                    },
+                                    {
+                                      "dataElement": "jJxPUCWKW1K",
+                                      "value": patientContactObservationsValue
+                                    },
+                                    {
+                                      "dataElement": "i5f4SA6TGRt",
+                                      "value": patientReasonContactNotReceivedValue
+                                    },
+                                    {
+                                      "dataElement": "Y7RU4f1g49C",
+                                      "value": ""
+                                    },
+                                    {
+                                      "dataElement": "GE0hAdM6xMg",
+                                      "value": patientContactNotifierValue
+                                    },
+                                    {
+                                      "dataElement": "r3DvI1uxJM0",
+                                      "value": ""
+                                    },
+                                    {
+                                      "dataElement": "UXx7mkioReb",
+                                      "value": patientNotificationApproachValue
+                                    },
+                                    {
+                                      "dataElement": "kVoTnMfXnyt",
+                                      "value": ""
+                                    },
+                                    {
+                                      "dataElement": "sCvxPIDQ66r",
+                                      "value": ""
+                                    },
+                                    {
+                                      "dataElement": "r1PVDg5nIGZ",
+                                      "value": patientContactHivPositifTrackedNumberValue
+                                    },
+                                    {
+                                      "dataElement": "OsZRlnXq7Qk",
+                                      "value": patientReasonContactNotTestedValue
+                                    },
+                                    {
+                                      "dataElement": "yRpn8oL0vxv",
+                                      "value": patientContactHivResultValue
+                                    }
+                                  ]
+                                }
+
+
+                                winston.info('Now, adding contacts information...');
+                                formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
+                                  if (error) {
+                                    winston.error('An error occured when trying to add a contacts information ', error);
+                                    callback('An error occured when trying to add a contacts information ');
+                                  } else {
+                                      winston.info('Contacts information added with success ', result);
+
+                                      winston.info('Now, adding results of contacts notifications...');
+                                      formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
+                                        if (error) {
+                                          winston.error('An error occured when trying to add a results of contacts notifications', error);
+                                          callback('An error occured when trying to add a results of contacts notifications');
+                                        } else {
+                                          winston.info('Results of contacts notifications added with success', result);
+                                          callback(null, 'Results of contacts notifications added with success');
+                                        }
+                                      })
+                                    }
+                                  }
+                                );
+
+
+
+                              });
                             });
                           });
                         });
@@ -2544,8 +2559,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
- if (apiConf.register) {
- //if (false) {
+if (apiConf.register) {
+//if (false) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
