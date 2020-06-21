@@ -22,7 +22,7 @@
             "type": "http"
           }
         ],
-        "allow": ["root@openhim.org"],
+        "allow": ["facilityregistry"],
         "type": "http"
       }
     ],
@@ -46,7 +46,7 @@
       }
     ],
     "config": {
-      "upstreamUrl": "http://rhies-frtoomrs:4005"
+      "upstreamUrl": "https://rhies-facility-registry-mediator:4005"
     }
   }
   
