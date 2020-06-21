@@ -1,7 +1,7 @@
 {
   "urn": "urn:uuid:c21716b0-a230-11e9-89b5-f705ca19e0e8",
   "version": "0.0.2",
-  "name": "openMRS to Client Registry mediator",
+  "name": "OpenMRS to Client Registry mediator",
   "description": "A mediator to post OpenMRS patient to Client Registry",
   "defaultChannelConfig": [
     {
@@ -15,7 +15,7 @@
       "matchContentTypes": [],
       "routes": [
         {
-          "name": "OpenMRS to Client Registry Route",
+          "name": "OpenMRS to Client Registry route",
           "host": "rhies-client-registry-mediator",
           "port": "4004",
           "primary": true,
@@ -46,6 +46,6 @@
     }
   ],
   "config": {
-    "upstreamUrl": "http://localhost:4004"
+    "upstreamUrl": "https://rhies-client-registry-mediator:4004"
   }
 }

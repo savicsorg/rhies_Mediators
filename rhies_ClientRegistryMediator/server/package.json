@@ -1,7 +1,7 @@
 {
   "name": "omrstocr",
   "version": "0.0.1",
-  "description": "openmrs to RHIES Client Registry mediator ",
+  "description": "RHIES Client Registry mediator ",
   "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",

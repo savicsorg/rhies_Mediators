@@ -1,8 +1,8 @@
 {
   "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0e6",
   "version": "0.0.2",
-  "name": "labware to OpenMrs mediator",
-  "description": "A mediator to get post from LabWare to OpenMRS",
+  "name": "labware to OpenMRS mediator",
+  "description": "A mediator to get post from Labware to OpenMRS",
   "defaultChannelConfig": [
     {
       "name": "Labware to OpenMRS channel",
@@ -15,7 +15,7 @@
       "matchContentTypes": [],
       "routes": [
         {
-          "name": "Labware to OpenMRS Route",
+          "name": "Labware to OpenMRS route",
           "host": "rhies-labware-mediator",
           "port": "4000",
           "primary": true,
@@ -46,6 +46,6 @@
     }
   ],
   "config": {
-    "upstreamUrl": "http://localhost:4000"
+    "upstreamUrl": "https://localhost:4000"
   }
 }

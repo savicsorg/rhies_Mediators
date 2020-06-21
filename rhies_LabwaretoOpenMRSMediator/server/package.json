@@ -1,7 +1,7 @@
 {
   "name": "labtoomrs-mediator",
   "version": "0.0.1",
-  "description": "labToOmrs mediators ",
+  "description": "Labware to OpenMRS mediator",
   "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",

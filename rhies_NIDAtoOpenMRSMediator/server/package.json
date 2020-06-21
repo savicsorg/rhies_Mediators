@@ -1,7 +1,7 @@
 {
   "name": "omrstonida-mediator",
   "version": "0.0.1",
-  "description": "omrsToNida mediator ",
+  "description": "OpenMRS to NIDA mediator",
   "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",

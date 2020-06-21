@@ -1,7 +1,7 @@
 {
   "name": "omrstodhis2",
   "version": "0.0.1",
-  "description": "openmrs to DHIS2 mediator ",
+  "description": "OpenMRS to DHIS2 mediator ",
   "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",

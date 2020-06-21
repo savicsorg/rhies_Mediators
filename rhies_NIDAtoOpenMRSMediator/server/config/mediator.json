@@ -2,7 +2,7 @@
   "urn": "urn:uuid:c11716b0-a250-11e9-89b4-f705ca19c0e7",
   "version": "0.0.2",
   "name": "OpenMRS to NIDA mediator",
-  "description": "A mediator to get data from nida to OpenMRS",
+  "description": "A mediator to get data from NIDA to OpenMRS",
   "defaultChannelConfig": [
     {
       "name": "OpenMRS to NIDA channel",
@@ -15,7 +15,7 @@
       "matchContentTypes": [],
       "routes": [
         {
-          "name": "OpenMRS to NIDA Route",
+          "name": "OpenMRS to NIDA route",
           "host": "rhies-nida-mediator",
           "port": "4001",
           "primary": true,
@@ -46,6 +46,6 @@
     }
   ],
   "config": {
-    "upstreamUrl": "http://localhost:4001"
+    "upstreamUrl": "https://localhost:4001"
   }
 }

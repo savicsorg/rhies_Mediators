@@ -5,7 +5,7 @@
     "description": "A mediator to post OpenMRS CBS encounters to DHIS2",
     "defaultChannelConfig": [
       {
-        "name": "OpenMRS to DHIS2 chanel",
+        "name": "OpenMRS to DHIS2 channel",
         "urlPattern": "/context/",
         "alerts": [],
         "txRerunAcl": [],
@@ -15,7 +15,7 @@
         "matchContentTypes": [],
         "routes": [
           {
-            "name": "OpenMRS to DHIS2 Route",
+            "name": "OpenMRS to DHIS2 route",
             "host": "rhies-dhis2-mediator",
             "port": "4002",
             "primary": true,
@@ -46,6 +46,6 @@
       }
     ],
     "config": {
-      "upstreamUrl": "http://rhies-dhis2-mediator:4002"
+      "upstreamUrl": "https://rhies-dhis2-mediator:4002"
     }
   }

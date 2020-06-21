@@ -5,7 +5,7 @@
     "description": "A mediator for facility registry to able facility data exchange",
     "defaultChannelConfig": [
       {
-        "name": "facility Registry chanel",
+        "name": "facility Registry channel",
         "urlPattern": "/facilityregistry/",
         "alerts": [],
         "txRerunAcl": [],
@@ -15,7 +15,7 @@
         "matchContentTypes": [],
         "routes": [
           {
-            "name": "Facility Registry Route",
+            "name": "Facility Registry route",
             "host": "rhies-facility-registry-mediator",
             "port": "4005",
             "primary": true,
