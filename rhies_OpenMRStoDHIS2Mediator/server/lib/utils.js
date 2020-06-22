@@ -69,6 +69,7 @@ exports.isFineValue = function (value) {
 
 
 exports.getPatientGenderDhis2Id = function (patient) {
+  
   if (patient.person.gender.toUpperCase() == "F" || patient.person.gender.toUpperCase() == "FEMAL") {
     return "dP9kDCGW6C1";
   } else {
@@ -507,7 +508,7 @@ exports.getDHIS2ResidencyType = function (uuid) {
       case '054266d6-b451-496a-892e-9249d52a0d44':
         return 'dIAODvHtlhX';
         break;
-      case '48a489e3-37f1-40df-8e7b-a2e7ba2371ec':
+      case '05544cd8-ead3-472a-98cd-02094d1e7c27':
         return 'vT0iGs8IW51';
         break;
       case '6e7401f4-ed93-4c3f-a208-73ec7a1a9126':
@@ -594,7 +595,10 @@ exports.getDHIS2YesNoUnknown = function (uuid) {
         break;
       case '3cd6f86c-26fe-102b-80cb-0017a47871b2':
         return 'No';
-        break;                
+        break;
+      case '3cd6fac4-26fe-102b-80cb-0017a47871b2':
+        return 'Unknown';
+        break;               
       default:
         return '';
     }
@@ -1226,6 +1230,39 @@ exports.getCBSContactAge = function(obs){
   }
 
 }
+
+
+exports.getDHIS2DistritctOrSectorId = function(value,level,callback){
+
+  var options = {
+    url: apiConf.api.dhis2.url + '/api/organisationUnits.json?level=' + level + '&filter=name:like:' + value ,
+    headers: {
+      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+      'Content-Type': 'application/json'
+    }
+  };
+
+  request.get(options, function (error, response, body) {
+    if (error) {
+      callback("");
+    } else {
+      var resp = JSON.parse(body);
+      if (exports.isFineValue(resp) == true && exports.isFineValue(resp.organisationUnits) == true) {
+        if(resp.organisationUnits.length > 0){
+          callback(resp.organisationUnits[0].id);
+        } else{
+          callback("");
+        }
+        
+      } else {
+        callback("");
+      }
+    }
+  });
+
+}
+
+
 
 
 exports.buildReturnObject = (urn, status, statusCode, headers, responseBody, orchestrations, properties) => {
