@@ -9,7 +9,7 @@
         "openmrs": {
             "rest_api": "/openmrs/ws/rest/v1",
             "encounterRole": "a0b03050-c99b-11e0-9572-0800200c9a66",
-            "provider": "prov0820-969f-48e0-a0e8-eeb7d00266a1"
+            "provider": "provfabc-9683-4754-b5e8-6f58c38932a9"
         }
     },
     "register": false,
@@ -65,9 +65,9 @@
         "l_7": {
             "hfname": "Muhima",
             "uuid": "ec098275-651d-4852-9603-aa0e1d88297f",
-            "ip": "http://130.104.12.92:8083",
-            "username": "admin",
-            "password": "Password10$"
+            "ip": "http://130.104.12.92:8081",
+            "username": "geoffrey",
+            "password": "Ganyugxy1"
         }
     }
 }

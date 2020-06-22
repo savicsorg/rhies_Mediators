@@ -147,11 +147,12 @@ function setupApp() {
                                 log.error(error);
                                 reportEndOfProcess(req, res, error, 500, "Error on patient research. Encounter creation aborted for " + data.SampleID + ".");
                             } else {
-                                log.info("Patient found");
                                 if (response.statusCode == "200") {
+                                    
                                     var results = JSON.parse(body).results;
                                     var patient = undefined;
                                     if (results && results.length == 1) {
+                                        log.info("Patient ", q, "found.");
                                         patient = results[0];
 
                                         var location = locations["l_" + data.facilityCode];
@@ -188,13 +189,6 @@ function setupApp() {
                                                                         "location": location.uuid//uuid of location
                                                                     }
                                                                 ],
-//                                                                "visit": {
-//                                                                    //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-//                                                                    "patient": patient.uuid,
-//                                                                    "visitType": tests.viral_load_2.visitType,
-//                                                                    "location": location.uuid,
-//                                                                    "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-//                                                                },
                                                                 "encounterProviders": [{
                                                                         "encounterRole": apiConf.api.openmrs.encounterRole,
                                                                         "provider": apiConf.api.openmrs.provider, //Labware
@@ -318,13 +312,6 @@ function setupApp() {
                                                                             }
                                                                         }
                                                                     ],
-//                                                                    "visit": {
-//                                                                        //"uuid": "db00fbc6-d100-44df-87f0-425f176152c4",
-//                                                                        "patient": patient.uuid,
-//                                                                        "visitType": tests.recency_vl.visitType,
-//                                                                        "location": location.uuid,
-//                                                                        "startDatetime": (new Date(data.SampleDate)).toISOString()//DATE OF THE VISIT IMPORTANT TO CREATE NEW VISIT. We need to have the date of the visit
-//                                                                    },
                                                                     "encounterProviders": [{
                                                                             "encounterRole": apiConf.api.openmrs.encounterRole,
                                                                             "provider": apiConf.api.openmrs.provider, //Labware
