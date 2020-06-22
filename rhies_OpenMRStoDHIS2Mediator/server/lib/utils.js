@@ -762,6 +762,9 @@ exports.getDHIS2ReasonARTChangedOrStopped = function (uuid) {
       case '3cccecdc-26fe-102b-80cb-0017a47871b2':
         return 'ADFsRPLCDTt';
         break;
+      case 'd1ce8485-1cf6-422c-a8cf-7193bf18abbf':
+        return 'MHwKIBgomot';
+        break;
       case '3cee7fb4-26fe-102b-80cb-0017a47871b2':
         return 'QIu05NTRtG4';
         break;  

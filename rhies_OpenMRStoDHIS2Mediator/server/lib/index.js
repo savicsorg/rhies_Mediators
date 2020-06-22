@@ -1843,6 +1843,10 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
 
   //Declaration of all the variables for DHIS2 dropdown and patient data
   var patientDemographicChangeValue = "";
+  var patientResidencyTypeValue = "";
+  var patientMaritalStatus = "";
+  var patientOccupation = "";
+  var patientOccupationTypeValue = "";
   var patientRiskFactorChangeValue = "";
   var patientFollowUpStableValue = ""; // Patient stable change in Follow UP form
   var patientChangeInTreatmentValue = "";
@@ -1969,15 +1973,37 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   } else {
     omrsWHOStage = "";
   }
+
+
+  var omrsResidencyType = utils.getConceptValue(incomingEncounter.encounter.obs, "59525e15-fc5e-4bc4-9e29-87954348c15f");
+  if (utils.isFineValue(omrsResidencyType) == true && utils.isFineValue(omrsResidencyType.name) == true && utils.isFineValue(omrsResidencyType.name.name) == true) {
+    omrsResidencyType = omrsResidencyType.uuid;
+  } else {
+    omrsResidencyType = "";
+  }
+
+
+  var omrsOccupationValue = utils.getConceptValue(incomingEncounter.encounter.obs, "4587542b-f1aa-47ad-8bed-75a705433950");
+  if (utils.isFineValue(omrsOccupationValue) == true && utils.isFineValue(omrsOccupationValue.name) == true && utils.isFineValue(omrsOccupationValue.name.name) == true) {
+    omrsOccupationValue = omrsOccupationValue.uuid;
+  } else {
+    omrsOccupationValue = "";
+  }
+
+
+  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
+    omrsOccupationType = omrsOccupationType.uuid;
+  } else {
+    omrsOccupationType = "";
+  }
+
   // End of UUID retrieving
 
 
   patientAddressObject = utils.getdhis2ProvinceDistrictIds(incomingEncounter.patient);
 
-  //getting patient Cellule and Village
-  patientCellule = patientAddressObject.cellule;
-  patientVillage = patientAddressObject.village;
-
+  
   //Retrieving all the dropdown value from DHIS2
     //Boolean retrieving
   patientDemographicChangeValue = utils.getDHIS2Boolean(omrsDemographicChange);
@@ -1987,6 +2013,12 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   patientAttendedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
   patientCompletedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
     //End of boolean retrieving
+
+  //getting patient Cellule and Village
+  if(patientDemographicChangeValue=="true"){
+    patientCellule = patientAddressObject.cellule;
+    patientVillage = patientAddressObject.village;
+  } 
   
   //This is a dropdown in OpenMRS and free text in DHIS2
   patientOINameValue = utils.getOINameConceptValue(incomingEncounter.encounter.obs, '0ae23a5a-15f5-102d-96e4-000c29c2a5d7');
@@ -1994,10 +2026,13 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   var patientDistrictDetails = incomingEncounter.patient.person.preferredAddress.countyDistrict;
 
   utils.getDHIS2DistritctOrSectorId(patientSectorDetails,5,function(result){
-    patientSecteur = result;
+    if(patientDemographicChangeValue == "true"){
+      patientSecteur = result;
+    }
     utils.getDHIS2DistritctOrSectorId(patientDistrictDetails,3,function(result){
-      patientDistrict = result;
-
+      if(patientDemographicChangeValue == "true"){
+        patientDistrict = result;
+      }
       utils.getDhis2DropdownValue(utils.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
         patientReasonARTChangedOrStoppedValue = result;
         utils.getDhis2DropdownValue(utils.getDHIS2DrugToxicityType(omrsDrugToxicityType), function(result){
@@ -2012,204 +2047,246 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                   patientTPTTherapyInProgressValue = result;
                   utils.getDhis2DropdownValue(utils.getDHIS2WHOStage(omrsWHOStage), function(result){
                     patientWHOStageValue = result;
+                    utils.getDhis2DropdownValue(utils.getDHIS2ResidencyType(omrsResidencyType), function(result){
+                      if(patientDemographicChangeValue == "true"){
+                        patientResidencyTypeValue = result;
+                      }
+                      utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
+                        if(patientDemographicChangeValue == "true"){
+                          patientMaritalStatus = result;
+                        }
+                        utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
+                          if(patientDemographicChangeValue == "true"){
+                            patientOccupation = result;
+                          }
+                          utils.getDhis2DropdownValue(utils.getDHIS2OccupationType(omrsOccupationType), function (result) {
+                            if(patientDemographicChangeValue == "true"){
+                              patientOccupationTypeValue = result;
+                            }
+              
       //End of retrieving all the dropdown value from DHIS2
 
-                    //DHIS2 json payload update before pushing
-                    var dhis2FollowupStructure =
-                      {
-                        "program": "CYyICYiO5zo",
-                        "orgUnit": organizationUnit,
-                        "eventDate": eventDate,
-                        "status": "COMPLETED",
-                        "storedBy": "Savics",
-                        "programStage": "Em0sRsnHjoR",
-                        "trackedEntityInstance": trackedEntityInstanceId,
-                        "enrollment": enrollmentId,
-                        "dataValues": [
-                          {
-                            "dataElement": "pbeBAIly2GT",
-                            "value": organizationUnit
-                          },
-                          {
-                            "dataElement": "txsxKp2l6y9",
-                            "value": eventDate
-                          },
-                          {
-                            "dataElement": "oLqMrGMI4Uf",
-                            "value": eventDate
-                          },
-                          {
-                            "dataElement":"Vrm4tEU28YG",
-                            "value": patientVillage
-                          },
-                          {
-                            "dataElement": "fEX1sjE7mEm",
-                            "value": patientCellule
-                          },
-                          {
-                            "dataElement": "I809QdRlgCb",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "tnMNaBmQaIy",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "wXcnNSYryUd",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "OCZt4UJitnh",
-                            "value": patientDemographicChangeValue
-                          },
-                          {
-                            "dataElement": "yu67Iiw64UQ",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "p5U0vUS0Q3V",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "I79uRgVEyUc",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "UaCDJMTQRLz",
-                            "value": patientSecteur
-                          },
-                          {
-                            "dataElement": "kPkjR4qEhhn",
-                            "value": patientDistrict
-                          },
-                          {
-                            "dataElement": "OTAM6B4xZwf",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "Cgt39EInKQV",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "KrYJW9kvJS2",
-                            "value": patientRiskFactorChangeValue
-                          },
-                          {
-                            "dataElement": "Nld1zMZwPxK",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "jYMNto3ELj5",
-                            "value": patientFollowUpStableValue
-                          },
-                          {
-                            "dataElement": "jmwJSKQthb7",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "xMLGFpVb0Kh",
-                            "value": patientChangeInTreatmentValue
-                          },
-                          {
-                            "dataElement": "KRTWX8CatfN",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "Nxu3IZxrngL",
-                            "value": patientReasonARTChangedOrStoppedValue
-                          },
-                          {
-                            "dataElement": "gZLYfulH1cx",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "dlbRyDDWVdz",
-                            "value": patientDrugToxicityTypeValue
-                          },
-                          {
-                            "dataElement": "MWnDK640C17",
-                            "value": patientWHOStageValue
-                          },
-                          {
-                            "dataElement": "MG6I5RT8YsE",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "Tgt3yKYd2oD",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "LovSZ5zd8YL",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "ePONK5dlCAl",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "G3dUs7PuDqx",
-                            "value": patientOINameValue
-                          },
-                          {
-                            "dataElement": "OKemd50jbHG",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "lrM4jhiDogd",
-                            "value": patientCBSClientOutcomeValue
-                          },
-                          {
-                            "dataElement": "kmA8X0Qwjor",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "L9lcjEkxHBv",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "eCbwnVkQ8Rt",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "OO8wNkgpAwK",
-                            "value": patientOverallTreatmentAdherenceValue
-                          },
-                          {
-                            "dataElement": "BMf4geBAMFU",
-                            "value": patientAttendedEnhancedCounsellingValue
-                          },
-                          {
-                            "dataElement": "LpDBQwhUZ4U",
-                            "value": patientCompletedEnhancedCounsellingValue
-                          },
-                          {
-                            "dataElement": "yH3otrjN0qZ",
-                            "value": patientClientTPTOutcomeValue
-                          },
-                          {
-                            "dataElement": "EBAuC7pMu4O",
-                            "value": ""
-                          },
-                          {
-                            "dataElement": "nQGHwHA3ayC",
-                            "value": patientTPTTherapyInProgressValue
-                          }
+                        //DHIS2 json payload update before pushing
+                            var dhis2FollowupStructure =
+                              {
+                                "program": "CYyICYiO5zo",
+                                "orgUnit": organizationUnit,
+                                "eventDate": eventDate,
+                                "status": "COMPLETED",
+                                "storedBy": "Savics",
+                                "programStage": "Em0sRsnHjoR",
+                                "trackedEntityInstance": trackedEntityInstanceId,
+                                "enrollment": enrollmentId,
+                                "dataValues": [
+                                  {
+                                    "dataElement": "pbeBAIly2GT",
+                                    "value": organizationUnit
+                                  },
+                                  {
+                                    "dataElement": "txsxKp2l6y9",
+                                    "value": eventDate
+                                  },
+                                  {
+                                    "dataElement": "oLqMrGMI4Uf",
+                                    "value": eventDate
+                                  },
+                                  {
+                                    "dataElement":"Vrm4tEU28YG",
+                                    "value": patientVillage
+                                  },
+                                  {
+                                    "dataElement": "fEX1sjE7mEm",
+                                    "value": patientCellule
+                                  },
+                                  {
+                                    "dataElement": "I809QdRlgCb",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "tnMNaBmQaIy",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "wXcnNSYryUd",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "OCZt4UJitnh",
+                                    "value": patientDemographicChangeValue
+                                  },
+                                  {
+                                    "dataElement": "yu67Iiw64UQ",
+                                    "value": patientDemographicChangeValue
+                                  },
+                                  {
+                                    "dataElement": "ZD5gy8Sox8I",
+                                    "value": patientDemographicChangeValue
+                                  },
+                                  {
+                                    "dataElement": "RZBJs5g0DsL",
+                                    "value": patientResidencyTypeValue
+                                  },
+                                  {
+                                    "dataElement": "VLl1dlYSt3P",
+                                    "value": patientMaritalStatus
+                                  },
+                                  {
+                                    "dataElement": "V2fWNvs7KDL",
+                                    "value": patientOccupation
+                                  },
+                                  {
+                                    "dataElement": "Tgt3yKYd2oD",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "p5U0vUS0Q3V",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "I79uRgVEyUc",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "muGUJ70FB50",
+                                    "value": patientSecteur
+                                  },
+                                  {
+                                    "dataElement": "hmZLcBkPP6F",
+                                    "value": patientDistrict
+                                  },
+                                  {
+                                    "dataElement": "OTAM6B4xZwf",
+                                    "value": patientDemographicChangeValue
+                                  },
+                                  {
+                                    "dataElement": "Cgt39EInKQV",
+                                    "value": patientOccupationTypeValue
+                                  },
+                                  {
+                                    "dataElement": "KrYJW9kvJS2",
+                                    "value": patientRiskFactorChangeValue
+                                  },
+                                  {
+                                    "dataElement": "Nld1zMZwPxK",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "jYMNto3ELj5",
+                                    "value": patientFollowUpStableValue
+                                  },
+                                  {
+                                    "dataElement": "jmwJSKQthb7",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "xMLGFpVb0Kh",
+                                    "value": patientChangeInTreatmentValue
+                                  },
+                                  {
+                                    "dataElement": "KRTWX8CatfN",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "Nxu3IZxrngL",
+                                    "value": patientReasonARTChangedOrStoppedValue
+                                  },
+                                  {
+                                    "dataElement": "gZLYfulH1cx",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "dlbRyDDWVdz",
+                                    "value": patientDrugToxicityTypeValue
+                                  },
+                                  {
+                                    "dataElement": "MWnDK640C17",
+                                    "value": patientWHOStageValue
+                                  },
+                                  {
+                                    "dataElement": "MG6I5RT8YsE",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "Tgt3yKYd2oD",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "LovSZ5zd8YL",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "ePONK5dlCAl",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "G3dUs7PuDqx",
+                                    "value": patientOINameValue
+                                  },
+                                  {
+                                    "dataElement": "OKemd50jbHG",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "lrM4jhiDogd",
+                                    "value": patientCBSClientOutcomeValue
+                                  },
+                                  {
+                                    "dataElement": "kmA8X0Qwjor",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "L9lcjEkxHBv",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "eCbwnVkQ8Rt",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "OO8wNkgpAwK",
+                                    "value": patientOverallTreatmentAdherenceValue
+                                  },
+                                  {
+                                    "dataElement": "BMf4geBAMFU",
+                                    "value": patientAttendedEnhancedCounsellingValue
+                                  },
+                                  {
+                                    "dataElement": "LpDBQwhUZ4U",
+                                    "value": patientCompletedEnhancedCounsellingValue
+                                  },
+                                  {
+                                    "dataElement": "yH3otrjN0qZ",
+                                    "value": patientClientTPTOutcomeValue
+                                  },
+                                  {
+                                    "dataElement": "EBAuC7pMu4O",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "nQGHwHA3ayC",
+                                    "value": patientTPTTherapyInProgressValue
+                                  }
 
-                        ]
-                    };
-                    
-                    //Beginnig data Pushing form 3 : FOLLOW UP
-                    formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
-                      if (error) {
-                        winston.error('An error occured when trying to add a follow up information', error);
-                        callback('An error occured when trying to add a follow up information');
-                      } else {
-                        winston.info('Follow up information added with success', result);
-                        callback(null, 'Follow up information added with success');
-                      }
-                    })
-                    //End data Pushing form 3 : FOLLOW UP
+                                ]
+                            };
+                            
+                            //Beginnig data Pushing form 3 : FOLLOW UP
+                            formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
+                              if (error) {
+                                winston.error('An error occured when trying to add a follow up information', error);
+                                callback('An error occured when trying to add a follow up information');
+                              } else {
+                                winston.info('Follow up information added with success', result);
+                                callback(null, 'Follow up information added with success');
+                              }
+                            })
+                            //End data Pushing form 3 : FOLLOW UP
 
+
+                          });  
+                        });
+                      });
+                    });  
                   });
                 });
               });
