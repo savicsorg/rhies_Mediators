@@ -1,0 +1,17 @@
+  rhies-facility-registry-mediator:
+     container_name: rhies-facility-registry-mediator
+     image: savicsorg/frtoomrs:latest
+     ports:
+       - "4014:4004"
+     depends_on:
+       - core
+       - OpenMRSDBinstance1
+       - OpenMRSDBinstance2
+       - OpenMRSDBinstance3
+       - OpenMRSDBinstanceN
+     volumes:
+       - ./disc/rhies-facility-registry-mediator/config/:/usr/src/app/savics/facilityRegistryMediator/config
+     restart: always
+     logging:
+       options:
+         max-size: 5m

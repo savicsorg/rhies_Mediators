@@ -904,6 +904,8 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
   var patientContactHivResultValue = "";
   var patientUntestedContactGivenTestKitValue = "";
   var patientContactGenderValue = "";
+  var patientContactOnART = "";
+
 
 
   //Reporting date in DHIS2 must be the encounterDate
@@ -911,9 +913,18 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
   
   //Retrive non dropdown concept for CBS CONTACT GROUP ConvSet
   var patientCodeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "41c410a4-18a4-4221-98ad-1daf1b22de4d"));
-  var patientAgeOfContactValue = utils.convertToNumber(utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "2ecf52c4-f732-46a8-9f10-45a04ca70f49"));
+  var patientAgeOfContactValue = utils.getCBSContactAge(incomingEncounter.encounter.obs);
   var patientContactHivPositifTrackedNumberValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8");
   var patientContactObservationsValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c");
+
+
+  var omrsContactOnART = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "c1063a9d-515b-440a-af6a-89375cb44ca0");
+  if (utils.isFineValue(omrsContactOnART) == true && utils.isFineValue(omrsContactOnART.name) == true && utils.isFineValue(omrsContactOnART.name.name) == true) {
+    omrsContactOnART = omrsContactOnART.uuid;
+  } else {
+    omrsContactOnART = "";
+  }
+
 
   var omrsRelationOfContact = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "d4a45c62-5d82-43a2-856d-6c75db9fe842");
   if (utils.isFineValue(omrsRelationOfContact) == true && utils.isFineValue(omrsRelationOfContact.name) == true && utils.isFineValue(omrsRelationOfContact.name.name) == true) {
@@ -1043,157 +1054,161 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
                             patientUntestedContactGivenTestKitValue = result;
                             utils.getDhis2DropdownValue(utils.getDHIS2ContactGender(omrsContactGender), function (result) {
                               patientContactGenderValue = result;
+                              utils.getDhis2DropdownValue(utils.getDHIS2OuiNonResponse(omrsContactOnART), function(result){
+                                patientContactOnART = result;
 //End of retrieving of the the matching value of the concept from DHIS2 for each dropdown
 
                               //1- sending createNewEventStageInfoContacts
                               //DHIS2 Json payload updating before pushing
-                              var dhsi2ContactStructure =
-                              {
-                                "program": "CYyICYiO5zo",
-                                "orgUnit": organizationUnit,
-                                "eventDate": eventDate,
-                                "status": "COMPLETED",
-                                "storedBy": "amza",
-                                "programStage": "RtQV53iuq7z",
-                                "trackedEntityInstance": trackedEntityInstanceId,
-                                "enrollment": enrollmentId,
-                                "dataValues": [
-                                  {
-                                    "dataElement": "CIh22FjXvOR",
-                                    "value": patientCodeOfContactValue
-                                  },
-                                  {
-                                    "dataElement": "m3pQUNk6AeL",
-                                    "value": patientContactGenderValue
-                                  },
-                                  {
-                                    "dataElement": "Zxkghqkbn7p",
-                                    "value": patientRelationOfContactValue
-                                  },
-                                  {
-                                    "dataElement": "scledbnTVVK",
-                                    "value": patientContactHivStatusValue
-                                  },
-                                  {
-                                    "dataElement": "mfAyPSJA74t",
-                                    "value": patientRiskOfViolenceValue
-                                  },
-                                  {
-                                    "dataElement": "iz0c8aW79QH",
-                                    "value": patientPlannedReferenceTypeValue
-                                  },
-                                  {
-                                    "dataElement": "MgkDDuHQHeN",
-                                    "value": patientAgeOfContactValue
-                                  }
-                                ]
-                              }
-
-
-                              //2- sending createNewEventStageResultContactNotif
-                              //DHIS2 Json payload updating before pushing
-                              var dhsi2NotifStructure =
-                              {
-                                "program": "CYyICYiO5zo",
-                                "orgUnit": organizationUnit,
-                                "eventDate": eventDate,
-                                "status": "COMPLETED",
-                                "storedBy": "Savics",
-                                "programStage": "b9rxVAiJaxA",
-                                "trackedEntityInstance": trackedEntityInstanceId,
-                                "enrollment": enrollmentId,
-                                "dataValues": [
-                                  {
-                                    "dataElement": "VsEnL2R7crc",
-                                    "value": patientContactInvitedValue
-                                  },
-                                  {
-                                    "dataElement": "VuZnWho10cr",
-                                    "value": patientContactReceivedValue
-                                  },
-                                  {
-                                    "dataElement": "SUL0FdHdNyq",
-                                    "value": patientContactTestedValue
-                                  },
-                                  {
-                                    "dataElement": "y0Z5EVxKowc",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "iTx0txf0FVj",
-                                    "value": patientUntestedContactGivenTestKitValue
-                                  },
-                                  {
-                                    "dataElement": "jJxPUCWKW1K",
-                                    "value": patientContactObservationsValue
-                                  },
-                                  {
-                                    "dataElement": "i5f4SA6TGRt",
-                                    "value": patientReasonContactNotReceivedValue
-                                  },
-                                  {
-                                    "dataElement": "Y7RU4f1g49C",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "GE0hAdM6xMg",
-                                    "value": patientContactNotifierValue
-                                  },
-                                  {
-                                    "dataElement": "r3DvI1uxJM0",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "UXx7mkioReb",
-                                    "value": patientNotificationApproachValue
-                                  },
-                                  {
-                                    "dataElement": "kVoTnMfXnyt",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "sCvxPIDQ66r",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "r1PVDg5nIGZ",
-                                    "value": patientContactHivPositifTrackedNumberValue
-                                  },
-                                  {
-                                    "dataElement": "OsZRlnXq7Qk",
-                                    "value": patientReasonContactNotTestedValue
-                                  },
-                                  {
-                                    "dataElement": "yRpn8oL0vxv",
-                                    "value": patientContactHivResultValue
-                                  }
-                                ]
-                              }
-
-
-                              winston.info('Now, adding contacts information...');
-                              formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
-                                if (error) {
-                                  winston.error('An error occured when trying to add a contacts information ', error);
-                                  callback('An error occured when trying to add a contacts information ');
-                                } else {
-                                    winston.info('Contacts information added with success ', result);
-
-                                    winston.info('Now, adding results of contacts notifications...');
-                                    formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
-                                      if (error) {
-                                        winston.error('An error occured when trying to add a results of contacts notifications', error);
-                                        callback('An error occured when trying to add a results of contacts notifications');
-                                      } else {
-                                        winston.info('Results of contacts notifications added with success', result);
-                                        callback(null, 'Results of contacts notifications added with success');
-                                      }
-                                    })
-                                  }
+                                var dhsi2ContactStructure =
+                                {
+                                  "program": "CYyICYiO5zo",
+                                  "orgUnit": organizationUnit,
+                                  "eventDate": eventDate,
+                                  "status": "COMPLETED",
+                                  "storedBy": "amza",
+                                  "programStage": "RtQV53iuq7z",
+                                  "trackedEntityInstance": trackedEntityInstanceId,
+                                  "enrollment": enrollmentId,
+                                  "dataValues": [
+                                    {
+                                      "dataElement": "CIh22FjXvOR",
+                                      "value": patientCodeOfContactValue
+                                    },
+                                    {
+                                      "dataElement": "m3pQUNk6AeL",
+                                      "value": patientContactGenderValue
+                                    },
+                                    {
+                                      "dataElement": "Zxkghqkbn7p",
+                                      "value": patientRelationOfContactValue
+                                    },
+                                    {
+                                      "dataElement": "scledbnTVVK",
+                                      "value": patientContactHivStatusValue
+                                    },
+                                    {
+                                      "dataElement": "mfAyPSJA74t",
+                                      "value": patientRiskOfViolenceValue
+                                    },
+                                    {
+                                      "dataElement": "iz0c8aW79QH",
+                                      "value": patientPlannedReferenceTypeValue
+                                    },
+                                    {
+                                      "dataElement": "MgkDDuHQHeN",
+                                      "value": patientAgeOfContactValue
+                                    }
+                                  ]
                                 }
-                              );
 
 
+                                //2- sending createNewEventStageResultContactNotif
+                                //DHIS2 Json payload updating before pushing
+                                var dhsi2NotifStructure =
+                                {
+                                  "program": "CYyICYiO5zo",
+                                  "orgUnit": organizationUnit,
+                                  "eventDate": eventDate,
+                                  "status": "COMPLETED",
+                                  "storedBy": "Savics",
+                                  "programStage": "b9rxVAiJaxA",
+                                  "trackedEntityInstance": trackedEntityInstanceId,
+                                  "enrollment": enrollmentId,
+                                  "dataValues": [
+                                    {
+                                      "dataElement": "VsEnL2R7crc",
+                                      "value": patientContactInvitedValue
+                                    },
+                                    {
+                                      "dataElement": "VuZnWho10cr",
+                                      "value": patientContactReceivedValue
+                                    },
+                                    {
+                                      "dataElement": "SUL0FdHdNyq",
+                                      "value": patientContactTestedValue
+                                    },
+                                    {
+                                      "dataElement": "y0Z5EVxKowc",
+                                      "value": patientContactOnART
+                                    },
+                                    {
+                                      "dataElement": "iTx0txf0FVj",
+                                      "value": patientUntestedContactGivenTestKitValue
+                                    },
+                                    {
+                                      "dataElement": "jJxPUCWKW1K",
+                                      "value": patientContactObservationsValue
+                                    },
+                                    {
+                                      "dataElement": "i5f4SA6TGRt",
+                                      "value": patientReasonContactNotReceivedValue
+                                    },
+                                    {
+                                      "dataElement": "Y7RU4f1g49C",
+                                      "value": ""
+                                    },
+                                    {
+                                      "dataElement": "GE0hAdM6xMg",
+                                      "value": patientContactNotifierValue
+                                    },
+                                    {
+                                      "dataElement": "r3DvI1uxJM0",
+                                      "value": ""
+                                    },
+                                    {
+                                      "dataElement": "UXx7mkioReb",
+                                      "value": patientNotificationApproachValue
+                                    },
+                                    {
+                                      "dataElement": "kVoTnMfXnyt",
+                                      "value": ""
+                                    },
+                                    {
+                                      "dataElement": "sCvxPIDQ66r",
+                                      "value": ""
+                                    },
+                                    {
+                                      "dataElement": "r1PVDg5nIGZ",
+                                      "value": patientContactHivPositifTrackedNumberValue
+                                    },
+                                    {
+                                      "dataElement": "OsZRlnXq7Qk",
+                                      "value": patientReasonContactNotTestedValue
+                                    },
+                                    {
+                                      "dataElement": "yRpn8oL0vxv",
+                                      "value": patientContactHivResultValue
+                                    }
+                                  ]
+                                }
+
+
+                                winston.info('Now, adding contacts information...');
+                                formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2ContactStructure, 2, formMapping.form1MappingBooleanTable, function (error, result) {
+                                  if (error) {
+                                    winston.error('An error occured when trying to add a contacts information ', error);
+                                    callback('An error occured when trying to add a contacts information ');
+                                  } else {
+                                      winston.info('Contacts information added with success ', result);
+
+                                      winston.info('Now, adding results of contacts notifications...');
+                                      formMapping.pushFormToDhis2(formMapping.form1MappingTable, incomingEncounter, dhsi2NotifStructure, 3, formMapping.form1MappingBooleanTable, function (error, result) {
+                                        if (error) {
+                                          winston.error('An error occured when trying to add a results of contacts notifications', error);
+                                          callback('An error occured when trying to add a results of contacts notifications');
+                                        } else {
+                                          winston.info('Results of contacts notifications added with success', result);
+                                          callback(null, 'Results of contacts notifications added with success');
+                                        }
+                                      })
+                                    }
+                                  }
+                                );
+
+
+
+                              });
                             });
                           });
                         });
@@ -1439,362 +1454,364 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
   patientVillage = patientAddressObject.village;
   
   //getting patient secteur and district from DHIS2
-    var patientDetails = incomingEncounter.patient.person.preferredAddress.cityVillage;
-    console.log("SECETEUR NAME: " + patientDetails);
-    utils.getDHIS2PatientAddress(patientDetails,function(result){
-      console.log("VALUE RESULT : " + result);
-      patientSecteur = result.split('/')[5];
-      patientDistrict = result.split('/')[3];
+    var patientSectorDetails = incomingEncounter.patient.person.preferredAddress.cityVillage;
+    var patientDistrictDetails = incomingEncounter.patient.person.preferredAddress.countyDistrict;
+    
+    utils.getDHIS2DistritctOrSectorId(patientSectorDetails,5,function(result){
+      patientSecteur = result;
+      utils.getDHIS2DistritctOrSectorId(patientDistrictDetails,3,function(result){
+        patientDistrict = result;
 
-      //getting gender from DHIS2
-      utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
-        patientGender = result;
-        var omrsOccupationValue = utils.getConceptValue(incomingEncounter.encounter.obs, "4587542b-f1aa-47ad-8bed-75a705433950");
-        if (utils.isFineValue(omrsOccupationValue) == true && utils.isFineValue(omrsOccupationValue.name) == true && utils.isFineValue(omrsOccupationValue.name.name) == true) {
-          omrsOccupationValue = omrsOccupationValue.uuid;
-        } else {
-          omrsOccupationValue = "";
-        }
+        //getting gender from DHIS2
+        utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
+          patientGender = result;
+          var omrsOccupationValue = utils.getConceptValue(incomingEncounter.encounter.obs, "4587542b-f1aa-47ad-8bed-75a705433950");
+          if (utils.isFineValue(omrsOccupationValue) == true && utils.isFineValue(omrsOccupationValue.name) == true && utils.isFineValue(omrsOccupationValue.name.name) == true) {
+            omrsOccupationValue = omrsOccupationValue.uuid;
+          } else {
+            omrsOccupationValue = "";
+          }
 
-        //Beginning of the retrieving of all the dropdown value from DHIS2
-        patientIsPregnantValue = utils.getDHIS2YesNoUnknown(omrsIsPregnant);
-        patientConselledOnLinkageValue = utils.getDHIS2Boolean(omrsConselledOnLinkage);
-        patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
-        patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
-        patientInitiatedOnTPTValue = utils.getDHIS2Boolean(omrsInitiatedOnTPT);
-        patientStableValue = utils.getDHIS2Boolean(omrsStable);
+          //Beginning of the retrieving of all the dropdown value from DHIS2
+          patientIsPregnantValue = utils.getDHIS2YesNoUnknown(omrsIsPregnant);
+          patientConselledOnLinkageValue = utils.getDHIS2Boolean(omrsConselledOnLinkage);
+          patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
+          patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
+          patientInitiatedOnTPTValue = utils.getDHIS2Boolean(omrsInitiatedOnTPT);
+          patientStableValue = utils.getDHIS2Boolean(omrsStable);
 
-        utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
-          patientOccupation = result;
-          utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
-            patientMaritalStatus = result;
-            utils.getDhis2DropdownValue(utils.getDHIS2ARTStartLocation(omrsARTStartLocation), function (result) {
-              patientARTStartLocationValue = result;
-              utils.getDhis2DropdownValue(utils.getDHIS2IndexCaseType(omrsIndexCaseType), function (result) {
-                patientIndexCaseTypeValue = result;
-                utils.getDhis2DropdownValue(utils.getDHIS2ResidencyType(omrsResidencyType), function (result) {
-                  patientResidencyTypeValue = result;
-                  utils.getDhis2DropdownValue(utils.getDHIS2OccupationType(omrsOccupationType), function (result) {
-                    patientOccupationTypeValue = result;
-                    utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsVASWCLast12m), function (result) {
-                      patientVASWCLast12mValue = result;
-                      utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithMale), function (result) {
-                        patientSexWithMaleValue = result;
-                        utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithFemale), function (result) {
-                          patientSexWithFemaleValue = result;
-                          utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithHivPositifPerson), function (result) {
-                            patientSexWithHivPositifPersonValue = result;
-                            utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithComSexWorker), function (result) {
-                              patientSexWithComSexWorkerValue = result;
-                              utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithMultiplePartner), function (result) {
-                                patientSexWithMultiplePartnerValue = result;
-                                utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsBeComSexWorker), function (result) {
-                                  patientBeComSexWorkerValue = result;
-                                  utils.getDhis2DropdownValue(utils.getDHIS2HivTestingClinic(omrsHivTestingClinic), function (result) {
-                                    patientHivTestingClinicValue = result;
-                                    utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsRecencyAssayTestDone), function (result) {
-                                      patientRecencyAssayTestDoneValue = result;
-                                      utils.getDhis2DropdownValue(utils.getDHIS2Form2RecencyAssayResult(omrsForm2RecencyAssayResult), function (result) {
-                                        patientForm2RecencyAssayResultValue = result;
-                                        utils.getDhis2DropdownValue(utils.getDHIS2FinalRitaRecencyResult(omrsFinalRitaRecencyResult), function (result) {
-                                          patientFinalRitaRecencyResultValue = result;
-                                          utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsFinalRitaInconclusive), function (result) {
-                                            patientFinalRitaInconclusiveValue = result;
-                                            utils.getDhis2DropdownValue(utils.getDHIS2ReasonNotInitiatedOnTPT(omrsReasonNotInitOnTPT), function (result) {
-                                              patientReasonNotInitOnTPTValue = result;
-      //End of the retrieving of all the dropdown value from DHIS2
+          utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
+            patientOccupation = result;
+            utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
+              patientMaritalStatus = result;
+              utils.getDhis2DropdownValue(utils.getDHIS2ARTStartLocation(omrsARTStartLocation), function (result) {
+                patientARTStartLocationValue = result;
+                utils.getDhis2DropdownValue(utils.getDHIS2IndexCaseType(omrsIndexCaseType), function (result) {
+                  patientIndexCaseTypeValue = result;
+                  utils.getDhis2DropdownValue(utils.getDHIS2ResidencyType(omrsResidencyType), function (result) {
+                    patientResidencyTypeValue = result;
+                    utils.getDhis2DropdownValue(utils.getDHIS2OccupationType(omrsOccupationType), function (result) {
+                      patientOccupationTypeValue = result;
+                      utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsVASWCLast12m), function (result) {
+                        patientVASWCLast12mValue = result;
+                        utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithMale), function (result) {
+                          patientSexWithMaleValue = result;
+                          utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithFemale), function (result) {
+                            patientSexWithFemaleValue = result;
+                            utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithHivPositifPerson), function (result) {
+                              patientSexWithHivPositifPersonValue = result;
+                              utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithComSexWorker), function (result) {
+                                patientSexWithComSexWorkerValue = result;
+                                utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsSexWithMultiplePartner), function (result) {
+                                  patientSexWithMultiplePartnerValue = result;
+                                  utils.getDhis2DropdownValue(utils.getDHIS2YesNoRefuseUnknown(omrsBeComSexWorker), function (result) {
+                                    patientBeComSexWorkerValue = result;
+                                    utils.getDhis2DropdownValue(utils.getDHIS2HivTestingClinic(omrsHivTestingClinic), function (result) {
+                                      patientHivTestingClinicValue = result;
+                                      utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsRecencyAssayTestDone), function (result) {
+                                        patientRecencyAssayTestDoneValue = result;
+                                        utils.getDhis2DropdownValue(utils.getDHIS2Form2RecencyAssayResult(omrsForm2RecencyAssayResult), function (result) {
+                                          patientForm2RecencyAssayResultValue = result;
+                                          utils.getDhis2DropdownValue(utils.getDHIS2FinalRitaRecencyResult(omrsFinalRitaRecencyResult), function (result) {
+                                            patientFinalRitaRecencyResultValue = result;
+                                            utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsFinalRitaInconclusive), function (result) {
+                                              patientFinalRitaInconclusiveValue = result;
+                                              utils.getDhis2DropdownValue(utils.getDHIS2ReasonNotInitiatedOnTPT(omrsReasonNotInitOnTPT), function (result) {
+                                                patientReasonNotInitOnTPTValue = result;
+        //End of the retrieving of all the dropdown value from DHIS2
 
-                                              //DHIS2 Json payload updating before pushing
-                                              var dhis2EnrollementStructure =
-                                              {
-                                                "program": "CYyICYiO5zo",
-                                                "orgUnit": organizationUnit,
-                                                "eventDate": eventDate,
-                                                "status": "COMPLETED",
-                                                "storedBy": "Savics",
-                                                "programStage": "pBAeqPjnhdF",
-                                                "trackedEntityInstance": trackedEntityInstanceId,
-                                                "enrollment": enrollmentId,
-                                                "dataValues": [
-                                                  {
-                                                    "dataElement": "pbeBAIly2GT",
-                                                    "value": organizationUnit
-                                                  },
-                                                  {
-                                                    "dataElement": "qycXEyMMFMb",
-                                                    "value": patientIndexCaseTypeValue
-                                                  },
-                                                  {
-                                                    "dataElement": "txsxKp2l6y9",
-                                                    "value": eventDate
-                                                  },
-                                                  {
-                                                    "dataElement": "oLqMrGMI4Uf",
-                                                    "value": patientVisitDate
-                                                  },
-                                                  {
-                                                    "dataElement": "GIC3Oq7ruS0",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "I809QdRlgCb",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "tnMNaBmQaIy",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "wXcnNSYryUd",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "aYhoeOchJYM",
-                                                    "value": patientARTStartLocationValue
-                                                  },
-                                                  {
-                                                    "dataElement": "GwCiJLY0of4",
-                                                    "value": patientBirhDate
-                                                  },
-                                                  {
-                                                    "dataElement": "c4KsTiEImGx",
-                                                    "value": patientGender
-                                                  },
-                                                  {
-                                                    "dataElement": "qsCPZIJLpYo",
-                                                    "value": patientIsPregnantValue
-                                                  },
-                                                  {
-                                                    "dataElement": "ZvH6DY75uR1",
-                                                    "value": patientResidencyTypeValue
-                                                  },
-                                                  {
-                                                    "dataElement": "p5U0vUS0Q3V",
-                                                    "value": patientVillage
-                                                  },
-                                                  {
-                                                    "dataElement": "I79uRgVEyUc",
-                                                    "value": patientCellule
-                                                  },
-                                                  {
-                                                    "dataElement": "UaCDJMTQRLz",
-                                                    "value": patientSecteur
-                                                  },
-                                                  {
-                                                    "dataElement": "kPkjR4qEhhn",
-                                                    "value": patientDistrict
-                                                  },
-                                                  {
-                                                    "dataElement": "PZo2sP0TOb6",
-                                                    "value": patientMaritalStatus
-                                                  },
-                                                  {
-                                                    "dataElement": "NrWXvZg3WtW",
-                                                    "value": patientOccupation
-                                                  },
-                                                  {
-                                                    "dataElement": "Cgt39EInKQV",
-                                                    "value": patientOccupationTypeValue
-                                                  },
-                                                  {
-                                                    "dataElement": "SzvTcCTNlGo",
-                                                    "value": patientVASWCLast12mValue
-                                                  },
-                                                  {
-                                                    "dataElement": "G0Jq8kyaJCD",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "xHo7COhyMKM",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "MyMV3TTWYmW",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "SNAaIVKCh78",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "eUVdYRa8qUo",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "KY4a5xCSKgT",
-                                                    "value": patientHivTestingClinicValue
-                                                  },
-                                                  {
-                                                    "dataElement": "VQPCeakHIpV",
-                                                    "value": patientRecencyAssayTestDoneValue
-                                                  },
-                                                  {
-                                                    "dataElement": "NFOu3OCGMKl",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "NZe43UAOGmt",
-                                                    "value": patientForm2RecencyAssayResultValue
-                                                  },
-                                                  {
-                                                    "dataElement": "i7AuzJQFo8O",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "ccYYcYf78sz",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "Ba8VCAO9Nqi",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "yu2bxd3xVIg",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "ptZMCKSxvU8",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "qBYsHDuUBIv",
-                                                    "value": patientFinalRitaRecencyResultValue
-                                                  },
-                                                  {
-                                                    "dataElement": "nMJKcTFHGj0",
-                                                    "value": patientFinalRitaInconclusiveValue
-                                                  },
-                                                  {
-                                                    "dataElement": "DDHl9CtiqaC",
-                                                    "value": patientConselledOnLinkageValue
-                                                  },
-                                                  {
-                                                    "dataElement": "RDQB5Zx8hMH",
-                                                    "value": patientLinkedToTreatmentValue
-                                                  },
-                                                  {
-                                                    "dataElement": "ocgzZ6BdT8W",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "ZodoxM8PakE",
-                                                    "value": patientLinkedToTreatmentAtThisFacilityValue
-                                                  },
-                                                  {
-                                                    "dataElement": "ERqqYuUtigv",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "kJIuYQpa9Lc",
-                                                    "value": patientInitiatedOnTPTValue
-                                                  },
-                                                  {
-                                                    "dataElement": "ivqLch0DMXv",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "gNjou1Bq6dz",
-                                                    "value": patientReasonNotInitOnTPTValue
-                                                  },
-                                                  {
-                                                    "dataElement": "jYMNto3ELj5",
-                                                    "value": patientStableValue
-                                                  },
-                                                  {
-                                                    "dataElement": "mKVpD68KeIO",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "jmwJSKQthb7",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "UYuVIHot43a",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "cE0JLRDspz9",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "MWnDK640C17",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "MG6I5RT8YsE",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "Qx0v2TzHlS0",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "qywtB6np899",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "nkRWZpUQ55g",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "Tgt3yKYd2oD",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "LovSZ5zd8YL",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "ePONK5dlCAl",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "G3dUs7PuDqx",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "OKemd50jbHG",
-                                                    "value": ""
-                                                  },
-                                                  {
-                                                    "dataElement": "gJ58M7ClaMm",
-                                                    "value": patientSexWithMaleValue
-                                                  },
-                                                  {
-                                                    "dataElement": "yGhEu1ntCaf",
-                                                    "value": patientSexWithMultiplePartnerValue
-                                                  },
-                                                  {
-                                                    "dataElement": "eQFf5SRscrT",
-                                                    "value": patientBeComSexWorkerValue
-                                                  },
-                                                  {
-                                                    "dataElement": "fB1hxxwcdye",
-                                                    "value": patientSexWithComSexWorkerValue
-                                                  },
-                                                  {
-                                                    "dataElement": "ZfoeEa3kNYe",
-                                                    "value": patientSexWithFemaleValue
-                                                  },
-                                                  {
-                                                    "dataElement": "fHHFiV0HP0V",
-                                                    "value": patientSexWithHivPositifPersonValue
+                                                //DHIS2 Json payload updating before pushing
+                                                var dhis2EnrollementStructure =
+                                                {
+                                                  "program": "CYyICYiO5zo",
+                                                  "orgUnit": organizationUnit,
+                                                  "eventDate": eventDate,
+                                                  "status": "COMPLETED",
+                                                  "storedBy": "Savics",
+                                                  "programStage": "pBAeqPjnhdF",
+                                                  "trackedEntityInstance": trackedEntityInstanceId,
+                                                  "enrollment": enrollmentId,
+                                                  "dataValues": [
+                                                    {
+                                                      "dataElement": "pbeBAIly2GT",
+                                                      "value": organizationUnit
+                                                    },
+                                                    {
+                                                      "dataElement": "qycXEyMMFMb",
+                                                      "value": patientIndexCaseTypeValue
+                                                    },
+                                                    {
+                                                      "dataElement": "txsxKp2l6y9",
+                                                      "value": eventDate
+                                                    },
+                                                    {
+                                                      "dataElement": "oLqMrGMI4Uf",
+                                                      "value": patientVisitDate
+                                                    },
+                                                    {
+                                                      "dataElement": "GIC3Oq7ruS0",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "I809QdRlgCb",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "tnMNaBmQaIy",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "wXcnNSYryUd",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "aYhoeOchJYM",
+                                                      "value": patientARTStartLocationValue
+                                                    },
+                                                    {
+                                                      "dataElement": "GwCiJLY0of4",
+                                                      "value": patientBirhDate
+                                                    },
+                                                    {
+                                                      "dataElement": "c4KsTiEImGx",
+                                                      "value": patientGender
+                                                    },
+                                                    {
+                                                      "dataElement": "qsCPZIJLpYo",
+                                                      "value": patientIsPregnantValue
+                                                    },
+                                                    {
+                                                      "dataElement": "ZvH6DY75uR1",
+                                                      "value": patientResidencyTypeValue
+                                                    },
+                                                    {
+                                                      "dataElement": "p5U0vUS0Q3V",
+                                                      "value": patientVillage
+                                                    },
+                                                    {
+                                                      "dataElement": "I79uRgVEyUc",
+                                                      "value": patientCellule
+                                                    },
+                                                    {
+                                                      "dataElement": "UaCDJMTQRLz",
+                                                      "value": patientSecteur
+                                                    },
+                                                    {
+                                                      "dataElement": "kPkjR4qEhhn",
+                                                      "value": patientDistrict
+                                                    },
+                                                    {
+                                                      "dataElement": "PZo2sP0TOb6",
+                                                      "value": patientMaritalStatus
+                                                    },
+                                                    {
+                                                      "dataElement": "NrWXvZg3WtW",
+                                                      "value": patientOccupation
+                                                    },
+                                                    {
+                                                      "dataElement": "Cgt39EInKQV",
+                                                      "value": patientOccupationTypeValue
+                                                    },
+                                                    {
+                                                      "dataElement": "SzvTcCTNlGo",
+                                                      "value": patientVASWCLast12mValue
+                                                    },
+                                                    {
+                                                      "dataElement": "G0Jq8kyaJCD",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "xHo7COhyMKM",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "MyMV3TTWYmW",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "SNAaIVKCh78",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "eUVdYRa8qUo",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "KY4a5xCSKgT",
+                                                      "value": patientHivTestingClinicValue
+                                                    },
+                                                    {
+                                                      "dataElement": "VQPCeakHIpV",
+                                                      "value": patientRecencyAssayTestDoneValue
+                                                    },
+                                                    {
+                                                      "dataElement": "NFOu3OCGMKl",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "NZe43UAOGmt",
+                                                      "value": patientForm2RecencyAssayResultValue
+                                                    },
+                                                    {
+                                                      "dataElement": "i7AuzJQFo8O",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "ccYYcYf78sz",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "Ba8VCAO9Nqi",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "yu2bxd3xVIg",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "ptZMCKSxvU8",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "qBYsHDuUBIv",
+                                                      "value": patientFinalRitaRecencyResultValue
+                                                    },
+                                                    {
+                                                      "dataElement": "nMJKcTFHGj0",
+                                                      "value": patientFinalRitaInconclusiveValue
+                                                    },
+                                                    {
+                                                      "dataElement": "DDHl9CtiqaC",
+                                                      "value": patientConselledOnLinkageValue
+                                                    },
+                                                    {
+                                                      "dataElement": "RDQB5Zx8hMH",
+                                                      "value": patientLinkedToTreatmentValue
+                                                    },
+                                                    {
+                                                      "dataElement": "ocgzZ6BdT8W",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "ZodoxM8PakE",
+                                                      "value": patientLinkedToTreatmentAtThisFacilityValue
+                                                    },
+                                                    {
+                                                      "dataElement": "ERqqYuUtigv",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "kJIuYQpa9Lc",
+                                                      "value": patientInitiatedOnTPTValue
+                                                    },
+                                                    {
+                                                      "dataElement": "ivqLch0DMXv",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "gNjou1Bq6dz",
+                                                      "value": patientReasonNotInitOnTPTValue
+                                                    },
+                                                    {
+                                                      "dataElement": "jYMNto3ELj5",
+                                                      "value": patientStableValue
+                                                    },
+                                                    {
+                                                      "dataElement": "mKVpD68KeIO",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "jmwJSKQthb7",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "UYuVIHot43a",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "cE0JLRDspz9",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "MWnDK640C17",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "MG6I5RT8YsE",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "Qx0v2TzHlS0",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "qywtB6np899",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "nkRWZpUQ55g",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "Tgt3yKYd2oD",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "LovSZ5zd8YL",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "ePONK5dlCAl",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "G3dUs7PuDqx",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "OKemd50jbHG",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "gJ58M7ClaMm",
+                                                      "value": patientSexWithMaleValue
+                                                    },
+                                                    {
+                                                      "dataElement": "yGhEu1ntCaf",
+                                                      "value": patientSexWithMultiplePartnerValue
+                                                    },
+                                                    {
+                                                      "dataElement": "eQFf5SRscrT",
+                                                      "value": patientBeComSexWorkerValue
+                                                    },
+                                                    {
+                                                      "dataElement": "fB1hxxwcdye",
+                                                      "value": patientSexWithComSexWorkerValue
+                                                    },
+                                                    {
+                                                      "dataElement": "ZfoeEa3kNYe",
+                                                      "value": patientSexWithFemaleValue
+                                                    },
+                                                    {
+                                                      "dataElement": "fHHFiV0HP0V",
+                                                      "value": patientSexWithHivPositifPersonValue
+                                                    }
+                                                  ]
+                                                };
+
+                                                //Beginning of data pushing
+                                                formMapping.pushFormToDhis2(formMapping.form2MappingTable, incomingEncounter, dhis2EnrollementStructure, 4, formMapping.form2MappingBooleanTable, function (error, result) {
+                                                  if (error) {
+                                                    winston.error('An error occured when trying to add an enrollment information', error);
+                                                    callback('An error occured when trying to add an enrollment information');
+                                                  } else {
+                                                    winston.info('Enrollment data added with success', result);
+                                                    callback(null, 'Enrollment dataadded with success');
                                                   }
-                                                ]
-                                              };
+                                                });
+                                                //End of data pushing
 
-                                              //Beginning of data pushing
-                                              formMapping.pushFormToDhis2(formMapping.form2MappingTable, incomingEncounter, dhis2EnrollementStructure, 4, formMapping.form2MappingBooleanTable, function (error, result) {
-                                                if (error) {
-                                                  winston.error('An error occured when trying to add an enrollment information', error);
-                                                  callback('An error occured when trying to add an enrollment information');
-                                                } else {
-                                                  winston.info('Enrollment data added with success', result);
-                                                  callback(null, 'Enrollment dataadded with success');
-                                                }
                                               });
-                                              //End of data pushing
-
                                             });
                                           });
                                         });
@@ -1816,7 +1833,6 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
         });
       });
     });
-
 };
 //End of the ENROLLEMENT INFORMATION
 
@@ -1974,219 +1990,228 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   
   //This is a dropdown in OpenMRS and free text in DHIS2
   patientOINameValue = utils.getOINameConceptValue(incomingEncounter.encounter.obs, '0ae23a5a-15f5-102d-96e4-000c29c2a5d7');
-  
-  utils.getDhis2DropdownValue(utils.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
-    patientReasonARTChangedOrStoppedValue = result;
-    utils.getDhis2DropdownValue(utils.getDHIS2DrugToxicityType(omrsDrugToxicityType), function(result){
-      patientDrugToxicityTypeValue = result;
-      utils.getDhis2DropdownValue(utils.getDHIS2CBSClientOutcome(omrsCBSClientOutcome), function(result){
-        patientCBSClientOutcomeValue = result;
-        utils.getDhis2DropdownValue(utils.getDHIS2OverAllTreatmentAdherence(omrsOverallTreatmentAdherence), function(result){
-          patientOverallTreatmentAdherenceValue = result;
-          utils.getDhis2DropdownValue(utils.getDHIS2ClientTPTOutcome(omrsClientTPTOutcome), function(result){
-            patientClientTPTOutcomeValue = result;
-            utils.getDhis2DropdownValue(utils.getDHIS2TPTTherapyInProgress(omrsTPTTherapyInProgress), function(result){
-              patientTPTTherapyInProgressValue = result;
-              utils.getDhis2DropdownValue(utils.getDHIS2WHOStage(omrsWHOStage), function(result){
-                patientWHOStageValue = result;
-  //End of retrieving all the dropdown value from DHIS2
+  var patientSectorDetails = incomingEncounter.patient.person.preferredAddress.cityVillage;
+  var patientDistrictDetails = incomingEncounter.patient.person.preferredAddress.countyDistrict;
 
-                //DHIS2 json payload update before pushing
-                var dhis2FollowupStructure =
-                  {
-                    "program": "CYyICYiO5zo",
-                    "orgUnit": organizationUnit,
-                    "eventDate": eventDate,
-                    "status": "COMPLETED",
-                    "storedBy": "Savics",
-                    "programStage": "Em0sRsnHjoR",
-                    "trackedEntityInstance": trackedEntityInstanceId,
-                    "enrollment": enrollmentId,
-                    "dataValues": [
+  utils.getDHIS2DistritctOrSectorId(patientSectorDetails,5,function(result){
+    patientSecteur = result;
+    utils.getDHIS2DistritctOrSectorId(patientDistrictDetails,3,function(result){
+      patientDistrict = result;
+
+      utils.getDhis2DropdownValue(utils.getDHIS2ReasonARTChangedOrStopped(omrsReasonARTChangedOrStopped), function(result){
+        patientReasonARTChangedOrStoppedValue = result;
+        utils.getDhis2DropdownValue(utils.getDHIS2DrugToxicityType(omrsDrugToxicityType), function(result){
+          patientDrugToxicityTypeValue = result;
+          utils.getDhis2DropdownValue(utils.getDHIS2CBSClientOutcome(omrsCBSClientOutcome), function(result){
+            patientCBSClientOutcomeValue = result;
+            utils.getDhis2DropdownValue(utils.getDHIS2OverAllTreatmentAdherence(omrsOverallTreatmentAdherence), function(result){
+              patientOverallTreatmentAdherenceValue = result;
+              utils.getDhis2DropdownValue(utils.getDHIS2ClientTPTOutcome(omrsClientTPTOutcome), function(result){
+                patientClientTPTOutcomeValue = result;
+                utils.getDhis2DropdownValue(utils.getDHIS2TPTTherapyInProgress(omrsTPTTherapyInProgress), function(result){
+                  patientTPTTherapyInProgressValue = result;
+                  utils.getDhis2DropdownValue(utils.getDHIS2WHOStage(omrsWHOStage), function(result){
+                    patientWHOStageValue = result;
+      //End of retrieving all the dropdown value from DHIS2
+
+                    //DHIS2 json payload update before pushing
+                    var dhis2FollowupStructure =
                       {
-                        "dataElement": "pbeBAIly2GT",
-                        "value": organizationUnit
-                      },
-                      {
-                        "dataElement": "txsxKp2l6y9",
-                        "value": eventDate
-                      },
-                      {
-                        "dataElement": "oLqMrGMI4Uf",
-                        "value": eventDate
-                      },
-                      {
-                        "dataElement":"Vrm4tEU28YG",
-                        "value": patientVillage
-                      },
-                      {
-                        "dataElement": "fEX1sjE7mEm",
-                        "value": patientCellule
-                      },
-                      {
-                        "dataElement": "I809QdRlgCb",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "tnMNaBmQaIy",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "wXcnNSYryUd",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "OCZt4UJitnh",
-                        "value": patientDemographicChangeValue
-                      },
-                      {
-                        "dataElement": "yu67Iiw64UQ",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "p5U0vUS0Q3V",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "I79uRgVEyUc",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "UaCDJMTQRLz",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "kPkjR4qEhhn",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "OTAM6B4xZwf",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "Cgt39EInKQV",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "KrYJW9kvJS2",
-                        "value": patientRiskFactorChangeValue
-                      },
-                      {
-                        "dataElement": "Nld1zMZwPxK",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "jYMNto3ELj5",
-                        "value": patientFollowUpStableValue
-                      },
-                      {
-                        "dataElement": "jmwJSKQthb7",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "xMLGFpVb0Kh",
-                        "value": patientChangeInTreatmentValue
-                      },
-                      {
-                        "dataElement": "KRTWX8CatfN",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "Nxu3IZxrngL",
-                        "value": patientReasonARTChangedOrStoppedValue
-                      },
-                      {
-                        "dataElement": "gZLYfulH1cx",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "dlbRyDDWVdz",
-                        "value": patientDrugToxicityTypeValue
-                      },
-                      {
-                        "dataElement": "MWnDK640C17",
-                        "value": patientWHOStageValue
-                      },
-                      {
-                        "dataElement": "MG6I5RT8YsE",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "Tgt3yKYd2oD",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "LovSZ5zd8YL",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "ePONK5dlCAl",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "G3dUs7PuDqx",
-                        "value": patientOINameValue
-                      },
-                      {
-                        "dataElement": "OKemd50jbHG",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "lrM4jhiDogd",
-                        "value": patientCBSClientOutcomeValue
-                      },
-                      {
-                        "dataElement": "kmA8X0Qwjor",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "L9lcjEkxHBv",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "eCbwnVkQ8Rt",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "OO8wNkgpAwK",
-                        "value": patientOverallTreatmentAdherenceValue
-                      },
-                      {
-                        "dataElement": "BMf4geBAMFU",
-                        "value": patientAttendedEnhancedCounsellingValue
-                      },
-                      {
-                        "dataElement": "LpDBQwhUZ4U",
-                        "value": patientCompletedEnhancedCounsellingValue
-                      },
-                      {
-                        "dataElement": "yH3otrjN0qZ",
-                        "value": patientClientTPTOutcomeValue
-                      },
-                      {
-                        "dataElement": "EBAuC7pMu4O",
-                        "value": ""
-                      },
-                      {
-                        "dataElement": "nQGHwHA3ayC",
-                        "value": patientTPTTherapyInProgressValue
+                        "program": "CYyICYiO5zo",
+                        "orgUnit": organizationUnit,
+                        "eventDate": eventDate,
+                        "status": "COMPLETED",
+                        "storedBy": "Savics",
+                        "programStage": "Em0sRsnHjoR",
+                        "trackedEntityInstance": trackedEntityInstanceId,
+                        "enrollment": enrollmentId,
+                        "dataValues": [
+                          {
+                            "dataElement": "pbeBAIly2GT",
+                            "value": organizationUnit
+                          },
+                          {
+                            "dataElement": "txsxKp2l6y9",
+                            "value": eventDate
+                          },
+                          {
+                            "dataElement": "oLqMrGMI4Uf",
+                            "value": eventDate
+                          },
+                          {
+                            "dataElement":"Vrm4tEU28YG",
+                            "value": patientVillage
+                          },
+                          {
+                            "dataElement": "fEX1sjE7mEm",
+                            "value": patientCellule
+                          },
+                          {
+                            "dataElement": "I809QdRlgCb",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "tnMNaBmQaIy",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "wXcnNSYryUd",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "OCZt4UJitnh",
+                            "value": patientDemographicChangeValue
+                          },
+                          {
+                            "dataElement": "yu67Iiw64UQ",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "p5U0vUS0Q3V",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "I79uRgVEyUc",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "UaCDJMTQRLz",
+                            "value": patientSecteur
+                          },
+                          {
+                            "dataElement": "kPkjR4qEhhn",
+                            "value": patientDistrict
+                          },
+                          {
+                            "dataElement": "OTAM6B4xZwf",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "Cgt39EInKQV",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "KrYJW9kvJS2",
+                            "value": patientRiskFactorChangeValue
+                          },
+                          {
+                            "dataElement": "Nld1zMZwPxK",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "jYMNto3ELj5",
+                            "value": patientFollowUpStableValue
+                          },
+                          {
+                            "dataElement": "jmwJSKQthb7",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "xMLGFpVb0Kh",
+                            "value": patientChangeInTreatmentValue
+                          },
+                          {
+                            "dataElement": "KRTWX8CatfN",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "Nxu3IZxrngL",
+                            "value": patientReasonARTChangedOrStoppedValue
+                          },
+                          {
+                            "dataElement": "gZLYfulH1cx",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "dlbRyDDWVdz",
+                            "value": patientDrugToxicityTypeValue
+                          },
+                          {
+                            "dataElement": "MWnDK640C17",
+                            "value": patientWHOStageValue
+                          },
+                          {
+                            "dataElement": "MG6I5RT8YsE",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "Tgt3yKYd2oD",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "LovSZ5zd8YL",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "ePONK5dlCAl",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "G3dUs7PuDqx",
+                            "value": patientOINameValue
+                          },
+                          {
+                            "dataElement": "OKemd50jbHG",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "lrM4jhiDogd",
+                            "value": patientCBSClientOutcomeValue
+                          },
+                          {
+                            "dataElement": "kmA8X0Qwjor",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "L9lcjEkxHBv",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "eCbwnVkQ8Rt",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "OO8wNkgpAwK",
+                            "value": patientOverallTreatmentAdherenceValue
+                          },
+                          {
+                            "dataElement": "BMf4geBAMFU",
+                            "value": patientAttendedEnhancedCounsellingValue
+                          },
+                          {
+                            "dataElement": "LpDBQwhUZ4U",
+                            "value": patientCompletedEnhancedCounsellingValue
+                          },
+                          {
+                            "dataElement": "yH3otrjN0qZ",
+                            "value": patientClientTPTOutcomeValue
+                          },
+                          {
+                            "dataElement": "EBAuC7pMu4O",
+                            "value": ""
+                          },
+                          {
+                            "dataElement": "nQGHwHA3ayC",
+                            "value": patientTPTTherapyInProgressValue
+                          }
+
+                        ]
+                    };
+                    
+                    //Beginnig data Pushing form 3 : FOLLOW UP
+                    formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
+                      if (error) {
+                        winston.error('An error occured when trying to add a follow up information', error);
+                        callback('An error occured when trying to add a follow up information');
+                      } else {
+                        winston.info('Follow up information added with success', result);
+                        callback(null, 'Follow up information added with success');
                       }
+                    })
+                    //End data Pushing form 3 : FOLLOW UP
 
-                    ]
-                };
-                
-                //Beginnig data Pushing form 3 : FOLLOW UP
-                formMapping.pushFormToDhis2(formMapping.form3MappingTable, incomingEncounter, dhis2FollowupStructure, 5, null, function (error, result) {
-                  if (error) {
-                    winston.error('An error occured when trying to add a follow up information', error);
-                    callback('An error occured when trying to add a follow up information');
-                  } else {
-                    winston.info('Follow up information added with success', result);
-                    callback(null, 'Follow up information added with success');
-                  }
-                })
-                //End data Pushing form 3 : FOLLOW UP
-
+                  });
+                });
               });
             });
           });
@@ -2267,260 +2292,268 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   //getting patient Cellule and Village
   patientCellule = patientAddressObject.cellule;
   patientVillage = patientAddressObject.village;
-  
+  var patientSectorDetails = incomingEncounter.patient.person.preferredAddress.cityVillage;
+  var patientDistrictDetails = incomingEncounter.patient.person.preferredAddress.countyDistrict;
 
-  utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsVLFinalRitaInconclusive), function (result) {
-    patientVLFinalRitaInconclusiveValue = result;
-    utils.getDhis2DropdownValue(utils.getDHIS2FinalRitaRecencyResult(omrsVLFinalRitaRecencyResult), function (result) {
-      patientVLFinalRitaRecencyResultValue = result;
-      utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
-        patientOccupation = result;
-        var patientTestDone = (utils.isFineValue(patientVLFinalRitaRecencyResultValue))? "yes":"";
-        utils.getDhis2DropdownValue(utils.getDHIS2ResidencyType(omrsResidencyType), function (result) {
-          patientResidencyTypeValue = result;
-          utils.getDhis2DropdownValue(utils.getDHIS2OccupationType(omrsOccupationType), function (result) {
-            patientOccupationTypeValue = result;
-            utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
-              patientGender = result;
-              utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
-                patientMaritalStatus = result;
-              
-                var dhis2EnrollementStructureVL =  {
-                  "program": "CYyICYiO5zo",
-                  "orgUnit": organizationUnit,
-                  "eventDate": eventDate,
-                  "status": "COMPLETED",
-                  "storedBy": "Savics",
-                  "programStage": "pBAeqPjnhdF",
-                  "trackedEntityInstance": trackedEntityInstanceId,
-                  "enrollment": enrollmentId,
-                  "dataValues": [
-                    {
-                      "dataElement": "pbeBAIly2GT",
-                      "value": organizationUnit
-                    },
-                    {
-                      "dataElement": "txsxKp2l6y9",
-                      "value": eventDate
-                    },
-                    {
-                      "dataElement": "oLqMrGMI4Uf",
-                      "value": eventDate
-                    },
-                    {
-                      "dataElement": "GwCiJLY0of4",
-                      "value": patientBirhDate
-                    },
-                    {
-                      "dataElement": "c4KsTiEImGx",
-                      "value": patientGender
-                    },
-                    {
-                      "dataElement": "PZo2sP0TOb6",
-                      "value": patientMaritalStatus
-                    },
-                    {
-                      "dataElement": "ZvH6DY75uR1",
-                      "value": patientResidencyTypeValue
-                    },
-                    {
-                      "dataElement": "NrWXvZg3WtW",
-                      "value": patientOccupation
-                    },
-                    {
-                      "dataElement": "I809QdRlgCb",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "tnMNaBmQaIy",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "wXcnNSYryUd",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "OCZt4UJitnh",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "yu67Iiw64UQ",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "p5U0vUS0Q3V",
-                      "value": patientVillage
-                    },
-                    {
-                      "dataElement": "I79uRgVEyUc",
-                      "value": patientCellule
-                    },
-                    {
-                      "dataElement": "UaCDJMTQRLz",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "kPkjR4qEhhn",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "OTAM6B4xZwf",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "Cgt39EInKQV",
-                      "value": patientOccupationTypeValue
-                    },
-                    {
-                      "dataElement": "KrYJW9kvJS2",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "Nld1zMZwPxK",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "jYMNto3ELj5",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "jmwJSKQthb7",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "xMLGFpVb0Kh",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "KRTWX8CatfN",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "Nxu3IZxrngL",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "gZLYfulH1cx",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "dlbRyDDWVdz",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "MWnDK640C17",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "MG6I5RT8YsE",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "LovSZ5zd8YL",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "ePONK5dlCAl",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "G3dUs7PuDqx",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "OKemd50jbHG",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "lrM4jhiDogd",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "kmA8X0Qwjor",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "L9lcjEkxHBv",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "eCbwnVkQ8Rt",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "OO8wNkgpAwK",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "BMf4geBAMFU",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "LpDBQwhUZ4U",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "yH3otrjN0qZ",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "EBAuC7pMu4O",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "nQGHwHA3ayC",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "qBYsHDuUBIv",
-                      "value": patientVLFinalRitaRecencyResultValue
-                    },
-                    {
-                      "dataElement": "Tgt3yKYd2oD",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "nMJKcTFHGj0",
-                      "value": patientVLFinalRitaInconclusiveValue
-                    },
-                    {
-                      "dataElement": "Ba8VCAO9Nqi",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "yu2bxd3xVIg",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "ptZMCKSxvU8",
-                      "value": ""
-                    },
-                    {
-                      "dataElement": "U8zMohYMqHi",
-                      "value": eventDate
-                    },
-                    {
-                      "dataElement": "ccYYcYf78sz",
-                      "value": patientTestDone
+  utils.getDHIS2DistritctOrSectorId(patientSectorDetails,5,function(result){
+    patientSecteur = result;
+    utils.getDHIS2DistritctOrSectorId(patientDistrictDetails,3,function(result){
+      patientDistrict = result;
+
+      utils.getDhis2DropdownValue(utils.getDHIS2YesNoResponse(omrsVLFinalRitaInconclusive), function (result) {
+        patientVLFinalRitaInconclusiveValue = result;
+        utils.getDhis2DropdownValue(utils.getDHIS2FinalRitaRecencyResult(omrsVLFinalRitaRecencyResult), function (result) {
+          patientVLFinalRitaRecencyResultValue = result;
+          utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
+            patientOccupation = result;
+            var patientTestDone = (utils.isFineValue(patientVLFinalRitaRecencyResultValue))? "yes":"";
+            utils.getDhis2DropdownValue(utils.getDHIS2ResidencyType(omrsResidencyType), function (result) {
+              patientResidencyTypeValue = result;
+              utils.getDhis2DropdownValue(utils.getDHIS2OccupationType(omrsOccupationType), function (result) {
+                patientOccupationTypeValue = result;
+                utils.getDhis2DropdownValue(utils.getPatientGenderDhis2Id(incomingEncounter.patient), function (result) {
+                  patientGender = result;
+                  utils.getDhis2DropdownValue(utils.getPatientMaritalStatusDhis2Id(incomingEncounter.patient), function (result) {
+                    patientMaritalStatus = result;
+                  
+                    var dhis2EnrollementStructureVL =  {
+                      "program": "CYyICYiO5zo",
+                      "orgUnit": organizationUnit,
+                      "eventDate": eventDate,
+                      "status": "COMPLETED",
+                      "storedBy": "Savics",
+                      "programStage": "pBAeqPjnhdF",
+                      "trackedEntityInstance": trackedEntityInstanceId,
+                      "enrollment": enrollmentId,
+                      "dataValues": [
+                        {
+                          "dataElement": "pbeBAIly2GT",
+                          "value": organizationUnit
+                        },
+                        {
+                          "dataElement": "txsxKp2l6y9",
+                          "value": eventDate
+                        },
+                        {
+                          "dataElement": "oLqMrGMI4Uf",
+                          "value": eventDate
+                        },
+                        {
+                          "dataElement": "GwCiJLY0of4",
+                          "value": patientBirhDate
+                        },
+                        {
+                          "dataElement": "c4KsTiEImGx",
+                          "value": patientGender
+                        },
+                        {
+                          "dataElement": "PZo2sP0TOb6",
+                          "value": patientMaritalStatus
+                        },
+                        {
+                          "dataElement": "ZvH6DY75uR1",
+                          "value": patientResidencyTypeValue
+                        },
+                        {
+                          "dataElement": "NrWXvZg3WtW",
+                          "value": patientOccupation
+                        },
+                        {
+                          "dataElement": "I809QdRlgCb",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "tnMNaBmQaIy",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "wXcnNSYryUd",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "OCZt4UJitnh",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "yu67Iiw64UQ",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "p5U0vUS0Q3V",
+                          "value": patientVillage
+                        },
+                        {
+                          "dataElement": "I79uRgVEyUc",
+                          "value": patientCellule
+                        },
+                        {
+                          "dataElement": "UaCDJMTQRLz",
+                          "value": patientSecteur
+                        },
+                        {
+                          "dataElement": "kPkjR4qEhhn",
+                          "value": patientDistrict
+                        },
+                        {
+                          "dataElement": "OTAM6B4xZwf",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "Cgt39EInKQV",
+                          "value": patientOccupationTypeValue
+                        },
+                        {
+                          "dataElement": "KrYJW9kvJS2",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "Nld1zMZwPxK",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "jYMNto3ELj5",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "jmwJSKQthb7",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "xMLGFpVb0Kh",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "KRTWX8CatfN",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "Nxu3IZxrngL",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "gZLYfulH1cx",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "dlbRyDDWVdz",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "MWnDK640C17",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "MG6I5RT8YsE",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "LovSZ5zd8YL",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "ePONK5dlCAl",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "G3dUs7PuDqx",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "OKemd50jbHG",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "lrM4jhiDogd",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "kmA8X0Qwjor",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "L9lcjEkxHBv",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "eCbwnVkQ8Rt",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "OO8wNkgpAwK",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "BMf4geBAMFU",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "LpDBQwhUZ4U",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "yH3otrjN0qZ",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "EBAuC7pMu4O",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "nQGHwHA3ayC",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "qBYsHDuUBIv",
+                          "value": patientVLFinalRitaRecencyResultValue
+                        },
+                        {
+                          "dataElement": "Tgt3yKYd2oD",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "nMJKcTFHGj0",
+                          "value": patientVLFinalRitaInconclusiveValue
+                        },
+                        {
+                          "dataElement": "Ba8VCAO9Nqi",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "yu2bxd3xVIg",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "ptZMCKSxvU8",
+                          "value": ""
+                        },
+                        {
+                          "dataElement": "U8zMohYMqHi",
+                          "value": eventDate
+                        },
+                        {
+                          "dataElement": "ccYYcYf78sz",
+                          "value": patientTestDone
+                        }
+
+                      ]
                     }
 
-                  ]
-                }
+
+                    //Beginning data pushing form 4
+                    formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2EnrollementStructureVL, 6, null, function (error, result) {
+                      if (error) {
+                        winston.error('An error occured when trying to add a recency VL information', error);
+                        callback('An error occured when trying to add a recency VL information');
+                      } else {
+                        winston.info('Recency VL information added with success', result);
+                        callback(null, 'Recency VL information added with success');
+                      }
+                    });
+                    //End data pushing form 4
 
 
-                //Beginning data pushing form 4
-                formMapping.pushFormToDhis2(formMapping.form4MappingTable, incomingEncounter, dhis2EnrollementStructureVL, 6, null, function (error, result) {
-                  if (error) {
-                    winston.error('An error occured when trying to add a recency VL information', error);
-                    callback('An error occured when trying to add a recency VL information');
-                  } else {
-                    winston.info('Recency VL information added with success', result);
-                    callback(null, 'Recency VL information added with success');
-                  }
+                  });
                 });
-                //End data pushing form 4
-
-
               });
             });
           });
@@ -2544,8 +2577,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
- if (apiConf.register) {
- //if (false) {
+if (apiConf.register) {
+//if (false) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
@@ -2566,12 +2599,12 @@ function start(callback) {
           let app = setupApp()
 
           // Create and start HTTPS server
-          var httpsServer = https.createServer({
+          /*var httpsServer = https.createServer({
               key: fs.readFileSync('./config/certificates/privkey.pem'),
               cert: fs.readFileSync('./config/certificates/cert.pem')
-          }, app);
+          }, app);*/
 
-          const server = httpsServer.listen(port, () => {
+          const server = app.listen(port, () => {
             if (apiConf.heartbeat) {
               let configEmitter = medUtils.activateHeartbeat(apiConf.api)
               configEmitter.on('config', (newConfig) => {
@@ -2595,11 +2628,11 @@ function start(callback) {
     let app = setupApp()
 
     // Create and start HTTPS server
-      var httpsServer = https.createServer({
+    /*  var httpsServer = https.createServer({
           key: fs.readFileSync('../config/certificates/privkey.pem'),
           cert: fs.readFileSync('../config/certificates/cert.pem')
-      }, app);
-    const server = httpsServer.listen(port, () => callback(server))
+      }, app);*/
+    const server = app.listen(port, () => callback(server))
 
   }
 }

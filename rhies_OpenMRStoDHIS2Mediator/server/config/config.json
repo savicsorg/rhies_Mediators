@@ -6,9 +6,9 @@
       "trustSelfSigned": "true",
       "urlPattern": "/context/",
       "dhis2": {
-        "url": "http://IPAddress:Port",
+        "url": "http://IP:Port",
         "user": {
-          "name": "amza",
+          "name": "",
           "pwd": ""
         }
       }

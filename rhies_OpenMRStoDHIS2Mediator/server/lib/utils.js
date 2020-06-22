@@ -69,6 +69,7 @@ exports.isFineValue = function (value) {
 
 
 exports.getPatientGenderDhis2Id = function (patient) {
+  
   if (patient.person.gender.toUpperCase() == "F" || patient.person.gender.toUpperCase() == "FEMAL") {
     return "dP9kDCGW6C1";
   } else {
@@ -507,7 +508,7 @@ exports.getDHIS2ResidencyType = function (uuid) {
       case '054266d6-b451-496a-892e-9249d52a0d44':
         return 'dIAODvHtlhX';
         break;
-      case '48a489e3-37f1-40df-8e7b-a2e7ba2371ec':
+      case '05544cd8-ead3-472a-98cd-02094d1e7c27':
         return 'vT0iGs8IW51';
         break;
       case '6e7401f4-ed93-4c3f-a208-73ec7a1a9126':
@@ -594,7 +595,10 @@ exports.getDHIS2YesNoUnknown = function (uuid) {
         break;
       case '3cd6f86c-26fe-102b-80cb-0017a47871b2':
         return 'No';
-        break;                
+        break;
+      case '3cd6fac4-26fe-102b-80cb-0017a47871b2':
+        return 'Unknown';
+        break;               
       default:
         return '';
     }
@@ -1163,6 +1167,102 @@ exports.getSampleRefDHIS2Site = function(uuid){
   }
 
 }
+
+
+exports.getCBSContactAge = function(obs){
+  if (exports.isFineValue(obs) == true) {
+    var i;
+    var z;
+    var myIndexI;
+    var myIndexZ;
+    var yesFound = false;
+    var ageInYear = true;
+    var ageValue = 0;
+    for(z=0; z < obs.length; z++){
+      for (i = 0; i < obs[z].groupMembers.length; i++) {
+        if (obs[z].groupMembers[i].concept.uuid == "4f60313a-5520-493d-8ec6-83c8c5ef7220") {
+          myIndexI = i;
+          myIndexZ = z
+          yesFound = true;
+          //Stop looping when the value is found
+          break;
+        }
+      }
+    }
+
+    if (yesFound) {
+      //GET CBS CONTACT AGE VALUE
+      for(var y=0; y < obs[myIndexZ].groupMembers.length; y++ ){
+        if(obs[myIndexZ].groupMembers[y].concept.uuid == "2ecf52c4-f732-46a8-9f10-45a04ca70f49"){
+          ageValue = obs[myIndexZ].groupMembers[y].value;
+          break;
+        }
+      }
+
+      //Check if Age in Years or Months
+      if (obs[myIndexZ].groupMembers[myIndexI].value.display == "NO"){
+        ageInYear = false;
+      }
+
+      //Age value in Years
+      if(ageInYear){
+
+        if(ageValue < 0){ 
+          return 0;
+        } else {
+          return ageValue;
+        }
+        
+      //Age Value in months
+      } else{
+        if(ageValue < 0){ 
+          return 0;
+        } else{
+          return Math.round((ageValue/12).toFixed(0));
+        }
+        
+      }
+    } else {
+      return "";
+    }
+  } else {
+    return "";
+  }
+
+}
+
+
+exports.getDHIS2DistritctOrSectorId = function(value,level,callback){
+
+  var options = {
+    url: apiConf.api.dhis2.url + '/api/organisationUnits.json?level=' + level + '&filter=name:like:' + value ,
+    headers: {
+      'Authorization': 'Basic ' + new Buffer(apiConf.api.dhis2.user.name + ":" + apiConf.api.dhis2.user.pwd).toString('base64'),
+      'Content-Type': 'application/json'
+    }
+  };
+
+  request.get(options, function (error, response, body) {
+    if (error) {
+      callback("");
+    } else {
+      var resp = JSON.parse(body);
+      if (exports.isFineValue(resp) == true && exports.isFineValue(resp.organisationUnits) == true) {
+        if(resp.organisationUnits.length > 0){
+          callback(resp.organisationUnits[0].id);
+        } else{
+          callback("");
+        }
+        
+      } else {
+        callback("");
+      }
+    }
+  });
+
+}
+
+
 
 
 exports.buildReturnObject = (urn, status, statusCode, headers, responseBody, orchestrations, properties) => {
