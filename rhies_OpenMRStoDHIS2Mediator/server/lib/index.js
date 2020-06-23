@@ -1991,7 +1991,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   }
 
 
-  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs,"3cd97286-26fe-102b-80cb-0017a47871b2");
   if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
     omrsOccupationType = omrsOccupationType.uuid;
   } else {
@@ -2204,10 +2204,6 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                                   },
                                   {
                                     "dataElement": "MG6I5RT8YsE",
-                                    "value": ""
-                                  },
-                                  {
-                                    "dataElement": "Tgt3yKYd2oD",
                                     "value": ""
                                   },
                                   {
