@@ -490,7 +490,7 @@ exports.getDHIS2ARTStartLocation = function (uuid) {
       case 'e4a2d73e-fa66-42cf-b9e4-c61da0fb041a':
         return 'ZcjMMzq1Dcv';
         break;
-      case '8fa7c91c-5865-4216-bc10-f8857f116556':
+      case '031ea34b-f95b-4cf7-a3c6-026f6fd60f1f':
         return 'Uuj3Wc8u7Az';
         break;                 
       default:

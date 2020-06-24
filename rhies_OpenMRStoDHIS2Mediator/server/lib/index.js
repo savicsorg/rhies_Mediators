@@ -905,6 +905,7 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
   var patientUntestedContactGivenTestKitValue = "";
   var patientContactGenderValue = "";
   var patientContactOnART = "";
+  
 
 
 
@@ -916,7 +917,7 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
   var patientAgeOfContactValue = utils.getCBSContactAge(incomingEncounter.encounter.obs);
   var patientContactHivPositifTrackedNumberValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8");
   var patientContactObservationsValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c");
-
+  var patientContactUPIDValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "a525a87f-b157-4599-b8e2-731896a9b7bc");
 
   var omrsContactOnART = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "c1063a9d-515b-440a-af6a-89375cb44ca0");
   if (utils.isFineValue(omrsContactOnART) == true && utils.isFineValue(omrsContactOnART.name) == true && utils.isFineValue(omrsContactOnART.name.name) == true) {
@@ -1166,7 +1167,7 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
                                     },
                                     {
                                       "dataElement": "sCvxPIDQ66r",
-                                      "value": ""
+                                      "value": patientContactUPIDValue
                                     },
                                     {
                                       "dataElement": "r1PVDg5nIGZ",
@@ -1294,7 +1295,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
     omrsResidencyType = "";
   }
   
-  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs,"3cd97286-26fe-102b-80cb-0017a47871b2");
   if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
     omrsOccupationType = omrsOccupationType.uuid;
   } else {
@@ -1562,6 +1563,10 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                     },
                                                     {
                                                       "dataElement": "wXcnNSYryUd",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "pGmLtnqqn6c",
                                                       "value": ""
                                                     },
                                                     {
@@ -1920,7 +1925,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   
 
   var omrsCBSClientOutcome = utils.getConceptValue(incomingEncounter.encounter.obs, "f0e8e8a2-11a9-4c58-87f1-daee5c284183");
-  if (utils.isFineValue(omrsDrugToxicityType) == true && utils.isFineValue(omrsCBSClientOutcome.name) == true && utils.isFineValue(omrsCBSClientOutcome.name.name) == true) {
+  if (utils.isFineValue(omrsCBSClientOutcome) == true && utils.isFineValue(omrsCBSClientOutcome.name) == true && utils.isFineValue(omrsCBSClientOutcome.name.name) == true) {
     omrsCBSClientOutcome = omrsCBSClientOutcome.uuid;
   } else {
     omrsCBSClientOutcome = "";
@@ -2232,6 +2237,10 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                                   },
                                   {
                                     "dataElement": "L9lcjEkxHBv",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "cE0JLRDspz9",
                                     "value": ""
                                   },
                                   {
