@@ -744,6 +744,27 @@ exports.getDHIS2Boolean = function (uuid) {
 }
 
 
+exports.getDHIS2BooleanForText = function (value) {
+  if (exports.isFineValue(value) == true) {
+    value = value.toUpperCase();
+    switch(value){
+      case 'YES':
+        return "true";
+        break;
+      case 'NO':
+        return "false";
+        break;  
+      default:
+        return '';
+        break;
+    }
+  } else {
+    return '';
+  }
+}
+
+
+
 exports.getDHIS2ReasonARTChangedOrStopped = function (uuid) {
   if (exports.isFineValue(uuid) == true) {
     switch(uuid){
