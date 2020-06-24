@@ -492,7 +492,7 @@ exports.getARTStartDate = function(encounter, uuid, callback){
     if(foundYes){
 
       startARTDate = encounter.obs[indexI].value;
-      if(startARTDate == 'unknown'){
+      if(startARTDate == 'Unknown'){
         callback('1900-01-01');
       } else{
         callback(startARTDate);
