@@ -6,9 +6,11 @@ const apiConf = process.env.NODE_ENV === 'test' ? require('../config/test') : re
 
 const winston = require('winston');
 var request = require('request');
+const { start } = require('.');
 
 //{uuid:dhis2}
 exports.form1MappingTable = [
+  { "a84ccc24-fd81-4e18-ba82-5a785c2f86bc": "ISfxedlVq7Y" },
   { "774f49dc-cd95-4f7e-a20f-b38f9a1f52c4": "FsbargPR5hR" },
   { "367b90c5-d5d9-4800-b467-69cedd7f9c24": "SNcELOKJCTs" },
   { "9fa91969-35bc-48aa-8ffd-fea157299d4d": "K4l00GKVInN" },
@@ -470,4 +472,38 @@ exports.getValue = function (mappingTable, obsListing, booleanMappingTable, dhis
   } else {
       callback("");
   }
+}
+
+
+exports.getARTStartDate = function(encounter, uuid, callback){
+
+  if ((utils.isFineValue(encounter)==true) && (utils.isFineValue(encounter.obs)==true)){
+    
+    var foundYes = false;
+    var indexI = "";
+    var startARTDate = '1900-01-01' 
+    for(var i = 0; i < encounter.obs.length; i++){
+      if(encounter.obs[i].concept.uuid == uuid){
+        foundYes = true;
+        indexI = i;
+        break;
+      }
+    }
+    if(foundYes){
+
+      startARTDate = encounter.obs[indexI].value;
+      if(startARTDate == 'unknown'){
+        callback('1900-01-01');
+      } else{
+        callback(startARTDate);
+      }
+
+    } else {
+      callback(startARTDate);
+    }
+
+  } else {
+      callback(startARTDate);
+  }
+
 }

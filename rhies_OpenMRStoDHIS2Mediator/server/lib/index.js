@@ -217,13 +217,10 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                 if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
                   // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
                   // or we take what is on resp.trackedEntityInstance
-                  formMapping.getValue(formMapping.form1MappingTable, fields, null, "ISfxedlVq7Y", function (result) {
-
+                  formMapping.getARTStartDate(fields.encounter, "a84ccc24-fd81-4e18-ba82-5a785c2f86bc", function (result) {
 
                     if (utils.isFineValue(result) == true) {
-                      patientInstance.attributes.ISfxedlVq7Y = result;
-                    } else {
-                      patientInstance.attributes.ISfxedlVq7Y = resp.attributes.ISfxedlVq7Y;
+                      patientInstance.attributes[1].value = result;
                     }
 
                     var options = {
