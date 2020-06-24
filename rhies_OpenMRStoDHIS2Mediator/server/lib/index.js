@@ -2321,6 +2321,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   var patientAddressObject = "";
   var patientCellule = "";
   var patientVillage = "";
+  var patientSecteur = "";
+  var patientDistrict = "";
 
   //Reporting date in DHIS2 must be the encounterDate
   var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);
@@ -2659,8 +2661,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
 function start(callback) {
   if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
 
-if (apiConf.register) {
-//if (false) {
+//if (apiConf.register) {
+if (false) {
     medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
       if (err) {
         winston.error('Failed to register this mediator, check your config')
