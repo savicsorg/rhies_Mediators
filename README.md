@@ -23,3 +23,4 @@ Mozilla Public License 2.0
 The following sets forth attribution notices for third party software that may be contained in portions of this repository. We thank the open source community for all of their contributions.
 
 * [OpenHIM](http://openhim.org/) (License: Mozilla Public License 2.0)
+* [HAPI FHIR](https://hapifhir.io/) (License: Apache License 2.0)
