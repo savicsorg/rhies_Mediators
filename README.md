@@ -22,4 +22,4 @@ Mozilla Public License 2.0
 ## Libraries We Use
 The following sets forth attribution notices for third party software that may be contained in portions of this repository. We thank the open source community for all of their contributions.
 
-* OpenHIM (License: Mozilla Public License 2.0)
+* [OpenHIM](http://openhim.org/) (License: Mozilla Public License 2.0)
