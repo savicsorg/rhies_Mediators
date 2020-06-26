@@ -1,7 +1,7 @@
 # rhies_Mediators
 This repository contains all the mediators of the RHIES project
-* [NIDAtoOpenMRS mediator] (https://github.com/savicsorg/rhies_Mediators/tree/master/rhies_NIDAtoOpenMRSMediator)
-* [LabWaretoOpenMRS mediator] (https://github.com/savicsorg/rhies_Mediators/tree/master/rhies_LabwaretoOpenMRSMediator)
+* [NIDAtoOpenMRS mediator](https://github.com/savicsorg/rhies_Mediators/tree/master/rhies_NIDAtoOpenMRSMediator)
+* [LabWaretoOpenMRS mediator](https://github.com/savicsorg/rhies_Mediators/tree/master/rhies_LabwaretoOpenMRSMediator)
 * [OpenMRStoDHIS2 mediator]
 * [ClientRegistry mediator]
 * [FacilityRegistry mediator]
