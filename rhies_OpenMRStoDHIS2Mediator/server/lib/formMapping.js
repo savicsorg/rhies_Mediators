@@ -475,13 +475,14 @@ exports.getValue = function (mappingTable, obsListing, booleanMappingTable, dhis
 }
 
 
-exports.getARTStartDate = function(encounter, uuid, callback){
+exports.getEntityInstanceDates = function(encounter, uuid, defaultDate, callback){
 
   if ((utils.isFineValue(encounter)==true) && (utils.isFineValue(encounter.obs)==true)){
     
     var foundYes = false;
     var indexI = "";
-    var startARTDate = '1900-01-01' 
+    var defaultDate = '1900-01-01';
+    var startARTDate = '';
     for(var i = 0; i < encounter.obs.length; i++){
       if(encounter.obs[i].concept.uuid == uuid){
         foundYes = true;
@@ -493,17 +494,17 @@ exports.getARTStartDate = function(encounter, uuid, callback){
 
       startARTDate = encounter.obs[indexI].value;
       if(startARTDate == 'Unknown'){
-        callback('1900-01-01');
+        callback(defaultDate);
       } else{
         callback(startARTDate);
       }
 
     } else {
-      callback(startARTDate);
+      callback(defaultDate);
     }
 
   } else {
-      callback(startARTDate);
+      callback(defaultDate);
   }
 
 }

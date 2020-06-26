@@ -217,7 +217,7 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                 if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
                   // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
                   // or we take what is on resp.trackedEntityInstance
-                  formMapping.getARTStartDate(fields.encounter, "a84ccc24-fd81-4e18-ba82-5a785c2f86bc", function (result) {
+                  formMapping.getEntityInstanceDates(fields.encounter, "a84ccc24-fd81-4e18-ba82-5a785c2f86bc",'1900-01-01', function (result) {
 
                     if (utils.isFineValue(result) == true) {
                       patientInstance.attributes[1].value = result;
@@ -260,7 +260,7 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                 } else {
 
                   //update a patient without updating the date of ARV
-                  patientInstance.attributes.ISfxedlVq7Y = resp.attributes.ISfxedlVq7Y;
+                  patientInstance.attributes[1].value = '1900-01-01';
 
                   var options = {
                     url: apiConf.api.dhis2.url + "/api/trackedEntityInstances/" + resp.trackedEntityInstance,
@@ -303,9 +303,10 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                 if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
                   // if received encounter have the right (start of ARV), we replace
                   // or we let like this
-                  formMapping.getValue(formMapping.form1MappingTable, fields, null, "ISfxedlVq7Y", function (result) {
+                  formMapping.getEntityInstanceDates(fields.encounter, "a84ccc24-fd81-4e18-ba82-5a785c2f86bc", '1900-01-01', function (result) {
+
                     if (utils.isFineValue(result) == true) {
-                      patientInstance.attributes.ISfxedlVq7Y = result;
+                      patientInstance.attributes[1].value = result;
                     }
 
                     var options = {
