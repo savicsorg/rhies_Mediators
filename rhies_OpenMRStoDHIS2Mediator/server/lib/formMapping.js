@@ -496,7 +496,7 @@ exports.getEntityInstanceDates = function(encounter, uuid, defaultDate, callback
       if(startARTDate == 'Unknown'){
         callback(defaultDate);
       } else{
-        callback(startARTDate);
+        callback(utils.convertToDate(startARTDate));
       }
 
     } else {

@@ -603,13 +603,13 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
         if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
           // if received encounter have the right ijTurgFUOPq (start of ARV) , we replace
           // or we take what is on resp.trackedEntityInstance
-          formMapping.getValue(formMapping.form1MappingTable, fields, null, "ijTurgFUOPq", function (result) {
+          formMapping.getEntityInstanceDates(fields.encounter, "badacf97-0970-4dde-aee4-5e1c2bb125f7", '2000-01-01', function (result) {
 
             if (utils.isFineValue(result) == true) {
               enrollementValue.enrollmentDate = result;
-            } else {
-              enrollementValue.enrollmentDate = resp.enrollmentDate;
-            }
+              enrollementValue.incidentDate = result;
+
+            } 
 
 
             var options = {
@@ -686,10 +686,13 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
         if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
           // if received encounter have the right enrollmentDate and incidentDate , we replace
           //or we let like this
-          formMapping.getValue(formMapping.form1MappingTable, fields, null, "ijTurgFUOPq", function (result) {
+          formMapping.getEntityInstanceDates(fields.encounter, "badacf97-0970-4dde-aee4-5e1c2bb125f7", '2000-01-01', function (result) {
+
             if (utils.isFineValue(result) == true) {
               enrollementValue.enrollmentDate = result;
-            }
+              enrollementValue.incidentDate = result;
+
+            } 
 
             var options = {
               url: apiConf.api.dhis2.url + "/api/enrollments",
