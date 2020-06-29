@@ -6,9 +6,11 @@ const apiConf = process.env.NODE_ENV === 'test' ? require('../config/test') : re
 
 const winston = require('winston');
 var request = require('request');
+const { start } = require('.');
 
 //{uuid:dhis2}
 exports.form1MappingTable = [
+  { "a84ccc24-fd81-4e18-ba82-5a785c2f86bc": "ISfxedlVq7Y" },
   { "774f49dc-cd95-4f7e-a20f-b38f9a1f52c4": "FsbargPR5hR" },
   { "367b90c5-d5d9-4800-b467-69cedd7f9c24": "SNcELOKJCTs" },
   { "9fa91969-35bc-48aa-8ffd-fea157299d4d": "K4l00GKVInN" },
@@ -105,6 +107,7 @@ exports.form1MappingTable = [
   { "e7fbe2c7-b9c4-4caa-83f3-3fc327a225c4": "Fl4NhPnptVk" },
   { "35de662a-63de-4dbc-92c4-2b08165406ab": "loFQ4dZf0eq" },
   { "d195e749-fa4a-43e3-8ceb-a72f25fb2be4": "MCTcHYKya23" },
+  { "a525a87f-b157-4599-b8e2-731896a9b7bc": "sCvxPIDQ66r" },
   { "6c93ead4-d189-4476-a81d-1bef16bda6a4": "PVLjZ2ZWQVS" },
   { "8919a43c-fdee-4861-9fd8-ff068d4d740c": "Sr5tjR2oQHf" },
   { "e5dbe475-9116-4ed6-9349-6ab652bf9b13": "aALfEtMhQbD" },
@@ -116,8 +119,8 @@ exports.form1MappingTable = [
   { "2138c5f5-ce1d-4e96-9b9b-c1ca6fc21510": "TJ4eVIVbxgL" },
   { "d12bec46-f525-41b2-99c6-bd51bda4046c": "gD4MJ7POPEz" },
   { "f7908667-e296-4be4-b41e-26bc4b5ceccb": "OG01ZScE7Xb" },
-  { "ab6fcd11-6531-4fcf-bfb2-a214b88c0d29": "zwjBu20ltE5" },
-  { "a525a87f-b157-4599-b8e2-731896a9b7bc": "sCvxPIDQ66r" }
+  { "ab6fcd11-6531-4fcf-bfb2-a214b88c0d29": "zwjBu20ltE5" }
+   
 
   
 ];
@@ -202,7 +205,7 @@ exports.form2MappingTable = [
   { "39cecd62-41b5-4673-a6aa-54cb5fd1246b": "NUbmYicRCUp" },
   { "3c4ef122-ce21-4b2f-b9e7-65f5d84a7758": "nOenSUVffWd" },
   { "3c4ef122-ce21-4b2f-b9e7-65f5d84a7758": "pGmLtnqqn6c" },
-  { "f47620e7-a45f-4b29-a3b3-7bcd6958e7a4": "cE0JLRDspz9" },
+  { "e0e8df2b-ea08-4945-a0ce-94d8715f814b": "cE0JLRDspz9" },
   { "774f49dc-cd95-4f7e-a20f-b38f9a1f52c4": "qywtB6np899" },
   { "fa87bb43-ebcc-4919-96f8-c5013ce1bbca": "LovSZ5zd8YL" },
   { "6b45806a-a6cf-4d95-b165-031569788fe8": "ERqqYuUtigv" }
@@ -227,7 +230,7 @@ exports.form3MappingTable = [
   { "ced94af8-ec16-489f-8e73-a02256b35601": "Nld1zMZwPxK" },
   { "5f2ce4b3-dc0f-4345-98ad-4177329b2388": "jYMNto3ELj5" },
   { "3ce3fc4c-26fe-102b-80cb-0017a47871b2": "xMLGFpVb0Kh" },
-  { "f47620e7-a45f-4b29-a3b3-7bcd6958e7a4": "cE0JLRDspz9" },
+  { "e0e8df2b-ea08-4945-a0ce-94d8715f814b": "cE0JLRDspz9" },
   { "3cd919c6-26fe-102b-80cb-0017a47871b2": "Nxu3IZxrngL" },
   { "3cd49432-26fe-102b-80cb-0017a47871b2": "MvibOcy7W7e" },
   { "e9f7f336-1b02-4734-99bd-3cb15fa4a2b6": "NlC64TrTfJ8" },
@@ -469,4 +472,39 @@ exports.getValue = function (mappingTable, obsListing, booleanMappingTable, dhis
   } else {
       callback("");
   }
+}
+
+
+exports.getEntityInstanceDates = function(encounter, uuid, defaultDate, callback){
+
+  if ((utils.isFineValue(encounter)==true) && (utils.isFineValue(encounter.obs)==true)){
+    
+    var foundYes = false;
+    var indexI = "";
+    var defaultDate = '1900-01-01';
+    var startARTDate = '';
+    for(var i = 0; i < encounter.obs.length; i++){
+      if(encounter.obs[i].concept.uuid == uuid){
+        foundYes = true;
+        indexI = i;
+        break;
+      }
+    }
+    if(foundYes){
+
+      startARTDate = encounter.obs[indexI].value;
+      if(startARTDate == 'Unknown'){
+        callback(defaultDate);
+      } else{
+        callback(utils.convertToDate(startARTDate));
+      }
+
+    } else {
+      callback(defaultDate);
+    }
+
+  } else {
+      callback(defaultDate);
+  }
+
 }

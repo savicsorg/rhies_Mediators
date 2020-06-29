@@ -217,13 +217,10 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                 if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
                   // if received encounter have the right ISfxedlVq7Y (start of ARV) , we replace
                   // or we take what is on resp.trackedEntityInstance
-                  formMapping.getValue(formMapping.form1MappingTable, fields, null, "ISfxedlVq7Y", function (result) {
-
+                  formMapping.getEntityInstanceDates(fields.encounter, "a84ccc24-fd81-4e18-ba82-5a785c2f86bc",'1900-01-01', function (result) {
 
                     if (utils.isFineValue(result) == true) {
-                      patientInstance.attributes.ISfxedlVq7Y = result;
-                    } else {
-                      patientInstance.attributes.ISfxedlVq7Y = resp.attributes.ISfxedlVq7Y;
+                      patientInstance.attributes[1].value = result;
                     }
 
                     var options = {
@@ -263,7 +260,7 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                 } else {
 
                   //update a patient without updating the date of ARV
-                  patientInstance.attributes.ISfxedlVq7Y = resp.attributes.ISfxedlVq7Y;
+                  patientInstance.attributes[1].value = '1900-01-01';
 
                   var options = {
                     url: apiConf.api.dhis2.url + "/api/trackedEntityInstances/" + resp.trackedEntityInstance,
@@ -306,9 +303,10 @@ var upsertEntity = function (fields, organizationUnit, callback) {
                 if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
                   // if received encounter have the right (start of ARV), we replace
                   // or we let like this
-                  formMapping.getValue(formMapping.form1MappingTable, fields, null, "ISfxedlVq7Y", function (result) {
+                  formMapping.getEntityInstanceDates(fields.encounter, "a84ccc24-fd81-4e18-ba82-5a785c2f86bc", '1900-01-01', function (result) {
+
                     if (utils.isFineValue(result) == true) {
-                      patientInstance.attributes.ISfxedlVq7Y = result;
+                      patientInstance.attributes[1].value = result;
                     }
 
                     var options = {
@@ -605,13 +603,13 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
         if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
           // if received encounter have the right ijTurgFUOPq (start of ARV) , we replace
           // or we take what is on resp.trackedEntityInstance
-          formMapping.getValue(formMapping.form1MappingTable, fields, null, "ijTurgFUOPq", function (result) {
+          formMapping.getEntityInstanceDates(fields.encounter, "badacf97-0970-4dde-aee4-5e1c2bb125f7", '2000-01-01', function (result) {
 
             if (utils.isFineValue(result) == true) {
               enrollementValue.enrollmentDate = result;
-            } else {
-              enrollementValue.enrollmentDate = resp.enrollmentDate;
-            }
+              enrollementValue.incidentDate = result;
+
+            } 
 
 
             var options = {
@@ -688,10 +686,13 @@ var enrolleEntity = function (fields, organizationUnit, trackedEntityInstanceId,
         if (fields.encounter.form.display.trim().toUpperCase() == apiConf.CaseBaseForme.trim().toUpperCase()) {
           // if received encounter have the right enrollmentDate and incidentDate , we replace
           //or we let like this
-          formMapping.getValue(formMapping.form1MappingTable, fields, null, "ijTurgFUOPq", function (result) {
+          formMapping.getEntityInstanceDates(fields.encounter, "badacf97-0970-4dde-aee4-5e1c2bb125f7", '2000-01-01', function (result) {
+
             if (utils.isFineValue(result) == true) {
               enrollementValue.enrollmentDate = result;
-            }
+              enrollementValue.incidentDate = result;
+
+            } 
 
             var options = {
               url: apiConf.api.dhis2.url + "/api/enrollments",
@@ -905,6 +906,7 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
   var patientUntestedContactGivenTestKitValue = "";
   var patientContactGenderValue = "";
   var patientContactOnART = "";
+  
 
 
 
@@ -916,7 +918,7 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
   var patientAgeOfContactValue = utils.getCBSContactAge(incomingEncounter.encounter.obs);
   var patientContactHivPositifTrackedNumberValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "0fbbc915-2550-4de8-93a0-1661ad7b45b8");
   var patientContactObservationsValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "e328e0b0-28c3-44c9-9b2a-5f16b5185e2c");
-
+  var patientContactUPIDValue = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "a525a87f-b157-4599-b8e2-731896a9b7bc");
 
   var omrsContactOnART = utils.getContactGroupConceptValue(incomingEncounter.encounter.obs, "c1063a9d-515b-440a-af6a-89375cb44ca0");
   if (utils.isFineValue(omrsContactOnART) == true && utils.isFineValue(omrsContactOnART.name) == true && utils.isFineValue(omrsContactOnART.name.name) == true) {
@@ -1166,7 +1168,7 @@ var addCbsContactInformation = function (incomingEncounter, organizationUnit, tr
                                     },
                                     {
                                       "dataElement": "sCvxPIDQ66r",
-                                      "value": ""
+                                      "value": patientContactUPIDValue
                                     },
                                     {
                                       "dataElement": "r1PVDg5nIGZ",
@@ -1294,7 +1296,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
     omrsResidencyType = "";
   }
   
-  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs,"3cd97286-26fe-102b-80cb-0017a47871b2");
   if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
     omrsOccupationType = omrsOccupationType.uuid;
   } else {
@@ -1430,12 +1432,12 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
     omrsReasonNotInitOnTPT = "";
   }
 
-  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "fab9afe9-8c11-4e31-9898-399b083fd9d6");
-  if (utils.isFineValue(omrsStable) == true && utils.isFineValue(omrsStable.name) == true && utils.isFineValue(omrsStable.name.name) == true) {
+  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "a650f583-8b61-4772-bae0-200dc81a463b");
+  /*if (utils.isFineValue(omrsStable) == true && utils.isFineValue(omrsStable.name) == true && utils.isFineValue(omrsStable.name.name) == true) {
     omrsStable = omrsStable.uuid;
   } else {
     omrsStable = "";
-  }
+  }*/
   //End of UUID retrieving
 
 
@@ -1478,7 +1480,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
           patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
           patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
           patientInitiatedOnTPTValue = utils.getDHIS2Boolean(omrsInitiatedOnTPT);
-          patientStableValue = utils.getDHIS2Boolean(omrsStable);
+          patientStableValue = utils.getDHIS2BooleanForText(omrsStable);
 
           utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
             patientOccupation = result;
@@ -1562,6 +1564,10 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
                                                     },
                                                     {
                                                       "dataElement": "wXcnNSYryUd",
+                                                      "value": ""
+                                                    },
+                                                    {
+                                                      "dataElement": "pGmLtnqqn6c",
                                                       "value": ""
                                                     },
                                                     {
@@ -1887,12 +1893,12 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   }
   
 
-  var omrsFollowUpStable = utils.getConceptValue(incomingEncounter.encounter.obs, "fab9afe9-8c11-4e31-9898-399b083fd9d6");
-  if (utils.isFineValue(omrsFollowUpStable) == true && utils.isFineValue(omrsFollowUpStable.name) == true && utils.isFineValue(omrsFollowUpStable.name.name) == true) {
+  var omrsFollowUpStable = utils.getConceptValue(incomingEncounter.encounter.obs, "a650f583-8b61-4772-bae0-200dc81a463b");
+  /*if (utils.isFineValue(omrsFollowUpStable) == true && utils.isFineValue(omrsFollowUpStable.name) == true && utils.isFineValue(omrsFollowUpStable.name.name) == true) {
     omrsFollowUpStable = omrsFollowUpStable.uuid;
   } else {
     omrsFollowUpStable = "";
-  }
+  }*/
 
 
   var omrsChangeInTreatment = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
@@ -1920,7 +1926,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   
 
   var omrsCBSClientOutcome = utils.getConceptValue(incomingEncounter.encounter.obs, "f0e8e8a2-11a9-4c58-87f1-daee5c284183");
-  if (utils.isFineValue(omrsDrugToxicityType) == true && utils.isFineValue(omrsCBSClientOutcome.name) == true && utils.isFineValue(omrsCBSClientOutcome.name.name) == true) {
+  if (utils.isFineValue(omrsCBSClientOutcome) == true && utils.isFineValue(omrsCBSClientOutcome.name) == true && utils.isFineValue(omrsCBSClientOutcome.name.name) == true) {
     omrsCBSClientOutcome = omrsCBSClientOutcome.uuid;
   } else {
     omrsCBSClientOutcome = "";
@@ -1991,12 +1997,17 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   }
 
 
-  var omrsOccupationType = utils.getOccupationTypeConcept(incomingEncounter.patient);
+  var omrsOccupationType = utils.getConceptValue(incomingEncounter.encounter.obs,"3cd97286-26fe-102b-80cb-0017a47871b2");
   if (utils.isFineValue(omrsOccupationType) == true && utils.isFineValue(omrsOccupationType.uuid) == true && utils.isFineValue(omrsOccupationType.display) == true) {
     omrsOccupationType = omrsOccupationType.uuid;
   } else {
     omrsOccupationType = "";
   }
+
+
+ 
+  //End of UUID retrieving
+
 
   // End of UUID retrieving
 
@@ -2008,10 +2019,11 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     //Boolean retrieving
   patientDemographicChangeValue = utils.getDHIS2Boolean(omrsDemographicChange);
   patientRiskFactorChangeValue = utils.getDHIS2Boolean(omrsRiskFactorChange);
-  patientFollowUpStableValue = utils.getDHIS2Boolean(omrsFollowUpStable);
+  patientFollowUpStableValue = utils.getDHIS2BooleanForText(omrsFollowUpStable);
   patientChangeInTreatmentValue =  utils.getDHIS2Boolean(omrsChangeInTreatment);
   patientAttendedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
   patientCompletedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
+  
     //End of boolean retrieving
 
   //getting patient Cellule and Village
@@ -2116,11 +2128,11 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                                   },
                                   {
                                     "dataElement": "yu67Iiw64UQ",
-                                    "value": patientDemographicChangeValue
+                                    "value": ""
                                   },
                                   {
-                                    "dataElement": "ZD5gy8Sox8I",
-                                    "value": patientDemographicChangeValue
+                                    "dataElement": "ZD5gy8Sox8I", 
+                                    "value": ""
                                   },
                                   {
                                     "dataElement": "RZBJs5g0DsL",
@@ -2156,7 +2168,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                                   },
                                   {
                                     "dataElement": "OTAM6B4xZwf",
-                                    "value": patientDemographicChangeValue
+                                    "value": ""
                                   },
                                   {
                                     "dataElement": "Cgt39EInKQV",
@@ -2207,10 +2219,6 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                                     "value": ""
                                   },
                                   {
-                                    "dataElement": "Tgt3yKYd2oD",
-                                    "value": ""
-                                  },
-                                  {
                                     "dataElement": "LovSZ5zd8YL",
                                     "value": ""
                                   },
@@ -2236,6 +2244,10 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
                                   },
                                   {
                                     "dataElement": "L9lcjEkxHBv",
+                                    "value": ""
+                                  },
+                                  {
+                                    "dataElement": "cE0JLRDspz9",
                                     "value": ""
                                   },
                                   {
@@ -2316,6 +2328,8 @@ var addRecencyVL = function (incomingEncounter, organizationUnit, trackedEntityI
   var patientAddressObject = "";
   var patientCellule = "";
   var patientVillage = "";
+  var patientSecteur = "";
+  var patientDistrict = "";
 
   //Reporting date in DHIS2 must be the encounterDate
   var eventDate = utils.convertToDate(incomingEncounter.encounter.encounterDatetime);

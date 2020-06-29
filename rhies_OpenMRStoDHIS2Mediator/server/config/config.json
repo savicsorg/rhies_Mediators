@@ -6,7 +6,7 @@
       "trustSelfSigned": "true",
       "urlPattern": "/context/",
       "dhis2": {
-        "url": "http://:",
+        "url": "http://192.168.1.162:8082",
         "user": {
           "name": "",
           "pwd": ""
@@ -15,7 +15,7 @@
     },
     "CaseBaseForme": "HIV CASE-BASED SURVEILLANCE Form - Index testing, partner notification, recency testing information",
     "enrollmentForm": "Confidential HIV CRF - SECTION 1: Enrollment Information",
-    "followupForm": "Confidential HIV CRF - SECTION II: Follow up Information",
+    "followupForm": "Confidential HIV CRF - SECTION 2: Follow up Information",
     "recencyVLForm": "CBS Recency VL",
     "cbsContactForm": "CBS contact information",
     "register": true,
