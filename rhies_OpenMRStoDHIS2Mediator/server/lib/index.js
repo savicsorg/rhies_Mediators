@@ -1432,12 +1432,12 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
     omrsReasonNotInitOnTPT = "";
   }
 
-  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "a650f583-8b61-4772-bae0-200dc81a463b");
-  /*if (utils.isFineValue(omrsStable) == true && utils.isFineValue(omrsStable.name) == true && utils.isFineValue(omrsStable.name.name) == true) {
+  var omrsStable = utils.getConceptValue(incomingEncounter.encounter.obs, "	fab9afe9-8c11-4e31-9898-399b083fd9d6");
+  if (utils.isFineValue(omrsStable) == true && utils.isFineValue(omrsStable.name) == true && utils.isFineValue(omrsStable.name.name) == true) {
     omrsStable = omrsStable.uuid;
   } else {
     omrsStable = "";
-  }*/
+  }
   //End of UUID retrieving
 
 
@@ -1480,7 +1480,7 @@ var addHivCrfSection1 = function (incomingEncounter, organizationUnit, trackedEn
           patientLinkedToTreatmentValue = utils.getDHIS2Boolean(omrsLinkedToTreatment);
           patientLinkedToTreatmentAtThisFacilityValue = utils.getDHIS2Boolean(omrsLinkedToTreatmentAtThisFacility);
           patientInitiatedOnTPTValue = utils.getDHIS2Boolean(omrsInitiatedOnTPT);
-          patientStableValue = utils.getDHIS2BooleanForText(omrsStable);
+          patientStableValue = utils.getDHIS2Boolean(omrsStable);
 
           utils.getDhis2DropdownValue(utils.getDHIS2Occupation(omrsOccupationValue), function (result) {
             patientOccupation = result;
@@ -1893,12 +1893,12 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   }
   
 
-  var omrsFollowUpStable = utils.getConceptValue(incomingEncounter.encounter.obs, "a650f583-8b61-4772-bae0-200dc81a463b");
-  /*if (utils.isFineValue(omrsFollowUpStable) == true && utils.isFineValue(omrsFollowUpStable.name) == true && utils.isFineValue(omrsFollowUpStable.name.name) == true) {
+  var omrsFollowUpStable = utils.getConceptValue(incomingEncounter.encounter.obs, "fab9afe9-8c11-4e31-9898-399b083fd9d6");
+  if (utils.isFineValue(omrsFollowUpStable) == true && utils.isFineValue(omrsFollowUpStable.name) == true && utils.isFineValue(omrsFollowUpStable.name.name) == true) {
     omrsFollowUpStable = omrsFollowUpStable.uuid;
   } else {
     omrsFollowUpStable = "";
-  }*/
+  }
 
 
   var omrsChangeInTreatment = utils.getConceptValue(incomingEncounter.encounter.obs, "5f2ce4b3-dc0f-4345-98ad-4177329b2388");
@@ -2019,7 +2019,7 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
     //Boolean retrieving
   patientDemographicChangeValue = utils.getDHIS2Boolean(omrsDemographicChange);
   patientRiskFactorChangeValue = utils.getDHIS2Boolean(omrsRiskFactorChange);
-  patientFollowUpStableValue = utils.getDHIS2BooleanForText(omrsFollowUpStable);
+  patientFollowUpStableValue = utils.getDHIS2Boolean(omrsFollowUpStable);
   patientChangeInTreatmentValue =  utils.getDHIS2Boolean(omrsChangeInTreatment);
   patientAttendedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsAttendedEnhancedCounselling);
   patientCompletedEnhancedCounsellingValue = utils.getDHIS2Boolean(omrsCompletedEnhancedCounselling);
