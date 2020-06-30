@@ -1933,12 +1933,12 @@ var addHivCrfSection2 = function (incomingEncounter, organizationUnit, trackedEn
   }
   
 
-  var omrsOverallTreatmentAdherence = utils.getConceptValue(incomingEncounter.encounter.obs, "3ce2ad10-26fe-102b-80cb-0017a47871b2");
-  if (utils.isFineValue(omrsOverallTreatmentAdherence) == true && utils.isFineValue(omrsOverallTreatmentAdherence.name) == true && utils.isFineValue(omrsOverallTreatmentAdherence.name.name) == true) {
+  var omrsOverallTreatmentAdherence = utils.getConceptValue(incomingEncounter.encounter.obs, "00e37896-0d51-4cda-a0f2-df56cccab894");
+  /*if (utils.isFineValue(omrsOverallTreatmentAdherence) == true && utils.isFineValue(omrsOverallTreatmentAdherence.name) == true && utils.isFineValue(omrsOverallTreatmentAdherence.name.name) == true) {
     omrsOverallTreatmentAdherence = omrsOverallTreatmentAdherence.uuid;
   } else {
     omrsOverallTreatmentAdherence = "";
-  }
+  }*/
 
 
   var omrsClientTPTOutcome = utils.getConceptValue(incomingEncounter.encounter.obs, "6d024c01-dc13-4074-b493-ba72bdb0739e");

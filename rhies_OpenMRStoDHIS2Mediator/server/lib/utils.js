@@ -849,16 +849,16 @@ exports.getDHIS2CBSClientOutcome = function (uuid) {
 }
 
 
-exports.getDHIS2OverAllTreatmentAdherence = function (uuid) {
-  if (exports.isFineValue(uuid) == true) {
-    switch(uuid){
-      case '3cdef6c0-26fe-102b-80cb-0017a47871b2':
+exports.getDHIS2OverAllTreatmentAdherence = function (value) {
+  if (exports.isFineValue(value) == true) {
+    switch(value){
+      case 'Poor':
         return 'DftFE82Ae65';
         break;
-      case '3cdef3d2-26fe-102b-80cb-0017a47871b2':
+      case 'Very Good':
         return 'MBJmU3rhpPm';
         break;
-      case '3cdef54e-26fe-102b-80cb-0017a47871b2':
+      case 'Good':
         return 'nek4WjtVfoT';
         break;
       default:
