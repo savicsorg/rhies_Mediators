@@ -1,5 +1,5 @@
-## RHIES Facility Registry mediator ##
-The Facility Registry project is created using NodeJs
+## RHIES Facility Registry Mediator ##
+The Facility Registry Mediator project is created using NodeJs
 
 ### Prerequisites ###
 * VS code or any editor you prefere
