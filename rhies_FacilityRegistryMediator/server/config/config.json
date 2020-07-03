@@ -6,14 +6,14 @@
     "trustSelfSigned": "true",
     "urlPattern": "/facilityregistry/",
     "openhimServer": "https://core",
-    "routeUser": "facility",
-    "routePass": "registry"
+    "routeUser": "username",
+    "routePass": "password"
   },
   "facilityregistry": {
       "server": {
           "url" : "http://rhies-facility-registry",
           "port": "4004",
-          "urlPattern": "/facilityregistry/",
+          "urlPattern": "/api/facilities/",
           "username": "",
           "pwd": ""
       },
