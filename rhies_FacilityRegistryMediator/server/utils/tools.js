@@ -86,7 +86,7 @@ exports.updateOpenmrsFacilitiesList = function(hostUrl, port, hostPwd, facilityT
             while(count < facilityTab.length){
                 e++
             };
-            messageBuffer = messageBuffer + ' ' +  'The list of the facilities (locations) has been succesfully updated on the openmrs instance ' + hostUrl + ':' + port;
+            messageBuffer = messageBuffer + ' ' +  'The list of the facilities (locations) has been succesfully updated';
             
         }
         callback(messageBuffer); 

@@ -9,14 +9,15 @@ const winston = require('winston');
 const _ = require('underscore');
 //var facServerrequest = require('http')
 var https = require('https');
+var http = require('http');
 const cron = require('node-cron');
 const cronPushing = require('node-cron');
 var myConfig = require('../config/config')
 var facServerrequest = require('request');
+var counterI = 0;
 
 var tools = require('../utils/tools');
 const fs = require('fs');
-const https = require('https');
 var getFacilityRegistry = [];
 
 
@@ -48,11 +49,12 @@ function setupApp() {
     var openmrsInstancesTab = myConfig.facilityregistry.openmrsinstances
     app.all('*', function(req, myResponse) {
       var msgBuffer = "";
-      var statusLog = 0; 
-      var endpoint = myConfig.facilityregistry.server.url + ":" + myConfig.facilityregistry.server.port + myConfig.facilityregistry.server.urlPattern;
+      var statusLog = 0;
+      // + ":" + myConfig.facilityregistry.server.port 
+      var endpoint = myConfig.facilityregistry.server.url + myConfig.facilityregistry.server.urlPattern;
       facServerrequest.get(endpoint, function(error,response,body) {
-           
         if(error){
+          console.log("There is an error while retrieving facilities");
           msgBuffer = 'Error while connecting to the facility registry Server. Check if the facility registry server (app and DB) is on and/or the Internet connection.';
           tools.reportEndOfProcess(req, myResponse, error, 500 , msgBuffer);
         } else {
@@ -61,7 +63,8 @@ function setupApp() {
           for(var i=0; i<openmrsInstancesTab.length; i++){
               tools.updateOpenmrsFacilitiesList(openmrsInstancesTab[i].name, openmrsInstancesTab[i].port, openmrsInstancesTab[i].pwd, facilitiesTab, function(result){
                 msgBuffer = msgBuffer + result + '  ';
-                if (i = (openmrsInstancesTab.length-1)){
+                counterI = i;
+                if (i == (openmrsInstancesTab.length-1)){
                   tools.reportEndOfProcess(req, myResponse, null, 200 , msgBuffer);
                 }  
               });  
@@ -82,7 +85,11 @@ function setupApp() {
         'content-type':'application/json'
       }
     };
-    https.request(hostname,requestOptions, function(rq, rs){}).end();
+    var sendRequest = https.request(hostname,requestOptions, function(rq, rs){});
+    sendRequest.on('error', function(err){
+      winston.info("Error details: ", err);
+    });
+    sendRequest.end();
   });
     
   return app;
@@ -101,8 +108,8 @@ function setupApp() {
 function start(callback) {
     if (apiConf.api.trustSelfSigned) { process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' }
   
-   if (apiConf.register) {
-  //  if (false) {
+  if (apiConf.register) {
+  //if (false) {
       medUtils.registerMediator(apiConf.api, mediatorConfig, (err) => {
         if (err) {
           winston.error('Failed to register this mediator, check your config')
@@ -124,9 +131,9 @@ function start(callback) {
 
           // Create and start HTTPS server
               var httpsServer = https.createServer({
-                key: fs.readFileSync('./config/certificates/privkey.pem'),
-                cert: fs.readFileSync('./config/certificates/cert.pem')
-            }, app); 
+                key: fs.readFileSync('../config/certificates/privkey.pem'),
+                cert: fs.readFileSync('../config/certificates/cert.pem')
+            }, app);  
             const server = httpsServer.listen(port, () => {
               if (apiConf.heartbeat) {
                 let configEmitter = medUtils.activateHeartbeat(apiConf.api)
@@ -152,10 +159,10 @@ function start(callback) {
       let app = setupApp();
 
       // Create and start HTTPS server
-      var httpsServer = https.createServer({
-        key: fs.readFileSync('./config/certificates/privkey.pem'),
-        cert: fs.readFileSync('./config/certificates/cert.pem')
-    }, app); 
+     var httpsServer = https.createServer({
+        key: fs.readFileSync('../config/certificates/privkey.pem'),
+        cert: fs.readFileSync('../config/certificates/cert.pem')
+    }, app);
       const server = httpsServer.listen(port, () => callback(server));
   
     }

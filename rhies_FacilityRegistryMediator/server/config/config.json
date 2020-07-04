@@ -11,22 +11,22 @@
   },
   "facilityregistry": {
       "server": {
-          "url" : "http://rhies-facility-registry",
-          "port": "4004",
+          "url" : "https://fr.rhies.rbc.gov.rw",
+          "port": "80",
           "urlPattern": "/api/facilities/",
           "username": "",
           "pwd": ""
       },
-      "pushingschedule":"00 14 * * *",
+      "pushingschedule":"00 01 * * *",
       "openmrsinstances":[
         {
           "name":"instance1",
-          "port":"3311",
+          "port":"3309",
           "pwd": "root"
         },
         {
           "name":"instance2",
-          "port":"3306",
+          "port":"3308",
           "pwd": "root"
         }
       ]
