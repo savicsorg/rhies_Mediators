@@ -5,6 +5,6 @@ COPY ./server/ .
 
 RUN npm install
 
-EXPOSE 4004
+EXPOSE 4005
 
 CMD ["node", "./app/index.js" ]
