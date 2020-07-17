@@ -16,4 +16,4 @@ Follow the steps to update the url for facilityregistry mediator and credentials
 
 4. Build the docker images by running the command  **docker build -t  savicsorg/frtoomrs:latest .**  while in the docker folder, the **latest** flag is the version number
 
-5. Push your image to the docker hub by running the command **docker push savicsorg/frtoopenmrs:latest**
+5. Push your image to the docker hub by running the command **docker push savicsorg/frtoomrs:latest**
