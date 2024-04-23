@@ -31,7 +31,7 @@
     "xmldom": "^0.1.22",
     "xpath": "0.0.23",
     "moment": "2.22.2",
-    "formidable": "1.2.1"
+    "formidable": "3.2.4"
   },
   "devDependencies": {
     "onchange": "^2.3.0",
